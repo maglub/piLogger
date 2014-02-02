@@ -8,6 +8,8 @@ oneWireDir=/mnt/1wire
 configDir=$this_dir/etc
 configFile=$configDir/piLogger.conf
 
+needReboot=""
+
 #=============================
 # functions
 #=============================
@@ -38,11 +40,13 @@ errorExit(){
 # Update some system files
 #================================
 
-echo "  - i2c config in /etc/modprobe.d/raspi-blacklist.conf"
+
 #--- comment out the blacklist of i2c
+echo "  - i2c config in /etc/modprobe.d/raspi-blacklist.conf"
 sudo sed -ie 's/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/' /etc/modprobe.d/raspi-blacklist.conf 
+
 echo "  - adding i2c-dev to /etc/modules"
-[ -z "$(grep i2c-dev /etc/modules)" ] && sudo sh -c "echo i2c-dev >> /etc/modules"
+[ -z "$(grep i2c-dev /etc/modules)" ] && { sudo sh -c "echo i2c-dev >> /etc/modules" ; needReboot=true ; }
 
 
 #--- setting up the locale
@@ -80,8 +84,8 @@ echo "  - Interface: $interface"
 # OWFS
 #--------------
 sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get -y install owfs ; }
-[ ! -h /etc/init.d/start1wire ] && sudo ln -s $this_dir/etc/init.d/start1wire /etc/init.d/
-[ ! -h /etc/rc2.d/S02start1wire ] && sudo update-rc.d start1wire defaults
+[ ! -h /etc/init.d/start1wire ] && { sudo ln -s $this_dir/etc/init.d/start1wire /etc/init.d/ ; needReboot=true ; }
+[ ! -h /etc/rc2.d/S02start1wire ] && { sudo update-rc.d start1wire defaults ; needReboot=true ; }
 
 #--------------
 # OWS
@@ -128,8 +132,18 @@ EOT
 # /etc/piLogger.conf link to installation directory
 #================================
 echo "  - Setting up bash completion"
-[ ! -h /etc/bash_completion.d/piLogger ] && sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger
+[ ! -h /etc/bash_completion.d/piLogger ] && { sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger ; needReboot=true ; }
 #================================
 # /etc/piLogger.conf link to installation directory
 #================================
 [[ ! -d /etc/piLogger.d && ! -h /etc/piLogger.d ]] && sudo ln -s $configDir /etc/piLogger.d
+
+
+#================================
+# End
+#================================
+[ -n "$needReboot" ] && {
+  echo "* Done, please reboot!"
+  echo "  sudo shutdown -r now"
+}
+
