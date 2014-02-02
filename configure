@@ -1,0 +1,83 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+configDir=$this_dir/etc
+configFile=$configDir/piLogger.conf
+
+withAbioWire=""
+piLoggerLocale=""
+
+#=============================
+# functions
+#=============================
+errorExit(){
+  echo "ERROR: $@"
+  exit 1
+}
+
+usage(){
+cat<<EOT
+
+Usage:
+
+  $this_dir/$this_script [options]
+
+Options:
+
+  --withAbioWire  -> Using abio wire interface (will use Axiris port of owfs)
+  --withLocale    -> Setting up en_US.UTF-8 locale
+
+Default:
+
+  * Default use of dpkg owfs
+
+EOT
+
+}
+
+#=============================
+# Command line parameters
+#=============================
+while [ -n "$1" ]
+do
+  case $1 in
+    --withAbioWire)
+      withAbioWire=true
+      interface=AbioWire
+      shift
+      ;;
+    --withLocale)
+      withLocale=true
+      piLoggerLocale=true
+      shift
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+
+#=============================
+# MAIN
+#=============================
+
+[ ! -d "$configDir" ] && mkdir -p $configDir
+
+#--- prepare the config file
+
+[ -f $configFile ] && errorExit "File $configFile already exists. Exiting! Please remove the config file before running again."
+
+#--- set the interface
+
+[ -z "$interface" ] && interface=default
+
+cat>$configFile<<EOT
+#----------------------------
+# Config file for piLogger
+#----------------------------
+interface=$interface
+piLoggerLocale=$piLoggerLocale
+EOT
