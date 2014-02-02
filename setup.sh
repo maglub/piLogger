@@ -93,7 +93,7 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 case $interface in
     AbioWire)
       abioDir=$this_dir/AbioWire
-      [ ! -d /opt/owf ] && {
+      [ ! -d /opt/ows ] && {
          [ ! -d $this_dir/AbioWire ] && {
            echo "  - Fetching AbioWire owfs from http://www.axiris.eu/en/index.php/one-wire/one-wire-software"
            echo "    - creating directory $this_dir/AbioWire"
