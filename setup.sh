@@ -4,6 +4,8 @@ this_dir=$(cd `dirname $0`; pwd)
 binDir=$this_dir/bin
 logDir=/var/log/piLogger
 dataDir=/var/piLogger
+dbDir=$dataDir/db
+graphDir=$dataDir/graphs
 oneWireDir=/mnt/1wire
 configDir=$this_dir/etc
 configFile=$configDir/piLogger.conf
@@ -72,8 +74,11 @@ EOT
 #================================
 [ ! -d "$logDir" ] && { sudo mkdir -p "$logDir" ; chown pi:pi "$logDir" ; }
 [ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"
+[ ! -d "$dbDir" ] && sudo mkdir -p "$dbDir"
+[ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 
+sudo chown pi:pi "$dataDir"
 #================================
 # Check for dependencies
 #================================
@@ -113,6 +118,12 @@ case $interface in
       echo "  - No special interfaces"
       ;;
 esac
+
+#------------------
+# RRDTool
+#------------------
+sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo apt-get -y install rrdtool ; }
+
 #================================
 # alias.conf file template
 #================================
@@ -133,6 +144,7 @@ EOT
 #================================
 echo "  - Setting up bash completion"
 [ ! -h /etc/bash_completion.d/piLogger ] && { sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger ; needReboot=true ; }
+
 #================================
 # /etc/piLogger.conf link to installation directory
 #================================

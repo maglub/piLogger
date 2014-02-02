@@ -1,18 +1,28 @@
 thisScript=$(basename $0)
-[ -z "$logDir" ] && logDir=/var/piLogger
+[ -z "$logDir" ] && logDir=/var/log/piLogger
 logFile=$logDir/$thisScript.log
 configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
 
 . $configDir/piLogger.conf
+[ -z "$dbDir" ] && dbDir=$oneWireDataDir/db
+[ -z "$graphDir" ] && graphDir=$oneWireDataDir/graphs
+
+#------------------------------------
+# errorExit
+#------------------------------------
+errorExit(){
+  logIt "ERROR: $@"
+  exit 1
+}
 
 #------------------------------------
 # logIt
 #------------------------------------
 logIt(){
   logIt_TS=$(date "+%Y%m%d_%H%M%S")
-  echo "$TS;$thisScript;$@" >> $logFile
-  echo "$TS;$thisScript;$@" 1>&2
+  echo "$logIt_TS;$thisScript;$@" >> $logFile
+  echo "$logIt_TS;$thisScript;$@" 1>&2
 }
 
 #------------------------------------
@@ -44,6 +54,68 @@ getDeviceAliasesByDevicePath() {
   echo "$cur_deviceAliases"
 }
 
+getDeviceByAlias(){
+  [ -z "$1" ] && return 0
+  grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3  | awk -F"/" '{print $NF}'
+}
+
 getDevicePathByAlias(){
   grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3 
+}
+
+#---------------------------------
+#logTemperature
+#---------------------------------
+logTemperature(){
+  lt_device=$1
+  lt_temperature=$2
+
+  lt_dbFile=$dbDir/${lt_device}.rrd
+
+  [ ! -f $lt_dbFile ] && $this_dir/createRRD $lt_device
+  [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
+  rrdtool update $lt_dbFile N:${lt_temperature}
+
+}
+#---------------------------------
+# getDBFilesFromGraphTemplate
+#---------------------------------
+getDBFilesFromGraphTemplate(){
+  local n
+  for n in $(cat $configDir/graph.$1.conf | grep -v "^#" | cut -d";" -f1)
+  do
+    getDeviceByAlias $n
+  done
+}
+#---------------------------------
+#---------------------------------
+# getDBFileByAlias
+#---------------------------------
+getDBFileByAlias(){
+  local curDevice
+  curDevice=$(getDeviceByAlias $1) 
+  [ -n "$curDevice" ] && echo $dbDir/${curDevice}.rrd 
+}
+#---------------------------------
+# getGraphColorFromGraphTemplateByAlias
+#---------------------------------
+getGraphColorFromGraphTemplateByAlias(){
+  local curAlias
+  local curGraphName
+
+  curGraphName=$1
+  curAlias=$2
+
+#  logIt "  - curGraphName: $curGraphName"
+#  logIt "  - curAlias: $curAlias"
+#  logIt "  - curFile: $configDir/graph.$curGraphName.conf"
+#  cat $configDir/graph.$curGraphName.conf | grep -v "^#" | grep "^${curAlias};" | cut -d";" -f2 1>&2
+  cat $configDir/graph.$curGraphName.conf | grep -v "^#" | grep "^${curAlias};" | cut -d";" -f2 | sed -e 's/#//'
+
+}
+#---------------------------------
+# getAliasesFromGraphTemplate
+#---------------------------------
+getAliasesFromGraphTemplate(){
+  cat $configDir/graph.$1.conf | grep -v "^#" | cut -d";" -f1
 }

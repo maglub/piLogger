@@ -82,6 +82,7 @@ interface=$interface
 piLoggerLocale=$piLoggerLocale
 
 oneWireDir=/mnt/1wire
+oneWireDataDir=/var/piLogger
 temperatureFile=temperature
 
 #----------------------

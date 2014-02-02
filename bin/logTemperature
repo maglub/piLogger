@@ -1,0 +1,37 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`; pwd)
+. $this_dir/functions
+
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+cat<<EOT
+
+Usage:
+
+  `basename $0` alias|/path/to/device
+
+EOT
+}
+
+#================================
+# MAIN
+#================================
+[ -z "$1" ] && { usage ; exit 1 ; }
+
+#--- check the device
+[ -d $1 ] &&   { curDevicePath=$1 ; curDevice=$(basename $1) ; }
+[ ! -d $1 ] && { curDevicePath=$(getDevicePathByAlias $1) ; curDevice=$(getDeviceByAlias $1) ; }
+[ -z "$curDevice" ] && errorExit "There is no device named $1"
+
+#--- get the temperature
+curTemperature=$(getTemperatureByDevicePath $curDevicePath)
+[ -z "$curTemperature" ] && errorExit "Could not read temperature from $curDevice"
+
+logIt "  - Logging data for device $curDevice, $curTemperature C"
+
+
+#--- at this point, there HAS to be a device, and ther has to be a temperature
+logTemperature $curDevice $curTemperature

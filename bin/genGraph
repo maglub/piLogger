@@ -1,0 +1,112 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+. $this_dir/functions
+
+#---------------------------------
+# printUsage()
+#---------------------------------
+usage(){
+  cat<<EOT
+
+$this_script graph_name <from date> <to date>
+
+Example:
+
+$this_script all.graph.20h "20131224 00:30:00" "20131224 23:59:59"
+
+EOT
+}
+#=================================
+# MAIN
+#=================================
+graphName=$1
+fromDate="$2"
+toDate="$3"
+
+[ -z "$fromDate" ] && { usage ; errorExit "No from date entered" ; }
+[ -z "$toDate" ] && { usage ; errorExit "No to date entered" ; }
+[ ! -d "$graphDir" ] && { errorExit "Could not find $graphDir" ; }
+TS=$(date "$dateFormat")
+
+tmpFile=$(mktemp /tmp/${this_script}.XXXXXXXX.rrd)
+
+fromDateEpoc=$(date -d "$fromDate" "+%s")
+toDateEpoc=$(date -d "$toDate" "+%s")
+
+
+curAliases=$(getAliasesFromGraphTemplate $graphName)
+
+cat>>$tmpFile<<EOT
+rrdtool graph $graphDir/$graphName.png \\
+  -t "$graphName $fromDate - $toDate" \\
+  -w 1200 \\
+  -h 400 \\
+  -W "" \\
+  --start $fromDateEpoc \\
+  --end $toDateEpoc \\
+  --vertical-label C \\
+EOT
+#--- data file definitions
+for curAlias in $curAliases
+do
+  cat>>$tmpFile<<EOT
+  DEF:$curAlias=$(getDBFileByAlias $curAlias):temperature:AVERAGE \\
+EOT
+done
+
+#--- horizontal ruler definitions
+cat>>$tmpFile<<EOT
+  HRULE:10#00FF00 \\
+  HRULE:75#00FF00 \\
+  HRULE:50#00FF00 \\
+EOT
+
+#--- area definitions
+#  AREA:element-fram#ffff0099 
+#  AREA:element-retur#ffffff 
+
+#--- line definitions
+
+for curAlias in $curAliases
+do
+cat>>$tmpFile<<EOT
+  LINE1:${curAlias}#$(getGraphColorFromGraphTemplateByAlias $graphName $curAlias):$curAlias \\
+EOT
+done
+
+cat $tmpFile
+
+echo "  - Generating graph: $graphName"
+bash $tmpFile
+rm $tmpFile
+exit
+
+  DEF:acktank-ovan=$dbDir/acktank-ovan.rrd:temperature:AVERAGE \
+  DEF:acktank-under=$dbDir/acktank-under.rrd:temperature:AVERAGE \
+  DEF:element-fram=$dbDir/element-fram.rrd:temperature:AVERAGE \
+  DEF:element-retur=$dbDir/element-retur.rrd:temperature:AVERAGE \
+  DEF:acktank-ovan-laddning=$dbDir/acktank-ovan-laddning.rrd:temperature:AVERAGE \
+  DEF:pannrum-stg3=$dbDir/pannrum-stg3.rrd:temperature:AVERAGE \
+  DEF:stg3-bv=$dbDir/stg3-bv.rrd:temperature:AVERAGE \
+  CDEF:stg3-bv-filtered-lt=stg3-bv,0,LT,UNKN,stg3-bv,IF \
+  CDEF:stg3-bv-filtered=stg3-bv-filtered-lt,115,GT,UNKN,stg3-bv-filtered-lt,IF \
+  DEF:stg3-ov=$dbDir/stg3-ov.rrd:temperature:AVERAGE \
+  DEF:termostat-ovan=$dbDir/termostat-ovan.rrd:temperature:AVERAGE \
+  HRULE:75#00FF00 \
+  HRULE:50#00FF00 \
+  AREA:element-fram#ffff0099 \
+  AREA:element-retur#ffffff \
+  LINE1:acktank-ovan-laddning#FF0000:acktank-ovan-laddning \
+  LINE3:acktank-ovan#0000FF:acktank-ovan \
+  LINE3:termostat-ovan#338955:acktank-mellan \
+  LINE1:termostat-ovan#000000 \
+  LINE3:acktank-under#00FF00:acktank-under \
+  LINE1:element-fram#ff0000:element-fram \
+  LINE1:element-retur#0000FF:element-retur \
+  LINE1:pannrum-stg3#444444:pannrum-stg3 \
+  LINE3:stg3-ov#ff0000:stg3-ov \
+  LINE1:stg3-bv-filtered#55ff00:stg3-bv
+
+

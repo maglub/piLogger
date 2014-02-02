@@ -37,6 +37,7 @@ _getTemperature() {
   #--- options to complete
 #  opt="-a -af --aliases --aliasFile"
 
+  #--- the aliases are taken from aliases.conf, regardless of existence in the filesystem
   local deviceAlias=$(grep -v "^#" /etc/piLogger.d/aliases.conf | cut -d";" -f1)
   local devicePath=$(echo /mnt/1wire/bus*/[0-9]*)
 
@@ -55,4 +56,28 @@ _getTemperature() {
   return 0
 }
 complete -F _getTemperature getTemperature
+complete -F _getTemperature logTemperature
 
+_genGraph(){
+  local cur prev opts base
+  local etcDir=~/piLogger/etc
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  first="${COMP_WORDS[1]}"
+  second="${COMP_WORDS[2]}"
+  third="${COMP_WORDS[3]}"
+
+  #--- options to complete
+  #  opt="-a -af --aliases --aliasFile"
+  local graphName=$(echo /etc/piLogger.d/graph.* | xargs -I Q basename Q .conf | sed -e 's/^graph\.//' )
+  local currentTimeStamp="\"$(date "+%Y%m%d %H%M")\""
+
+  [[ -z "$first" || -n "$first" ]] && COMPREPLY=( $(compgen  -W "${graphName}" -- ${cur} ) )
+  [[ ${#COMP_WORDS[@]} -gt 2 ]] && COMPREPLY=( $(compgen  -- ${cur} ) )
+
+#  [[ -n "$first" && -n "$first" ]] && COMPREPLY=( $(compgen  -- ${cur} ) )
+  return 0
+}
+complete -F _genGraph genGraph

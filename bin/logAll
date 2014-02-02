@@ -1,0 +1,34 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`; pwd)
+. $this_dir/functions
+
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+cat<<EOT
+
+Usage:
+
+  `basename $0` path/to/config/file/capture.NAME.conf
+
+EOT
+}
+
+#================================
+# MAIN
+#================================
+[ -z "$1" ] && { usage ; exit 1 ; }
+
+curConfigFile=$1
+[ ! -f $curConfigFile ] && errorExit "Could not find config file: $curConfigFile"
+
+#--- at this point, there HAS to be a device, and ther has to be a temperature
+aliases="$(cat $curConfigFile | grep -v "^#")"
+
+for curAlias in $aliases
+do
+  logIt "  - Logging data from $curAlias"
+  $this_dir/logTemperature $curAlias
+done
