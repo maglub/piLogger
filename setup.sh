@@ -109,3 +109,17 @@ case $interface in
       echo "  - No special interfaces"
       ;;
 esac
+#================================
+# alias.conf file template
+#================================
+[ ! -f $configDir/aliases.conf ] && {
+cat>$configDir/aliases.conf<<EOT
+#-----------------------------------------------
+# aliases.conf
+#
+# Example:
+# indoor1;1wire;/mnt/1wire/bus.12/28.12ED2F040000
+#-----------------------------------------------
+# alias ; type ; path
+EOT
+}

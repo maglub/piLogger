@@ -2,6 +2,7 @@ thisScript=$(basename $0)
 [ -z "$logDir" ] && logDir=/var/piLogger
 logFile=$logDir/$thisScript.log
 configDir=$this_dir/../etc
+piLoggerDeviceAliasFile=$configDir/aliases.conf
 
 . $configDir/piLogger.conf
 
@@ -30,6 +31,19 @@ getDeviceTypeByDevicePath() {
 }
 
 getTemperatureByDevicePath(){
-  cat $1/$temperatureFile
+  cat $1/$temperatureFile | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }'
 }
 
+getTemperatureByDeviceAlias(){
+  getTemperatureByDevicePath $(getDevicePathByAlias $1)
+}
+
+getDeviceAliasesByDevicePath() {
+  cur_deviceAliases=$(grep -v "^#" $piLoggerDeviceAliasFile | grep -v "^#" | awk -F";" -v ID=$1 '{ if (match ($NF, ID)) { printf "%s ", $1 }}')
+  [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
+  echo "$cur_deviceAliases"
+}
+
+getDevicePathByAlias(){
+  grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3 
+}

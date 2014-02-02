@@ -5,18 +5,74 @@ this_dir=$(cd `dirname $0`; pwd)
 
 all_devices=$(getAllDevices /mnt/1wire)
 
-TS=$(date "$dateFormat")
-echo "$TS devices:"
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+  cat<<EOT
 
-for device in  $all_devices
+Uage:
+
+  `basename $0` [options]
+
+Options:
+
+  -a|--aliases     - Show aliases for devices
+  -af|--aliasFile  - generate a dummy alias file output
+
+EOT
+}
+#--------------------------------
+# printNormal
+#--------------------------------
+printNormal(){
+  for device in  $all_devices
+  do
+    echo "$device"
+  done
+}
+
+#--------------------------------
+# printWithAliases
+#--------------------------------
+printWithAliases(){
+  for device in $all_devices
+  do
+    deviceType=$(getDeviceTypeByDevicePath $device)
+    deviceAliases="$(getDeviceAliasesByDevicePath `basename $device`)"
+    echo "Device: $device Type: $deviceType Device Aliases: $deviceAliases"
+  done
+}
+
+printAliasFileFormat(){
+  n=1
+  for device in $all_devices
+  do
+    echo "alias${n};1wire;$device"
+    ((n+=1))
+  done
+}
+
+#====================================
+# MAIN
+#====================================
+
+[ -z "$1" ] && printNormal
+
+while [ -n "$1" ]
 do
-  echo "  - $device"
+  case $1 in
+    -a|--aliases)
+       printWithAliases
+       shift
+       ;;
+    --aliasFile|-af)
+      printAliasFileFormat
+      shift
+      ;;
+    *)
+      usage
+      exit
+      ;;
+  esac 
 done
-
-for device in $all_devices
-do
-  deviceType=$(getDeviceTypeByDevicePath $device)
-#  deviceAliases="$(getDeviceAliasesByDeviceId `basename $device`)"
-  echo "Device: $device Type: $deviceType Device Aliases: $deviceAliases"
-done
-
