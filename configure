@@ -80,4 +80,10 @@ cat>$configFile<<EOT
 #----------------------------
 interface=$interface
 piLoggerLocale=$piLoggerLocale
+
+oneWireDir=/mnt/1wire
+temperatureFile=temperature
+
+#----------------------
+dateFormat="+%Y%m%d %H%M%S"
 EOT

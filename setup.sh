@@ -66,7 +66,7 @@ EOT
 #================================
 # setup directories
 #================================
-[ ! -d "$logDir" ] && sudo mkdir -p "$logDir"
+[ ! -d "$logDir" ] && { sudo mkdir -p "$logDir" ; chown pi:pi "$logDir" ; }
 [ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 

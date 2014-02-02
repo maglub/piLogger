@@ -1,6 +1,9 @@
 thisScript=$(basename $0)
 [ -z "$logDir" ] && logDir=/var/piLogger
 logFile=$logDir/$thisScript.log
+configDir=$this_dir/../etc
+
+. $configDir/piLogger.conf
 
 #------------------------------------
 # logIt
@@ -11,15 +14,22 @@ logIt(){
   echo "$TS;$thisScript;$@" 1>&2
 }
 
-
 #------------------------------------
 # listDevices
 #------------------------------------
-listDevices(){
+getAllDevices(){
   ld_dir="$1"
 
-  for bus in $ld_dir/bus*
-  do
-    echo "bus: $bus"
-  done
+  echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
+
+getDeviceTypeByDevicePath() {
+  cur_deviceType=$(cat $1/type)
+  [ -n "$debug" ] && echo "Device type: $cur_deviceType" 1>&2
+  echo $cur_deviceType
+}
+
+getTemperatureByDevicePath(){
+  cat $1/$temperatureFile
+}
+
