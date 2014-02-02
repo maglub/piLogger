@@ -123,3 +123,7 @@ cat>$configDir/aliases.conf<<EOT
 # alias ; type ; path
 EOT
 }
+#================================
+# /etc/piLogger.conf link to installation directory
+#================================
+[[ ! -d /etc/piLogger.d && ! -h /etc/piLogger.d ]] && sudo ln -s $configDir /etc/piLogger.d

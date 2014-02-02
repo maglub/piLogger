@@ -3,5 +3,5 @@
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
 
-[ -f $1 ] && getTemperatureByDevicePath $1
-[ ! -f $1 ] && getTemperatureByDeviceAlias $1
+[ -d $1 ] && getTemperatureByDevicePath $1
+[ ! -d $1 ] && getTemperatureByDeviceAlias $1

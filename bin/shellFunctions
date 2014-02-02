@@ -1,0 +1,58 @@
+_listDevices() {
+  local cur prev opts base
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  #--- options to complete
+  opt="-a -af --aliases --aliasFile"
+
+#  local series=$(ls $lspbDir/config/series | xargs -I Q basename Q .conf)
+
+#  case "${prev}" in
+#    -ls|-vi|-viconfig|-viignore|-stat)
+#      COMPREPLY=( $(compgen  -W "${series}" -- ${cur} ) )
+#      return 0
+#      ;;
+#    ">"|">>")
+#      COMPREPLY=( $(compgen -f ${cur} ) )
+#      return 0
+#      ;;
+#  esac
+
+  COMPREPLY=( $(compgen  -W "${opt} ${series}"  -- ${cur} ) )
+  return 0
+}
+complete -F _listDevices listDevices
+
+_getTemperature() {
+  local cur prev opts base
+  local etcDir=~/piLogger/etc
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  #--- options to complete
+#  opt="-a -af --aliases --aliasFile"
+
+  local deviceAlias=$(grep -v "^#" /etc/piLogger.d/aliases.conf | cut -d";" -f1)
+  local devicePath=$(echo /mnt/1wire/bus*/[0-9]*)
+
+#  case "${prev}" in
+#    -ls|-vi|-viconfig|-viignore|-stat)
+#      COMPREPLY=( $(compgen  -W "${series}" -- ${cur} ) )
+#      return 0
+#      ;;
+#    ">"|">>")
+#      COMPREPLY=( $(compgen -f ${cur} ) )
+#      return 0
+#      ;;
+#  esac
+
+  COMPREPLY=( $(compgen  -W "${deviceAlias} ${devicePath}"   -- ${cur} ) )
+  return 0
+}
+complete -F _getTemperature getTemperature
+
