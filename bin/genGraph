@@ -25,6 +25,8 @@ graphName=$1
 fromDate="$2"
 toDate="$3"
 
+logIt "* Generating graph $graphName from: $fromDate to: $toDate"
+
 [ -z "$fromDate" ] && { usage ; errorExit "No from date entered" ; }
 [ -z "$toDate" ] && { usage ; errorExit "No to date entered" ; }
 [ ! -d "$graphDir" ] && { errorExit "Could not find $graphDir" ; }
