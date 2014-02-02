@@ -79,6 +79,8 @@ EOT
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 
 sudo chown pi:pi "$dataDir"
+sudo chown pi:pi "$dbDir"
+sudo chown pi:pi "$graphDir"
 #================================
 # Check for dependencies
 #================================
