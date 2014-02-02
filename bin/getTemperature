@@ -3,5 +3,22 @@
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
 
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+cat<<EOT
+
+Usage:
+
+  `basename $0` alias|/path/to/device
+
+EOT
+}
+
+#================================
+# MAIN
+#================================
+[ -z "$1" ] && { usage ; exit 1 ; }
 [ -d $1 ] && getTemperatureByDevicePath $1
 [ ! -d $1 ] && getTemperatureByDeviceAlias $1

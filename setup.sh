@@ -123,6 +123,12 @@ cat>$configDir/aliases.conf<<EOT
 # alias ; type ; path
 EOT
 }
+
+#================================
+# /etc/piLogger.conf link to installation directory
+#================================
+echo "  - Setting up bash completion"
+[ ! -h /etc/bash_completion.d/piLogger ] && sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger
 #================================
 # /etc/piLogger.conf link to installation directory
 #================================
