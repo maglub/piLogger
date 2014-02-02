@@ -1,0 +1,22 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`; pwd)
+. $this_dir/functions
+
+all_devices=$(getAllDevices /mnt/1wire)
+
+TS=$(date "$dateFormat")
+echo "$TS devices:"
+
+for device in  $all_devices
+do
+  echo "  - $device"
+done
+
+for device in $all_devices
+do
+  deviceType=$(getDeviceTypeByDevicePath $device)
+#  deviceAliases="$(getDeviceAliasesByDeviceId `basename $device`)"
+  echo "Device: $device Type: $deviceType Device Aliases: $deviceAliases"
+done
+

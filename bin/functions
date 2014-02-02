@@ -1,0 +1,25 @@
+thisScript=$(basename $0)
+[ -z "$logDir" ] && logDir=/var/piLogger
+logFile=$logDir/$thisScript.log
+
+#------------------------------------
+# logIt
+#------------------------------------
+logIt(){
+  logIt_TS=$(date "+%Y%m%d_%H%M%S")
+  echo "$TS;$thisScript;$@" >> $logFile
+  echo "$TS;$thisScript;$@" 1>&2
+}
+
+
+#------------------------------------
+# listDevices
+#------------------------------------
+listDevices(){
+  ld_dir="$1"
+
+  for bus in $ld_dir/bus*
+  do
+    echo "bus: $bus"
+  done
+}
