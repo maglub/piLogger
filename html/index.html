@@ -26,11 +26,27 @@
 
    if (myData[0].temperature[myData[0].temperature.length-1] === 1000) {
      myData[0].temperature.splice(myData[0].temperature.length-1,1);
-   }
+   };
 
    if (myData[1].temperature[myData[1].temperature.length-1] === 1000) {
      myData[1].temperature.splice(myData[1].temperature.length-1,1);
+   };
+
+   var plotData = [];
+   var plotDataSensors = [ ];
+
+   var plotDataArray = new Array();
+   
+   
+   for (i=0; i<myData.length ; i++) {
+     plotDataArray[i] = new Object();
+     plotDataArray[i].data = myData[i].temperature.slice(0);
+     plotDataArray[i].name = myData[i].sensor.slice(0);
+     plotData[i] = myData[i].temperature.slice(0);
+     plotDataSensors[i] = myData[i].sensor.slice(0);
    }
+
+   plotDataArray.splice(plotDataArray.length-1,1);
 
    var options={ 
         chart: {
@@ -48,10 +64,14 @@
                 text: 'C'
             }
         },
-        series: 
- [
-           { data: myData[0].temperature , name: myData[0].sensor },
-           { data: myData[1].temperature , name: myData[1].sensor }]
+        //series: [ {data: plotData[0] } ] 
+        //series: [  plotDataArray[0] , plotDataArray[1] ]
+        series:  plotDataArray
+/*
+         [ { data: plotData[0] , name: plotDataSensors[0] },
+           { data: plotData[1] , name: plotDataSensors[1] }]
+*/
+
     };
 
     $('#container').highcharts( options );
