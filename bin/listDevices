@@ -53,6 +53,18 @@ printAliasFileFormat(){
   done
 }
 
+printJSON(){
+  printf '['
+  local prependComma=""
+  for device in $all_devices
+  do
+    printf "%s" "$prependComma"
+    printf '\n{ "sensorName":"'$(basename $device)'", "devicePath":"'$device'" }'
+    prependComma=","
+  done
+  printf '\n]\n'
+}
+
 #====================================
 # MAIN
 #====================================
@@ -68,6 +80,10 @@ do
        ;;
     --aliasFile|-af)
       printAliasFileFormat
+      shift
+      ;;
+    --json|-j)
+      printJSON
       shift
       ;;
     *)
