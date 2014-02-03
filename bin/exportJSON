@@ -25,7 +25,7 @@ graphName=$1
 
 #logIt "* Generating graph $graphName from: $fromDate to: $toDate"
 
-[ ! -d "$oneWireDataDir/xml" ] && { errorExit "Could not find $oneWireDataDir/xml" ; }
+#[ ! -d "$oneWireDataDir/xml" ] && { errorExit "Could not find $oneWireDataDir/xml" ; }
 TS=$(date "$dateFormat")
 
 tmpFile=$(mktemp /tmp/${this_script}.XXXXXXXX.rrd)
