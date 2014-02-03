@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <title>piLogger</title>
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+
+    <script src="http://fgnass.github.io/spin.js/spin.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+    <link rel="stylesheet" href="css/main.css">
+  
+<!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
+<script type="text/javascript">
+   console.log("XXX Here it starts");
+
+  var chart;
+  function draw_chart(myData){
+
+   // Ugly hack to get around the termination of the json data ",1000]"
+   console.log("XXX value of last element: " + myData[0].temperature[myData[0].temperature.length-1]);
+
+   if (myData[0].temperature[myData[0].temperature.length-1] === 1000) {
+     myData[0].temperature.splice(myData[0].temperature.length-1,1);
+   }
+
+   if (myData[1].temperature[myData[1].temperature.length-1] === 1000) {
+     myData[1].temperature.splice(myData[1].temperature.length-1,1);
+   }
+
+   var options={ 
+        chart: {
+            type: 'line'
+        },
+        plotOptions: { line: {animation: false } , series: {animation: false , marker: { enabled: false } } },
+        title: {
+            text: myData[0].sensor
+        },
+        xAxis: {
+            title: 'tjoffen'
+        },
+        yAxis: {
+            title: {
+                text: 'C'
+            }
+        },
+        series: 
+ [
+           { data: myData[0].temperature , name: myData[0].sensor },
+           { data: myData[1].temperature , name: myData[1].sensor }]
+    };
+
+    $('#container').highcharts( options );
+
+  };
+
+  $(function(){
+  var opts = {
+    lines: 13, // The number of lines to draw
+    length: 20, // The length of each line
+    width: 10, // The line thickness
+    radius: 30, // The radius of the inner circle
+    corners: 1, // Corner roundness (0..1)
+    rotate: 0, // The rotation offset
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    color: '#000', // #rgb or #rrggbb or array of colors
+    speed: 1, // Rounds per second
+    trail: 60, // Afterglow percentage
+    shadow: false, // Whether to render a shadow
+    hwaccel: false, // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    top: '100', // Top position relative to parent in px
+    left: 'auto' // Left position relative to parent in px
+  };
+
+  var target = document.getElementById('highcharts');
+
+  var spinner = new Spinner(opts).spin(target);
+
+   var url="xml/4h.json";
+   var url="api/helloWorld";
+   console.log("XXX url: " + url);
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: function(data) {
+        draw_chart(data);
+          console.log("XXX Stopping spinner");
+          spinner.stop();
+      },
+      error: function(data) {
+        draw_chart([2,2,2,2,2,2,2]);
+      }
+    });
+
+    /* draw_chart([1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]); */
+  });
+
+   console.log("XXX Here it ends");
+</script>
+  </head>
+  <body>
+
+<!-- http://thule.mine.nu/html/ -->
+
+<!-- Header and Nav -->
+  <div class="row">
+    <div class="large-2 columns">
+      <h1><img src="http://i.imgur.com/cVS9fdC.png" /></h1>
+    </div>
+    <div class="large-10 columns">
+      <ul class="inline-list right">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+ 
+
+<!-- End Header and Nav -->
+  
+  
+  <div class="row">    
+    <!-- Main Content Section -->
+    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+    <div class="large-10 push-2 columns">      
+       <div id="highcharts"></div>     
+       <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+    </div>
+
+
+
+    
+    
+    <!-- Nav Sidebar -->
+    <!-- This is source ordered to be pulled to the left on larger screens -->
+    <div class="large-2 pull-10 columns">
+      <ul class="side-nav">
+         <li class="nav-header">Temperature</li>
+         <li><a href="index.html?3h">Last 3h</a></li>
+         <li><a href="/graphs">Graph files</a></li>
+         <li><a href="/xml">XML files</a></li>
+         <li><a href="/xml">XML files</a></li>
+
+      </ul>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="row">
+    <div class="large-12 columns">
+      <hr />
+      <div class="row">
+        <div class="large-6 columns">
+          <p>&copy; tjadu</p>
+        </div>
+        <div class="large-6 columns">
+          
+        </div>
+      </div>
+    </div> 
+  </footer>
+
+<script>
+</script>
+
+  </body>
+</html>

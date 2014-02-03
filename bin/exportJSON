@@ -1,0 +1,50 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+. $this_dir/functions
+
+#---------------------------------
+# printUsage()
+#---------------------------------
+usage(){
+  cat<<EOT
+
+$this_script graph_name <from date> <to date>
+
+Example:
+
+$this_script all.graph.20h "20131224 00:30:00" "20131224 23:59:59"
+
+EOT
+}
+#=================================
+# MAIN
+#=================================
+graphName=$1
+
+#logIt "* Generating graph $graphName from: $fromDate to: $toDate"
+
+[ ! -d "$oneWireDataDir/xml" ] && { errorExit "Could not find $oneWireDataDir/xml" ; }
+TS=$(date "$dateFormat")
+
+tmpFile=$(mktemp /tmp/${this_script}.XXXXXXXX.rrd)
+
+fromDateEpoc=$(date -d "$fromDate" "+%s")
+toDateEpoc=$(date -d "$toDate" "+%s")
+
+
+curAliases=$(getAliasesFromGraphTemplate $graphName)
+
+echo "["
+for curAlias in $curAliases
+do
+  echo '{"sensor":"'$curAlias'",'
+  echo ' "temperature":['
+  rrdtool xport -s now-11h -e now --step 300  \
+      DEF:${curAlias}=$(getDBFileByAlias $curAlias):temperature:AVERAGE \
+      XPORT:${curAlias}:$curAlias | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "%.2f,", $2*1;'
+  echo "1000"]},
+done
+echo '{"sensor":"dummy", "temperature":[]}]'
+

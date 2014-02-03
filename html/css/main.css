@@ -1,0 +1,34 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Corben', Georgia, Times, serif;
+}
+
+h1 { 
+    text-shadow: 1px 1px 1px #ccc;
+}
+
+
+p, div {
+    font-family: 'Nobile', Helvetica, Arial, sans-serif;
+}
+
+.inline-list {
+    list-style: none outside none;
+    margin: 1em 0 1.0625em -1.375em;
+    overflow: hidden;
+    padding: 0;
+}
+
+.side-nav {
+    display: block;
+    list-style-position: inside;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}

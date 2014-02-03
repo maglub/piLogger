@@ -126,6 +126,12 @@ esac
 #------------------
 sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo apt-get -y install rrdtool ; }
 
+#------------------
+# Lighttpd
+#------------------
+sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -y install lighttpd ; }
+[ ! -h /etc/lighttpd/conf-enabled/10-dir-listing.conf ] && sudo ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled
+
 #================================
 # alias.conf file template
 #================================
