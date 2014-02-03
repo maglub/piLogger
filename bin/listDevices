@@ -58,8 +58,10 @@ printJSON(){
   local prependComma=""
   for device in $all_devices
   do
+    pj_deviceName=$(basename $device)
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
     printf "%s" "$prependComma"
-    printf '\n{ "sensorName":"'$(basename $device)'", "devicePath":"'$device'" }'
+    printf '\n{ "sensorName":"'${pj_deviceName}'", "devicePath":"'$device'" , "aliases":["'$pj_deviceAliases'"]}'
     prependComma=","
   done
   printf '\n]\n'
