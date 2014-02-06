@@ -3,7 +3,7 @@
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
 
-all_devices=$(getAllDevices /mnt/1wire)
+all_devices=$(getAllDevices $oneWireDir)
 
 #--------------------------------
 # usage()
