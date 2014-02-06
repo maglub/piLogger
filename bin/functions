@@ -36,6 +36,11 @@ getAllDevices(){
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
 
+getAllDeviceNames(){
+  ld_dir=$1
+  ls -1 $ld_dir/bus* | grep "^[0-9]" 
+}
+
 getDeviceTypeByDevicePath() {
   cur_deviceType=$(cat $1/type)
   [ -n "$debug" ] && echo "Device type: $cur_deviceType" 1>&2
@@ -110,8 +115,14 @@ getDBFilesFromGraphTemplate(){
 #---------------------------------
 getDBFileByAlias(){
   local curDevice
-  curDevice=$(getDeviceByAlias $1) 
-  [ -n "$curDevice" ] && echo $dbDir/${curDevice}.rrd 
+
+  if [ -a $dbDir/${1##*/}.rrd ]
+  then
+    echo $dbDir/${1##*/}.rrd
+  else
+    curDevice=$(getDeviceByAlias $1) 
+    [ -n "$curDevice" ] && echo $dbDir/${curDevice}.rrd 
+  fi
 }
 
 #---------------------------------
@@ -135,5 +146,5 @@ getGraphColorFromGraphTemplateByAlias(){
 # getAliasesFromGraphTemplate
 #---------------------------------
 getAliasesFromGraphTemplate(){
-  cat $configDir/graph.$1.conf | grep -v "^#" | cut -d";" -f1
+  cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }

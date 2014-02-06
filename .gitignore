@@ -1,3 +1,4 @@
+etc/devices.scanned
 etc/piLogger.conf
 etc/aliases.conf
 etc/*.conf

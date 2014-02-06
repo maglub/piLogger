@@ -118,3 +118,10 @@ function updateDevicesPane(deviceData){
     target2.innerHTML = outputString;
     console.log("XXX device listing - after updating content");
 }
+
+  function show(id) {
+    document.getElementById(id).style.visibility = "visible";
+  }
+  function hide(id) {
+    document.getElementById(id).style.visibility = "hidden";
+  }
