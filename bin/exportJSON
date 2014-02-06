@@ -35,7 +35,7 @@ fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
 curAliases=$(getAliasesFromGraphTemplate $graphName)
-[ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "/81")
+[ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
 
 printf "["
 curComma=" "
