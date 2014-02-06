@@ -39,7 +39,7 @@ _getTemperature() {
 
   #--- the aliases are taken from aliases.conf, regardless of existence in the filesystem
   local deviceAlias=$(grep -v "^#" /etc/piLogger.d/aliases.conf | cut -d";" -f1)
-  local devicePath=$(echo /mnt/1wire/bus*/[0-9]*)
+  local devicePath=$(echo /mnt/1wire*/bus*/[0-9]*)
 
 #  case "${prev}" in
 #    -ls|-vi|-viconfig|-viignore|-stat)
