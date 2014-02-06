@@ -2,5 +2,6 @@ etc/piLogger.conf
 etc/aliases.conf
 etc/*.conf
 bin/.*.swp
+html/cache
 
 AbioWire
