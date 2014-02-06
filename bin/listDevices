@@ -19,6 +19,7 @@ Options:
 
   -a|--aliases     - Show aliases for devices
   -af|--aliasFile  - generate a dummy alias file output
+  --scan           - Scan for devices into etc/devices.scanned
 
 EOT
 }
@@ -120,6 +121,10 @@ do
       printJSON=true
       shift
       ;;
+    --scan)
+      scanDevices=true
+      shift
+      ;;
     *)
       usage
       exit
@@ -127,6 +132,7 @@ do
   esac 
 done
 
+[[ -n "$scanDevices" ]] && { logIt "  - Scanning for devices into $configDir/devices.scanned" ; printNormal > $configDir/devices.scanned ; cat $configDir/devices.scanned ; exit 0 ; }
 [[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
 [[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
 [[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
