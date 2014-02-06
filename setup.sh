@@ -81,6 +81,9 @@ EOT
 sudo chown pi:pi "$dataDir"
 sudo chown pi:pi "$dbDir"
 sudo chown pi:pi "$graphDir"
+
+[ ! -d $this_dir/html/cache ] && { mkdir $dataDir/cache ; ln -s $dataDir/cache $this_dir/html/cache ; }
+
 #================================
 # Check for dependencies
 #================================

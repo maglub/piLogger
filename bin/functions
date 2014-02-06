@@ -31,6 +31,8 @@ logIt(){
 getAllDevices(){
   ld_dir="$1"
 
+  [ -f $configDir/devices.scanned ] && { cat $configDir/devices.scanned ; return 0 ; }
+  logIt "No scanned devices, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
 
@@ -41,7 +43,9 @@ getDeviceTypeByDevicePath() {
 }
 
 getTemperatureByDevicePath(){
-  cat $1/$temperatureFile | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }'
+  curOut=$(cat $1/$temperatureFile | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
+  [ -n "debug" ] && logIt "device: $1 temperature: $curOut"
+  echo $curOut
 }
 
 getTemperatureByDeviceAlias(){
@@ -49,7 +53,8 @@ getTemperatureByDeviceAlias(){
 }
 
 getDeviceAliasesByDevicePath() {
-  cur_deviceAliases=$(grep -v "^#" $piLoggerDeviceAliasFile | grep -v "^#" | awk -F";" -v ID=$1 '{ if (match ($NF, ID)) { printf "%s ", $1 }}')
+  #cur_deviceAliases=$(grep -v "^#" $piLoggerDeviceAliasFile | grep -v "^#" | awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}')
+  cur_deviceAliases=$(awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}'  $piLoggerDeviceAliasFile )
   [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
   echo "$cur_deviceAliases"
 }
@@ -61,6 +66,18 @@ getDeviceByAlias(){
 
 getDevicePathByAlias(){
   grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3 
+}
+
+getLastRRDUpdate(){
+  curDevice=$1
+
+  #--- you will need the device name, like 28.12ED2F040000
+  #--- which is to be found either right away, or by alias
+  #[ -z "$debug" ] && logIt "getLastRRDUpdate: $curDevice"
+  #[ -z "$debug" ] && logIt "db dir: $oneWireDataDir testing: $oneWireDataDir/db/$curDevice.rrd"
+  #[ ! -f $oneWireDataDir/db/$curDevice.rrd ] && curDevice=$(getDeviceByAlias $1)
+  #rrdtool info $oneWireDataDir/db/${curDevice}.rrd | grep last_ds | cut -d"=" -f2 | sed -e 's/[ "]//g'
+  rrdtool info $oneWireDataDir/db/${curDevice}.rrd | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
 }
 
 #---------------------------------
@@ -96,6 +113,7 @@ getDBFileByAlias(){
   curDevice=$(getDeviceByAlias $1) 
   [ -n "$curDevice" ] && echo $dbDir/${curDevice}.rrd 
 }
+
 #---------------------------------
 # getGraphColorFromGraphTemplateByAlias
 #---------------------------------

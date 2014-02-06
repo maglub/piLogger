@@ -28,23 +28,21 @@ graphName=$1
 #[ ! -d "$oneWireDataDir/xml" ] && { errorExit "Could not find $oneWireDataDir/xml" ; }
 TS=$(date "$dateFormat")
 
-tmpFile=$(mktemp /tmp/${this_script}.XXXXXXXX.rrd)
-
 fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
-
 curAliases=$(getAliasesFromGraphTemplate $graphName)
 
-echo "["
+printf "["
+curComma=" "
 for curAlias in $curAliases
 do
-  echo '{"sensor":"'$curAlias'",'
-  echo ' "temperature":['
+  printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
   rrdtool xport -s now-11h -e now --step 300  \
       DEF:${curAlias}=$(getDBFileByAlias $curAlias):temperature:AVERAGE \
-      XPORT:${curAlias}:$curAlias | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "%.2f,", $2*1;'
-  echo "1000"]},
+      XPORT:${curAlias}:$curAlias | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "%.2f,", $2*1;' | sed -e 's/,$//'
+  curComma=","
+  printf "]}"
 done
-echo '{"sensor":"dummy", "temperature":[]}]'
+printf "\n]"
 

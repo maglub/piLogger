@@ -53,7 +53,21 @@ printAliasFileFormat(){
   done
 }
 
-printJSON(){
+printAllJSON(){
+  printf "["
+  local prependComma=" "
+  for device in $all_devices
+  do
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    deviceTemperature=$(getLastRRDUpdate ${device##*/} )
+    printf '%s\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"], "temperature":"%s" }' "$prependComma" ${device##*/} ${device} ${pj_deviceAliases} ${deviceTemperature}
+    prependComma=","
+  done
+  printf '\n]\n'
+  return 0
+}
+
+printAliasesJSON(){
   printf '['
   local prependComma=""
   for device in $all_devices
@@ -61,7 +75,21 @@ printJSON(){
     pj_deviceName=$(basename $device)
     pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
     printf "%s" "$prependComma"
-    printf '\n{ "sensorName":"'${pj_deviceName}'", "devicePath":"'$device'" , "aliases":["'$pj_deviceAliases'"]}'
+    printf '\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"] }' ${pj_deviceName} ${device} ${pj_deviceAliases} 
+    prependComma=","
+  done
+  printf '\n]\n'
+}
+
+printPathJSON(){
+  printf '['
+  local prependComma=""
+  for device in $all_devices
+  do
+    pj_deviceName=$(basename $device)
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    printf "%s" "$prependComma"
+    printf '\n{ "sensorName":"%s", "devicePath":"%s" }' ${pj_deviceName} ${device} 
     prependComma=","
   done
   printf '\n]\n'
@@ -76,16 +104,20 @@ printJSON(){
 while [ -n "$1" ]
 do
   case $1 in
-    -a|--aliases)
-       printWithAliases
-       shift
-       ;;
     --aliasFile|-af)
       printAliasFileFormat
       shift
       ;;
+    -a|--aliases)
+      listAliases=true
+      shift
+      ;;
+    --info)
+      listInfo=true
+      shift
+      ;;
     --json|-j)
-      printJSON
+      printJSON=true
       shift
       ;;
     *)
@@ -94,3 +126,8 @@ do
       ;;
   esac 
 done
+
+[[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
+[[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
+[[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
+[[ -n "$listAliases" ]] && { printWithAliases ; exit 0 ; }

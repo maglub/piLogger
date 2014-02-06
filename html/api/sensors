@@ -1,2 +1,0 @@
-#!/bin/bash
-/home/pi/piLogger/bin/listDevices --json

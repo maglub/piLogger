@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#export debug=true
+bin_dir=/home/pi/piLogger/bin
+
+#--- read tokens
+OLD_IFS=$IFS
+IFS="/"
+[ -n "$PATH_INFO" ] && { set $PATH_INFO ; shift ; }
+
+[ -z "$par1" ] && par1=$1
+[ -z "$par2" ] && par2=$2
+[ -z "$par3" ] && par3=$3
+[ -z "$par4" ] && par4=$4
+
+#--- api:
+#  - /api/{sensor|all}/{path|temperature}
+
+if [ -n "$par2" ]
+then
+  #--- implemented features
+  #  - temperature
+  #  - path
+
+  case $par2 in
+    info)
+      case $par1 in
+        all) /home/pi/piLogger/bin/listDevices --json --info ;;
+          *) echo "Not yet implemented" ;;
+      esac
+    ;;
+    path)
+      case $par1 in
+        all) /home/pi/piLogger/bin/listDevices --json ;;
+          *) echo "Not yet implemented" ;;
+      esac
+    ;;
+    temperature)
+      case $par1 in
+        all) echo "Not yet implemented" ;;
+          *)
+            /home/pi/piLogger/bin/getTemperature $par1
+          ;;
+      esac
+    ;;
+    *)
+      echo "Not yet implemented"
+    ;;
+  esac
+fi

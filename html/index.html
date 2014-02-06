@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>piLogger</title>
 
     <link rel="stylesheet" href="css/normalize.css">
@@ -16,93 +17,20 @@
   
     <script src="myJs/myfunctions.js"></script>
 
-<!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
+  <!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
 <script type="text/javascript">
    console.log("XXX Here it starts");
 
-  var chart;
-  function draw_chart(myData){
-
-    // Ugly hack to get around the termination of the json data ",1000]"
-     if (myData[0].temperature[myData[0].temperature.length-1] === 1000) {
-       myData[0].temperature.splice(myData[0].temperature.length-1,1);
-     };
-  
-     if (myData[1].temperature[myData[1].temperature.length-1] === 1000) {
-       myData[1].temperature.splice(myData[1].temperature.length-1,1);
-     };
-  
-     var plotData = [];
-     var plotDataSensors = [ ];
-  
-     var plotDataArray = new Array();
-     
-     
-     for (i=0; i<myData.length ; i++) {
-       plotDataArray[i] = new Object();
-       plotDataArray[i].data = myData[i].temperature.slice(0);
-       plotDataArray[i].name = myData[i].sensor.slice(0);
-       plotData[i] = myData[i].temperature.slice(0);
-       plotDataSensors[i] = myData[i].sensor.slice(0);
-     }
-  
-     plotDataArray.splice(plotDataArray.length-1,1);
-  
-     var options={ 
-          chart: {
-              type: 'line'
-          },
-          plotOptions: { line: {animation: false } , series: {animation: false , marker: { enabled: false } } },
-          title: {
-              text: myData[0].sensor
-          },
-          xAxis: {
-              title: 'tjoffen'
-          },
-          yAxis: {
-              title: {
-                  text: 'C'
-              }
-          },
-          //series: [ {data: plotData[0] } ] 
-          //series: [  plotDataArray[0] , plotDataArray[1] ]
-          series:  plotDataArray
-  /*
-           [ { data: plotData[0] , name: plotDataSensors[0] },
-             { data: plotData[1] , name: plotDataSensors[1] }]
-  */
-  
-     };
-  
-     $('#highcharts').highcharts( options );
-  // end of function draw_chart 
-  };
-
   $(function(){
-    var opts = {
-      lines: 13, // The number of lines to draw
-      length: 20, // The length of each line
-      width: 10, // The line thickness
-      radius: 30, // The radius of the inner circle
-      corners: 1, // Corner roundness (0..1)
-      rotate: 0, // The rotation offset
-      direction: 1, // 1: clockwise, -1: counterclockwise
-      color: '#000', // #rgb or #rrggbb or array of colors
-      speed: 1, // Rounds per second
-      trail: 60, // Afterglow percentage
-      shadow: false, // Whether to render a shadow
-      hwaccel: false, // Whether to use hardware acceleration
-      className: 'spinner', // The CSS class to assign to the spinner
-      zIndex: 2e9, // The z-index (defaults to 2000000000)
-      top: '100', // Top position relative to parent in px
-      left: 'auto' // Left position relative to parent in px
-    };
-  
+
     var target = document.getElementById('highcharts');
-    var spinner = new Spinner(opts).spin(target);
+    var spinner = new Spinner(getSpinnerOpts()).spin(target);
+
+    // print the graph
 
     var url="api/sensorData";
-    console.log("XXX url: " + url);
+    //var url="cache/sensorData.json";
+    console.log("XXX graph data url: " + url);
 
     $.ajax({
       url: url,
@@ -114,7 +42,9 @@
           spinner.stop();
       },
       error: function(data) {
-        draw_chart([2,2,2,2,2,2,2]);
+          spinner.stop();
+          var target2 = document.getElementById('highcharts');
+          target2.innerHTML = 'Error: could not load data for graph';
       }
     //end of ajax
     });
@@ -127,7 +57,12 @@
   //========================================
     console.log("XXX Start of device listing");
 
-   var url="api/sensors";
+    var target = document.getElementById('deviceContainer');
+    var spinner2 = new Spinner(getSpinnerOptsSmall()).spin(target);
+
+    // print the devices into the devicesContainer
+   var url="api/sensor/all/info";
+   //var url="cache/sensorAllInfo.json";
    console.log("XXX url: " + url);
 
     $.ajax({
@@ -136,6 +71,12 @@
       dataType: "json",
       success: function(data) {
         updateDevicesPane(data);
+        spinner2.stop();
+      },
+      error: function(data) {
+        spinner2.stop();
+        var target2 = document.getElementById('deviceContainer');
+        target2.innerHTML = 'Error: could not load data for devices';
       }
     //end of ajax
     });
@@ -176,9 +117,6 @@
        <div id="deviceContainer" style="min-width: 400px; height: 200px; margin: 0 auto"></div>
     </div>
 
-
-
-    
     
     <!-- Nav Sidebar -->
     <!-- This is source ordered to be pulled to the left on larger screens -->
@@ -199,7 +137,7 @@
       <hr />
       <div class="row">
         <div class="large-6 columns">
-          <p>&copy; tjadu</p>
+          <p>&copy; KMG Group GmbH</p>
         </div>
         <div class="large-6 columns">
           
