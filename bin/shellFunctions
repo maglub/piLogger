@@ -6,7 +6,7 @@ _listDevices() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
 
   #--- options to complete
-  opt="-a -af --aliases --aliasFile"
+  opt="-a -af --aliases --aliasFile --conf"
 
 #  local series=$(ls $lspbDir/config/series | xargs -I Q basename Q .conf)
 
