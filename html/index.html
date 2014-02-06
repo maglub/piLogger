@@ -58,6 +58,7 @@
     console.log("XXX Start of device listing");
 
     var target = document.getElementById('deviceContainer');
+    var dp = document.getElementById('device-pane');
     var spinner2 = new Spinner(getSpinnerOptsSmall()).spin(target);
 
     // print the devices into the devicesContainer
@@ -71,6 +72,7 @@
       dataType: "json",
       success: function(data) {
         updateDevicesPane(data);
+        dp.innerHTML = 'Device: ' + data[0].sensorName;
         spinner2.stop();
       },
       error: function(data) {
@@ -81,8 +83,19 @@
     //end of ajax
     });
 
+//    document.getElementById('device-pane').style.visibility = "hidden";
+
+    $('#device-pane').hide();
+//    hide('device-pane');
+
+    $('#deviceContainer').hover(function() {
+        $('#device-pane').toggle();
+    });
+
+
   console.log("XXX End of jquery block");
 });
+
 
    console.log("XXX Here it ends");
 </script>
@@ -114,7 +127,7 @@
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="large-10 push-2 columns">      
        <div id="highcharts" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-       <div id="deviceContainer" style="min-width: 400px; height: 200px; margin: 0 auto"></div>
+       <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
     </div>
 
     
@@ -128,6 +141,7 @@
          <li><a href="/xml">XML files</a></li>
          <li><a href="/api/sensors">Devices</a></li>
 
+         <div id="device-pane">some text</div>
       </ul>
     </div>
   </div>
