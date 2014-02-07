@@ -1,0 +1,17 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+. $this_dir/functions
+
+logIt "  - Refreshing caches for sensorData.json and sensorAllInfo.json"
+
+tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
+
+$htmlDir/api/sensorData --genCache  > $tmpFile
+mv $tmpFile $cacheDir/sensorData.json
+chmod 666 $cacheDir/sensorData.json 
+
+$htmlDir/api/sensor all info > $tmpFile
+mv $tmpFile $cacheDir/sensorAllInfo.json
+chmod 666 $cacheDir/sensorAllInfo.json 
