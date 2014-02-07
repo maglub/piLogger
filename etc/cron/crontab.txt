@@ -1,1 +1,1 @@
-*/1 * * * * /home/pi/piLogger/bin/logAll /home/pi/piLogger/etc/capture.all.conf >/dev/null 2>&1 ; htmlDir=/home/pi/piLogger/html ; $htmlDir/api/sensorData --genCache  > $htmlDir/cache/sensorData.json ; $htmlDir/api/sensor all info > $htmlDir/cache/sensorAllInfo.json
+*/1 * * * * /home/pi/piLogger/bin/logAll /home/pi/piLogger/etc/capture.conf >/dev/null 2>&1 ; /home/pi/piLogger/bin/refreshCaches
