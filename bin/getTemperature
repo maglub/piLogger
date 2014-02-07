@@ -11,7 +11,7 @@ cat<<EOT
 
 Usage:
 
-  `basename $0` alias|/path/to/device
+  `basename $0` [-rrd] alias|/path/to/device
 
 EOT
 }
@@ -20,5 +20,18 @@ EOT
 # MAIN
 #================================
 [ -z "$1" ] && { usage ; exit 1 ; }
-[ -d $1 ] && getTemperatureByDevicePath $1
-[ ! -d $1 ] && getTemperatureByDeviceAlias $1
+
+case $1 in
+  -rrd)
+    [ -z "$debug" ] && logIt "device: $2"
+    time getLastRRDUpdate $2
+    exit 0
+    ;;
+   *)
+    curDevice=$1
+    [ -z "$debug" ] && logIt "device: $1"
+    [ -d $curDevice ] && { getTemperatureByDevicePath $curDevice ; exit 0 ; }
+    [ -d /mnt/1wire/$curDevice ] && { getTemperatureByDevicePath /mnt/1wire/$curDevice ; exit 0 ; }
+    [ ! -d $curDevice ] && getTemperatureByDeviceAlias $curDevice
+    ;;
+esac

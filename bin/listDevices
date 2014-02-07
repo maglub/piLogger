@@ -3,7 +3,7 @@
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
 
-all_devices=$(getAllDevices /mnt/1wire)
+all_devices=$(getAllDevices $oneWireDir)
 
 #--------------------------------
 # usage()
@@ -19,6 +19,7 @@ Options:
 
   -a|--aliases     - Show aliases for devices
   -af|--aliasFile  - generate a dummy alias file output
+  --scan           - Scan for devices into etc/devices.scanned
 
 EOT
 }
@@ -53,6 +54,48 @@ printAliasFileFormat(){
   done
 }
 
+printAllJSON(){
+  printf "["
+  local prependComma=" "
+  for device in $all_devices
+  do
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    deviceTemperature=$(getLastRRDUpdate ${device##*/} )
+    printf '%s\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"], "temperature":"%s" }' "$prependComma" ${device##*/} ${device} ${pj_deviceAliases} ${deviceTemperature}
+    prependComma=","
+  done
+  printf '\n]\n'
+  return 0
+}
+
+printAliasesJSON(){
+  printf '['
+  local prependComma=""
+  for device in $all_devices
+  do
+    pj_deviceName=$(basename $device)
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    printf "%s" "$prependComma"
+    printf '\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"] }' ${pj_deviceName} ${device} ${pj_deviceAliases} 
+    prependComma=","
+  done
+  printf '\n]\n'
+}
+
+printPathJSON(){
+  printf '['
+  local prependComma=""
+  for device in $all_devices
+  do
+    pj_deviceName=$(basename $device)
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    printf "%s" "$prependComma"
+    printf '\n{ "sensorName":"%s", "devicePath":"%s" }' ${pj_deviceName} ${device} 
+    prependComma=","
+  done
+  printf '\n]\n'
+}
+
 #====================================
 # MAIN
 #====================================
@@ -62,12 +105,24 @@ printAliasFileFormat(){
 while [ -n "$1" ]
 do
   case $1 in
-    -a|--aliases)
-       printWithAliases
-       shift
-       ;;
     --aliasFile|-af)
       printAliasFileFormat
+      shift
+      ;;
+    -a|--aliases)
+      listAliases=true
+      shift
+      ;;
+    --info)
+      listInfo=true
+      shift
+      ;;
+    --json|-j)
+      printJSON=true
+      shift
+      ;;
+    --scan)
+      scanDevices=true
       shift
       ;;
     *)
@@ -76,3 +131,9 @@ do
       ;;
   esac 
 done
+
+[[ -n "$scanDevices" ]] && { logIt "  - Scanning for devices into $configDir/devices.scanned" ; printNormal > $configDir/devices.scanned ; cat $configDir/devices.scanned ; exit 0 ; }
+[[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
+[[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
+[[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
+[[ -n "$listAliases" ]] && { printWithAliases ; exit 0 ; }
