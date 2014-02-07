@@ -36,12 +36,60 @@ EOT
 
 }
 
+check(){
+
+  echo "* Packages:"
+  for package in owfs rrdtool lighttpd
+  do
+    echo -n "  - $package:"
+    sudo dpkg -s $package >/dev/null 2>&1 && echo -n " installed" || echo -n " not installed"
+    echo ""
+  done
+  
+  echo "* Directories:"
+
+  for dir in /var/piLogger /var/piLogger/db /var/piLogger/cache /var/piLogger/xml /var/piLogger/cache 
+  do
+    echo -n "  - $dir:"
+    [ -d $dir ] && echo -n " exists" || echo -n " does not exist"
+    echo ""
+  done
+
+  echo "* Soft links:"
+
+  for link in $this_dir/html/cache $this_dir/html/graphs $this_dir/html/xml /etc/piLogger.d
+  do
+    echo -n "  - $link:"
+    [ -h $link ] && echo -n " exists" || echo -n " does not exist"
+    echo ""
+  done
+
+  echo "* Config file:"
+  echo -n "  - $configDir/piLogger.conf"
+  [ -f $configDir/piLogger.conf ] && echo -n " exists" || echo -n " does not exist"
+  echo ""
+
+  [ -f $configDir/piLogger.conf ] && {
+    for parameter in interface piLoggerLocale baseDir htmlDir oneWireDir oneWireDataDir cacheDir temperatureFile
+    do
+      echo "  - $parameter="$(grep "^${parameter}=" $configDir/piLogger.conf | cut -d"=" -f2 )
+    done
+
+  }
+  
+
+}
+
 #=============================
 # Command line parameters
 #=============================
 while [ -n "$1" ]
 do
   case $1 in
+    --check)
+        check
+        exit 0
+      ;;
     --withAbioWire)
       withAbioWire=true
       interface=AbioWire
