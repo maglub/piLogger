@@ -112,6 +112,9 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 [ ! -h /etc/init.d/start1wire ] && { sudo ln -s $this_dir/etc/init.d/start1wire /etc/init.d/ ; needReboot=true ; }
 [ ! -h /etc/rc2.d/S02start1wire ] && { sudo update-rc.d start1wire defaults ; needReboot=true ; }
 
+#--- remove dummy devices from the config file /etc/owfs.conf
+sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf 
+
 #--------------
 # OWS
 #--------------
