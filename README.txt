@@ -70,15 +70,33 @@ sudo reboot
 
 ~/piLogger/bin/listDevices --scan
 
-2) Set up aliases
+This should show your connected devices and add them to ~/piLogger/etc/devices.scanned.
+
+2) Set up aliases for your devices
 
 To generate an alias file from scratch:
 
-~/piLogger/bin/listDevices --alias > ~/piLogger/etc/aliases.conf
+~/piLogger/bin/listDevices --aliasFile > ~/piLogger/etc/aliases.conf
 
 Edit this file and give your devices names that you like better.
 
-3) Set up the 
+3) Set up the capture file by adding the aliases you want to log
 
+pi@raspberrypi ~/piLogger/bin $ cat ~/piLogger/etc/capture.conf 
+tabletop
+under-table
+
+4) Test that the logging works, and that new rrd files are created.
+
+./logAll ../etc/capture.conf 
+
+pi@raspberrypi ~/piLogger/bin $ ls -la /var/piLogger/db
+total 20264
+drwxr-xr-x 2 pi pi     4096 Feb  7 14:28 .
+drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
+-rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.12ED2F040000.rrd
+-rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.90EC2F040000.rrd
+
+4) If the logAll command 
 
 
