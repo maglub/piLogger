@@ -5,6 +5,7 @@ binDir=$this_dir/bin
 logDir=/var/log/piLogger
 dataDir=/var/piLogger
 dbDir=$dataDir/db
+cacheDir=$dataDir/cache
 graphDir=$dataDir/graphs
 oneWireDir=/mnt/1wire
 configDir=$this_dir/etc
@@ -72,17 +73,31 @@ EOT
 #================================
 # setup directories
 #================================
-[ ! -d "$logDir" ] && { sudo mkdir -p "$logDir" ; chown pi:pi "$logDir" ; }
+[ ! -d "$logDir" ] &&  sudo mkdir -p "$logDir" 
 [ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"
 [ ! -d "$dbDir" ] && sudo mkdir -p "$dbDir"
 [ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"
+[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 
 sudo chown pi:pi "$dataDir"
+sudo chown pi:pi "$logDir"
 sudo chown pi:pi "$dbDir"
 sudo chown pi:pi "$graphDir"
+sudo chown pi:pi "$cacheDir"
 
 [ ! -d $this_dir/html/cache ] && { mkdir $dataDir/cache ; ln -s $dataDir/cache $this_dir/html/cache ; }
+
+#================================
+# Make sure the latest updates are available
+#================================
+curTS=$(date "+%s")
+aptTS=$(stat -c %Y /var/cache/apt/)
+
+(( ageApt = $curTS - $aptTS ))
+#--- one day  =  86400
+#--- one week = 604800
+[ $ageApt -gt 604800 ] && sudo apt-get update
 
 #================================
 # Check for dependencies
@@ -167,6 +182,11 @@ echo "  - Setting up bash completion"
 [[ ! -d /etc/piLogger.d && ! -h /etc/piLogger.d ]] && sudo ln -s $configDir /etc/piLogger.d
 
 
+#================================
+# Show info about timezones
+#================================
+  echo "* If your timezone is not set, you can do so by running:"
+  echo "sudo cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime"
 #================================
 # End
 #================================

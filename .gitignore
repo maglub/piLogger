@@ -4,5 +4,6 @@ etc/aliases.conf
 etc/*.conf
 bin/.*.swp
 html/cache
+html/graphs
 
 AbioWire

@@ -1,0 +1,20 @@
+#--------------------------------------
+# Example interfaces file
+#--------------------------------------
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+	address 192.168.2.61
+	netmask 255.255.255.0
+	network 192.168.2.0
+	broadcast 192.168.2.255
+	gateway 192.168.2.1
+	# dns-* options are implemented by the resolvconf package, if installed
+	dns-nameservers 192.168.2.1
+
+
+iface default inet dhcp
