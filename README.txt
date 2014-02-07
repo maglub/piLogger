@@ -22,7 +22,9 @@ Installation
 
 The installation is easy. Just clone this repository, run ./configure then ./setup.sh. The result is an etc/piLogger.conf file, which is ready to go for most configurations. After the initial installation, set up eventual aliases in the etc/aliases.conf file.
 
-* Installation
+====================================================
+= Installation of the software
+====================================================
 
 1) Get yourself a Raspberry Pi
 2) Install an SD card with the latest version of Raspbian
@@ -54,17 +56,25 @@ ssh git@github.com
 git clone https://github.com/maglub/piLogger
 cd piLogger
 
+5) Configure the installation
+
 ./configure
-or
-./configure [--withAbioWire] [--withLocale]
+
+or, if you have the AbioWire interface (http://www.axiris.eu/en/index.php/one-wire/abiowire)
+
+./configure --withAbioWire --withLocale
+
+6) Run setup, which will install necessary packages (this will take ca 5 - 10 minutes)
 
 ./setup.sh
 
-5) Reboot
+7) Reboot - since the install of owfs will not work before
 
 sudo reboot
 
-* Configuration
+====================================================
+= Configuration of your setup
+====================================================
 
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
 
@@ -88,7 +98,7 @@ under-table
 
 4) Test that the logging works, and that new rrd files are created.
 
-./logAll ../etc/capture.conf 
+~/piLogger/bin/logAll ~/piLogger/etc/capture.conf 
 
 pi@raspberrypi ~/piLogger/bin $ ls -la /var/piLogger/db
 total 20264
@@ -97,6 +107,26 @@ drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.12ED2F040000.rrd
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.90EC2F040000.rrd
 
-4) If the logAll command 
+4) If the logAll command works, you can setup the default plot group
+
+cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
+
+
+=====================================================
+= Notes and references
+=====================================================
+
+* Data files are found in /var/piLogger
+
+* Log files are found in /var/log/piLogger
+
+* Config files are found in /etc/piLogger.d, which is conveniently symlinked to ~/piLogger/etc 
+
+* bash autocompletion is set up for most important scripts. This means that you can
+  press <TAB> twice to see parameters and devices for most commands in ~/piLogger/bin
+
+* By setting the variable "debug=true" in ~/piLogger/etc/piLogger.conf file, you will get
+  more output on the screen and in the logfiles in /var/log/piLogger
+
 
 
