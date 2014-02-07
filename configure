@@ -81,8 +81,11 @@ cat>$configFile<<EOT
 interface=$interface
 piLoggerLocale=$piLoggerLocale
 
+baseDir=$this_dir
+htmlDir=$this_dir/html
 oneWireDir=/mnt/1wire
 oneWireDataDir=/var/piLogger
+cacheDir=$oneWireDataDir/cache
 temperatureFile=temperature
 
 #----------------------
