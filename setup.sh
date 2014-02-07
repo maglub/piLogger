@@ -133,8 +133,6 @@ case $interface in
          cd $this_dir/AbioWire/ows-1.3.2-linux-armel
          ./install.sh
          cd $this_dir
-         exit
-
       }
       ;;
     *)
