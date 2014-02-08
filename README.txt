@@ -102,6 +102,8 @@ under-table
 
 ~/piLogger/bin/logAll ~/piLogger/etc/capture.conf 
 
+Check that the RRD files are created properly, one per device connected to your 1wire interface.
+
 pi@raspberrypi ~/piLogger/bin $ ls -la /var/piLogger/db
 total 20264
 drwxr-xr-x 2 pi pi     4096 Feb  7 14:28 .
@@ -113,7 +115,11 @@ drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
 
 cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
-6) And lastly, set up cron so that you log and create the caches at a regular basis
+6) Refresh the cache files
+
+~/piLogger/bin/refreshCaches
+
+7) And lastly, set up cron so that you log and create the caches at a regular basis
 
 (crontab -l 2>/dev/null ;cat ~/piLogger/etc/cron/crontab.txt ) | crontab -
 
@@ -125,7 +131,7 @@ base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1
 4 * * * * /home/pi/piLogger/bin/refreshCaches 48h
 5 */6 * * * /home/pi/piLogger/bin/refreshCaches 168h
 
-7) Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
+8) Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
 
 
 
