@@ -22,7 +22,7 @@
    console.log("XXX Here it starts");
 
   $(function(){
-
+/*
     var target = document.getElementById('highcharts');
     var spinner = new Spinner(getSpinnerOpts()).spin(target);
 
@@ -49,6 +49,11 @@
     //end of ajax
     });
 
+*/
+
+   var nothing = printGraph('piLogger12h', 12);
+   var nothing = printGraph('piLogger24h', 24);
+   var nothing = printGraph('piLogger168h', 168);
 
    console.log("XXX End of graph");
 
@@ -126,7 +131,9 @@
     <!-- Main Content Section -->
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="large-10 push-2 columns">      
-       <div id="highcharts" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+       <div id="piLogger12h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+       <div id="piLogger24h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+       <div id="piLogger168h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
        <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
     </div>
 

@@ -52,13 +52,12 @@ function getSpinnerOptsSmall(){
 //----------------------------------------------------------
 // draw_chart(myData)
 //----------------------------------------------------------
-  function draw_chart(myData){
+  function draw_chart(myPane, myData){
 
      var plotData = [];
      var plotDataSensors = [ ];
 
      var plotDataArray = new Array();
-
 
      for (i=0; i<myData.length ; i++) {
        plotDataArray[i] = new Object();
@@ -77,7 +76,7 @@ function getSpinnerOptsSmall(){
                          marker: { enabled: false } }
                        },
           title: {
-              text: 'Temperatures'
+              text: 'Temperatures: ' + myPane 
           },
           xAxis: {
               title: 'Date'
@@ -92,7 +91,8 @@ function getSpinnerOptsSmall(){
 
      };
 
-     $('#highcharts').highcharts( options );
+     //$('#highcharts').highcharts( options );
+     $('#'+myPane).highcharts( options );
   // end of function draw_chart
 }
 
@@ -125,3 +125,37 @@ function updateDevicesPane(deviceData){
   function hide(id) {
     document.getElementById(id).style.visibility = "hidden";
   }
+//----------------------------------------------------------
+// printGraph(nameOfPane, numberOfHours)
+//----------------------------------------------------------
+function printGraph(curPane, curHours){
+
+    var target = document.getElementById(curPane);
+    var spinner = new Spinner(getSpinnerOpts()).spin(target);
+
+    // print the graph
+
+    //var url="api/sensorData";
+    var url="cache/sensorData." + curHours.toString() + "h.json";
+
+   console.log("XXX graph data url: " + url);
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: function(data) {
+        draw_chart(curPane, data);
+          console.log("XXX Stopping spinner");
+          spinner.stop();
+      },
+      error: function(data) {
+          spinner.stop();
+          var target2 = document.getElementById(curPane);
+          target2.innerHTML = 'Error: could not load data for graph';
+      }
+    //end of ajax
+    });
+
+   return 0;
+
+}

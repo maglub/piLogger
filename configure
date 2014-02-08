@@ -42,7 +42,7 @@ check(){
   for package in owfs rrdtool lighttpd
   do
     echo -n "  - $package:"
-    sudo dpkg -s $package >/dev/null 2>&1 && echo -n " installed" || echo -n " not installed"
+    sudo dpkg -s $package >/dev/null 2>&1 && echo -n " OK! installed" || echo -n " ERROR: not installed"
     echo ""
   done
   
@@ -51,7 +51,7 @@ check(){
   for dir in /var/piLogger /var/piLogger/db /var/piLogger/cache /var/piLogger/xml /var/piLogger/cache 
   do
     echo -n "  - $dir:"
-    [ -d $dir ] && echo -n " exists" || echo -n " does not exist"
+    [ -d $dir ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
     echo ""
   done
 
@@ -60,13 +60,22 @@ check(){
   for link in $this_dir/html/cache $this_dir/html/graphs $this_dir/html/xml /etc/piLogger.d
   do
     echo -n "  - $link:"
-    [ -h $link ] && echo -n " exists" || echo -n " does not exist"
+    [ -h $link ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
     echo ""
   done
 
-  echo "* Config file:"
+  echo "* Crontab:"
+
+  for crontabEntry in "bin/logAll" "bin/refreshCaches" 
+  do
+    echo -n "  - $crontabEntry:"
+    crontab -l | grep $crontabEntry >/dev/null 2>&1 && echo -n " OK! exists" || echo -n " ERROR: does not exist"
+    echo ""
+  done
+    
+  echo "* Config file entries:"
   echo -n "  - $configDir/piLogger.conf"
-  [ -f $configDir/piLogger.conf ] && echo -n " exists" || echo -n " does not exist"
+  [ -f $configDir/piLogger.conf ] && echo -n " OK! exists" || echo -n " does not exist"
   echo ""
 
   [ -f $configDir/piLogger.conf ] && {

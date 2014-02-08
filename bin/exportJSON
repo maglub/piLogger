@@ -5,6 +5,7 @@ this_script=$(basename $0)
 . $this_dir/functions
 
 exportTime=24h
+[ -n "$2" ] && exportTime=$2
 
 #---------------------------------
 # printUsage()

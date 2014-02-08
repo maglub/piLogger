@@ -1,3 +1,7 @@
 #!/bin/bash
-[[ ! -f /home/pi/piLogger/html/cache/sensorData.json || -n "$1" ]] && { /home/pi/piLogger/bin/exportJSON default ; exit 0 ; }
-cat /home/pi/piLogger/html/cache/sensorData.json
+
+[[ "x$1" = "x--genCache" && -n "$2" ]] && { /home/pi/piLogger/bin/exportJSON default $2 ; exit 0 ; }
+[[ "x$1" = "x--genCache" ]] && { /home/pi/piLogger/bin/exportJSON default ; exit 0 ; }
+[ -f /home/pi/piLogger/html/cache/sensorData.${1}.json ] && { cat /home/pi/piLogger/html/cache/sensorData.${1}.json ; exit 0 ; }
+[ -f /home/pi/piLogger/html/cache/sensorData.json ] && { cat /home/pi/piLogger/html/cache/sensorData.json ; exit 0 ; }
+/home/pi/piLogger/bin/exportJSON default

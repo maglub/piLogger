@@ -12,6 +12,18 @@ $htmlDir/api/sensorData --genCache  > $tmpFile
 mv $tmpFile $cacheDir/sensorData.json
 chmod 666 $cacheDir/sensorData.json 
 
+$htmlDir/api/sensorData --genCache 168h > $tmpFile
+mv $tmpFile $cacheDir/sensorData.168h.json
+chmod 666 $cacheDir/sensorData.json 
+
+$htmlDir/api/sensorData --genCache 24h > $tmpFile
+mv $tmpFile $cacheDir/sensorData.24h.json
+chmod 666 $cacheDir/sensorData.json 
+
+$htmlDir/api/sensorData --genCache 12h > $tmpFile
+mv $tmpFile $cacheDir/sensorData.12h.json
+chmod 666 $cacheDir/sensorData.json 
+
 $htmlDir/api/sensor all info > $tmpFile
 mv $tmpFile $cacheDir/sensorAllInfo.json
 chmod 666 $cacheDir/sensorAllInfo.json 
