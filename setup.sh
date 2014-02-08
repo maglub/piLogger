@@ -174,7 +174,7 @@ EOT
 }
 
 #================================
-# /etc/piLogger.conf link to installation directory
+# Set up bash completion by linking shellFunctions to /etc/bash_completion.d/piLogger
 #================================
 echo "  - Setting up bash completion"
 [ ! -h /etc/bash_completion.d/piLogger ] && { sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger ; needReboot=true ; }
@@ -184,6 +184,10 @@ echo "  - Setting up bash completion"
 #================================
 [[ ! -d /etc/piLogger.d && ! -h /etc/piLogger.d ]] && sudo ln -s $configDir /etc/piLogger.d
 
+#================================
+# Setup logrotate
+#================================
+[[ ! -h /etc/logrotate.d/piLogger ]] && sudo ln -s $configDir/logrotate.d/piLogger /etc/logrotate.d/piLogger
 
 #================================
 # Show info about timezones
