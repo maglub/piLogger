@@ -107,9 +107,22 @@ drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.12ED2F040000.rrd
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.90EC2F040000.rrd
 
-4) If the logAll command works, you can setup the default plot group
+5) If the logAll command works, you can setup the default plot group
 
 cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
+
+6) And lastly, set up cron so that you log and create the caches at a regular basis
+
+(crontab -l 2>/dev/null ;cat piLogger/etc/cron/crontab.txt ) | crontab -
+
+Your crontab should look something like this:
+
+# m h  dom mon dow   command*/1 * * * *
+base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1 ; $base/bin/refreshCaches 12h ; $base/bin/refreshCaches sensors
+*/10 * * * * /home/pi/piLogger/bin/refreshCaches 24h 
+4 * * * * /home/pi/piLogger/bin/refreshCaches 48h
+5 */6 * * * /home/pi/piLogger/bin/refreshCaches 168h
+
 
 
 =====================================================

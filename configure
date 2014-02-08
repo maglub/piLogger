@@ -148,7 +148,7 @@ baseDir=$this_dir
 htmlDir=$this_dir/html
 oneWireDir=/mnt/1wire
 oneWireDataDir=/var/piLogger
-cacheDir=$oneWireDataDir/cache
+cacheDir=/var/piLogger/cache
 temperatureFile=temperature
 
 #----------------------
