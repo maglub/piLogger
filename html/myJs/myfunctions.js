@@ -69,7 +69,8 @@ function getSpinnerOptsSmall(){
 
      var options={
           chart: {
-              type: 'line'
+              type: 'line',
+              zoomType: 'x'
           },
           plotOptions: { line: {animation: false },
                          series: {animation: false ,
@@ -80,7 +81,8 @@ function getSpinnerOptsSmall(){
           },
           xAxis: {
               type: 'datetime',
-              title: 'Date'
+              title: 'Date',
+              maxZoom: 1800000
           },
           yAxis: {
               title: {
