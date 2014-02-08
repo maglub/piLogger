@@ -74,8 +74,8 @@ check(){
   done
     
   echo "* Logrotate:"
-  echo -n "  - link /etc/logrotate.d/piLogger:"
-  [ -h /etc/logrotate.d/piLogger ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
+  echo -n "  - file /etc/logrotate.d/piLogger:"
+  [ -f /etc/logrotate.d/piLogger ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
   echo ""
 
   echo "* Config file entries:"

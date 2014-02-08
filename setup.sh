@@ -187,7 +187,7 @@ echo "  - Setting up bash completion"
 #================================
 # Setup logrotate
 #================================
-[[ ! -h /etc/logrotate.d/piLogger ]] && sudo ln -s $configDir/logrotate.d/piLogger /etc/logrotate.d/piLogger
+[[ ! -r /etc/logrotate.d/piLogger ]] && sudo cp $configDir/logrotate.d/piLogger /etc/logrotate.d/piLogger
 
 #================================
 # Show info about timezones
