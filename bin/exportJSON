@@ -46,7 +46,7 @@ do
   curVName=$(echo $curAlias | sed -e 's/\.//g')
   rrdtool xport -s now-${exportTime} -e now --step 300  \
       DEF:${curVName}=$(getDBFileByAlias $curAlias):temperature:AVERAGE \
-      XPORT:${curVName}:$curVName | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "%.2f,", $2*1;' | sed -e 's/,$//'
+      XPORT:${curVName}:$curVName | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "[%i, %.2f],", $1, $2*1;' | sed -e 's/,$//'
   curComma=","
   printf "]}"
 done
