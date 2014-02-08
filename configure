@@ -66,10 +66,10 @@ check(){
 
   echo "* Crontab:"
 
-  for crontabEntry in "bin/logAll" "bin/refreshCaches" 
+  for crontabEntry in "bin/logAll" "bin/refreshCaches sensors" "bin/refreshCaches 12h" "bin/refreshCaches 24h" "bin/refreshCaches 168h"
   do
     echo -n "  - $crontabEntry:"
-    crontab -l | grep $crontabEntry >/dev/null 2>&1 && echo -n " OK! exists" || echo -n " ERROR: does not exist"
+    crontab -l | grep "$crontabEntry" >/dev/null 2>&1 && echo -n " OK! exists" || echo -n " ERROR: does not exist"
     echo ""
   done
     
