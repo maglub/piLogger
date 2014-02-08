@@ -4,26 +4,50 @@ this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 . $this_dir/functions
 
-logIt "  - Refreshing caches for sensorData.json and sensorAllInfo.json"
+logIt "  - Refreshing caches"
 
 tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
-$htmlDir/api/sensorData --genCache  > $tmpFile
-mv $tmpFile $cacheDir/sensorData.json
-chmod 666 $cacheDir/sensorData.json 
+[ -z "$1" ] && {
+  #--- generating all caches
 
-$htmlDir/api/sensorData --genCache 168h > $tmpFile
-mv $tmpFile $cacheDir/sensorData.168h.json
-chmod 666 $cacheDir/sensorData.json 
+  #--- default
+  logIt "  - Refreshing sensorData.json"
+  $htmlDir/api/sensorData --genCache  > $tmpFile
+  mv $tmpFile $cacheDir/sensorData.json
+  chmod 666 $cacheDir/sensorData.json 
 
-$htmlDir/api/sensorData --genCache 24h > $tmpFile
-mv $tmpFile $cacheDir/sensorData.24h.json
-chmod 666 $cacheDir/sensorData.json 
+  for time in 12 24 168
+  do
+    logIt "  - Refreshing sensorData.${time}.json"
+    $htmlDir/api/sensorData --genCache ${time}h > $tmpFile
+    mv $tmpFile $cacheDir/sensorData.${time}h.json
+    chmod 666 $cacheDir/sensorData.${time}h.json 
+  done
 
-$htmlDir/api/sensorData --genCache 12h > $tmpFile
-mv $tmpFile $cacheDir/sensorData.12h.json
-chmod 666 $cacheDir/sensorData.json 
+  #--- sensors
+    logIt "  - Refreshing sensorAllInfo.json"
+  $htmlDir/api/sensor all info > $tmpFile
+  mv $tmpFile $cacheDir/sensorAllInfo.json
+  chmod 666 $cacheDir/sensorAllInfo.json 
 
-$htmlDir/api/sensor all info > $tmpFile
-mv $tmpFile $cacheDir/sensorAllInfo.json
-chmod 666 $cacheDir/sensorAllInfo.json 
+  exit
+}
+
+case $1 in
+  *h)
+    logIt "  - Refreshing sensorData.${1}.cache"
+    $htmlDir/api/sensorData --genCache ${1}h > $tmpFile
+    mv $tmpFile $cacheDir/sensorData.${1}h.json
+    chmod 666 $cacheDir/sensorData.${1}h.json 
+    ;;
+  sensors)
+    logIt "  - Refreshing sensorAllInfo.json"
+    $htmlDir/api/sensor all info > $tmpFile
+    mv $tmpFile $cacheDir/sensorAllInfo.json
+    chmod 666 $cacheDir/sensorAllInfo.json 
+    ;;
+
+esac    
+
+
