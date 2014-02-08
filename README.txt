@@ -119,6 +119,17 @@ cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
 ~/piLogger/bin/refreshCaches
 
+pi@s1wire ~/piLogger $ ls -la ~/piLogger/html/cache/
+total 28
+drwxr-xr-x 2 pi pi 4096 Feb  8 14:25 .
+drwxr-xr-x 6 pi pi 4096 Feb  8 14:26 ..
+-rw-rw-rw- 1 pi pi  138 Feb  8 14:25 sensorAllInfo.json
+-rw-rw-rw- 1 pi pi  901 Feb  8 14:25 sensorData.12h.json
+-rw-rw-rw- 1 pi pi  217 Feb  8 14:25 sensorData.168h.json
+-rw-rw-rw- 1 pi pi 1075 Feb  8 14:25 sensorData.24h.json
+-rw-rw-rw- 1 pi pi 1075 Feb  8 14:25 sensorData.json
+
+
 7) And lastly, set up cron so that you log and create the caches at a regular basis
 
 (crontab -l 2>/dev/null ;cat ~/piLogger/etc/cron/crontab.txt ) | crontab -
