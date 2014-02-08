@@ -90,7 +90,9 @@ To generate an alias file from scratch:
 
 Edit this file and give your devices names that you like better.
 
-3) Set up the capture file by adding the aliases you want to log
+3) Set up the capture file by adding the aliases you want to log. The easiest way is to take all aliases in aliases.conf
+
+pi@raspberrypi ~/piLogger/bin $ cat ~/piLogger/etc/aliases.conf | cut -d";" -f1 > ~/piLogger/etc/capture.conf
 
 pi@raspberrypi ~/piLogger/bin $ cat ~/piLogger/etc/capture.conf 
 tabletop
@@ -113,7 +115,7 @@ cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
 6) And lastly, set up cron so that you log and create the caches at a regular basis
 
-(crontab -l 2>/dev/null ;cat piLogger/etc/cron/crontab.txt ) | crontab -
+(crontab -l 2>/dev/null ;cat ~/piLogger/etc/cron/crontab.txt ) | crontab -
 
 Your crontab should look something like this:
 
@@ -122,6 +124,9 @@ base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1
 */10 * * * * /home/pi/piLogger/bin/refreshCaches 24h 
 4 * * * * /home/pi/piLogger/bin/refreshCaches 48h
 5 */6 * * * /home/pi/piLogger/bin/refreshCaches 168h
+
+7) Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
+
 
 
 
