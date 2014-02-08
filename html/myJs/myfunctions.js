@@ -79,6 +79,7 @@ function getSpinnerOptsSmall(){
               text: 'Temperatures: ' + myPane 
           },
           xAxis: {
+              type: 'datetime',
               title: 'Date'
           },
           yAxis: {
@@ -136,7 +137,7 @@ function printGraph(curPane, curHours){
     // print the graph
 
     //var url="api/sensorData";
-    var url="cache/sensorData." + curHours.toString() + "h.json";
+    var url="cache/sensorData." + curHours.toString() + ".json";
 
    console.log("XXX graph data url: " + url);
     $.ajax({
