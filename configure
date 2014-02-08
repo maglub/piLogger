@@ -48,7 +48,7 @@ check(){
   
   echo "* Directories:"
 
-  for dir in /var/piLogger /var/piLogger/db /var/piLogger/cache /var/piLogger/xml /var/piLogger/cache 
+  for dir in /var/piLogger /var/piLogger/db /var/piLogger/cache /var/piLogger/xml /var/piLogger/graphs 
   do
     echo -n "  - $dir:"
     [ -d $dir ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
