@@ -5,5 +5,6 @@ etc/*.conf
 bin/.*.swp
 html/cache
 html/graphs
+html/xml
 
 AbioWire
