@@ -157,11 +157,22 @@ base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1
 
 * Config files are found in /etc/piLogger.d, which is conveniently symlinked to ~/piLogger/etc 
 
-* bash autocompletion is set up for most important scripts. This means that you can
-  press <TAB> twice to see parameters and devices for most commands in ~/piLogger/bin
+* bash autocompletion is set up for most important scripts. This means that you can press <TAB> twice to see parameters and devices for most commands in ~/piLogger/bin
 
-* By setting the variable "debug=true" in ~/piLogger/etc/piLogger.conf file, you will get
-  more output on the screen and in the logfiles in /var/log/piLogger
+* By setting the variable "debug=true" in ~/piLogger/etc/piLogger.conf file, you will get more output on the screen and in the logfiles in /var/log/piLogger
 
+
+* You can list your devices at any time by running the following commands, which will NOT alter any config files:
+  -> ~/piLogger/bin/listDevices
+  -> ~/piLogger/bin/listDevices --aliasFile
+
+* You can rescan your devices, and automatically update the ~/piLogger/etc/devices.conf file with:
+  -> ~/piLogger/bin/listDevices --scan
+
+* Almost always, you want the same aliases in your caputre.conf file as in your aliases.conf file. You can easily do this by running:
+  -> cat ~/piLogger/etc/aliases.conf | cut -d";" -f1 > ~/piLogger/etc/capture.conf
+
+* Almost always, you wamt the same aliases in yoru graph.default.conf file. You can easily do this by running:
+  -> cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
 
