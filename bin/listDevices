@@ -3,7 +3,6 @@
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
 
-all_devices=$(getAllDevices $oneWireDir)
 
 #--------------------------------
 # usage()
@@ -102,12 +101,14 @@ printPathJSON(){
 
 [ -z "$1" ] && printNormal
 
+all_devices=$(getAllDevices $oneWireDir)
 while [ -n "$1" ]
 do
   case $1 in
     --aliasFile|-af)
       printAliasFileFormat
       shift
+      exit 0
       ;;
     -a|--aliases)
       listAliases=true
@@ -132,8 +133,18 @@ do
   esac 
 done
 
-[[ -n "$scanDevices" ]] && { logIt "  - Scanning for devices into $configDir/devices.scanned" ; printNormal > $configDir/devices.scanned ; cat $configDir/devices.scanned ; exit 0 ; }
+[[ -n "$scanDevices" ]] && { 
+  all_devices=$(getAllDevices $oneWireDir -f)
+  logIt "  - Scanning for devices into $configDir/devices.scanned" 
+  printNormal > $configDir/devices.scanned.new
+  cat $configDir/devices.scanned.new 
+  mv $configDir/devices.scanned.new $configDir/devices.scanned
+  exit 0 
+}
+
+
 [[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
 [[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
 [[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
 [[ -n "$listAliases" ]] && { printWithAliases ; exit 0 ; }
+printNormal

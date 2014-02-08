@@ -30,8 +30,9 @@ logIt(){
 #------------------------------------
 getAllDevices(){
   ld_dir="$1"
+  ld_force="$2"
 
-  [ -f $configDir/devices.scanned ] && { cat $configDir/devices.scanned ; return 0 ; }
+  [[ -f $configDir/devices.scanned && -z "$ld_force" ]] && { cat $configDir/devices.scanned ; return 0 ; }
   logIt "No scanned devices, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
