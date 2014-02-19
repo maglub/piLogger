@@ -19,6 +19,7 @@
     <script src="http://fgnass.github.io/spin.js/spin.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
     <link rel="stylesheet" href="css/main.css">
@@ -85,6 +86,7 @@
       dataType: "json",
       success: function(data) {
         updateDevicesPane(data);
+        var nothing = printGauge('deviceGauges', data[1] ); 
         dp.innerHTML = 'Device: ' + data[0].sensorName;
         spinner2.stop();
       },
@@ -106,9 +108,11 @@
     });
 
 
+//  var curData = { "sensorName" : "device1" , "temperature" : 80 };
+//  var nothing = printGauge('deviceGauges', curData ); 
+
   console.log("XXX End of jquery block");
 });
-
 
    console.log("XXX Here it ends");
 </script>
@@ -138,10 +142,11 @@
     <!-- Main Content Section -->
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="large-10 push-2 columns">      
-       <div id="piLogger12h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-       <div id="piLogger24h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-       <div id="piLogger168h" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+       <div id="piLogger12h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
+       <div id="piLogger24h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
+       <div id="piLogger168h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
        <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
+       <div id="deviceGauges" style="min-width: 200px; margin: 0 auto"></div>
     </div>
 
     
