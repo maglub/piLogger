@@ -153,7 +153,7 @@ function printGauge(myPane, myData){
         // the value axis
         yAxis: {
             min: 0,
-            max: 200,
+            max: 120,
             
             minorTickInterval: 'auto',
             minorTickWidth: 1,
@@ -175,24 +175,24 @@ function printGauge(myPane, myData){
             },
             plotBands: [{
                 from: 0,
-                to: 120,
+                to: 80,
                 color: '#55BF3B' // green
             }, {
-                from: 120,
-                to: 160,
+                from: 80,
+                to: 100,
                 color: '#DDDF0D' // yellow
             }, {
-                from: 160,
+                from: 100,
                 to: 200,
                 color: '#DF5353' // red
             }]        
         },
     
         series: [{
-            name: myData.sensorName ,
-            data: [ +(myData.temperature) ] ,
+            name: myData.aliases[0] ,
+            data: [ myData.temperature ] ,
             tooltip: {
-                valueSuffix: ' km/h'
+                valueSuffix: 'C'
             }
         }]
     

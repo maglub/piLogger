@@ -87,7 +87,8 @@
       success: function(data) {
         updateDevicesPane(data);
         var nothing = printGauge('deviceGauges', data[1] ); 
-        dp.innerHTML = 'Device: ' + data[0].sensorName;
+        var nothing = printGauge('device-pane', data[0] ); 
+//        dp.innerHTML = 'Device: ' + data[0].sensorName;
         spinner2.stop();
       },
       error: function(data) {
@@ -98,14 +99,12 @@
     //end of ajax
     });
 
-//    document.getElementById('device-pane').style.visibility = "hidden";
 
-    $('#device-pane').hide();
-//    hide('device-pane');
-
-    $('#deviceContainer').hover(function() {
-        $('#device-pane').toggle();
-    });
+// 2014-02-19
+//    $('#device-pane').hide();
+//    $('#deviceContainer').hover(function() {
+//        $('#device-pane').toggle();
+//    });
 
 
 //  var curData = { "sensorName" : "device1" , "temperature" : 80 };
