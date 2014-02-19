@@ -86,8 +86,10 @@
       dataType: "json",
       success: function(data) {
         updateDevicesPane(data);
-        var nothing = printGauge('deviceGauges', data[1] ); 
-        var nothing = printGauge('device-pane', data[0] ); 
+        var nothing = printGauge('deviceGauges1', data[0] ); 
+        var nothing = printGauge('deviceGauges2', data[1] ); 
+        var nothing = printGauge('deviceGauges3', data[2] ); 
+        var nothing = printGauge('deviceGauges4', data[3] ); 
 //        dp.innerHTML = 'Device: ' + data[0].sensorName;
         spinner2.stop();
       },
@@ -145,7 +147,10 @@
        <div id="piLogger24h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
        <div id="piLogger168h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
        <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
-       <div id="deviceGauges" style="min-width: 200px; margin: 0 auto"></div>
+       <div id="deviceGauges1" style="width: 200px; margin: 0 auto; float:left"></div>
+       <div id="deviceGauges2" style="width: 200px; margin: 0 auto; float:left"></div>
+       <div id="deviceGauges3" style="width: 200px; margin: 0 auto; float:left"></div>
+       <div id="deviceGauges4" style="width: 200px; margin: 0 auto; float:left"></div>
     </div>
 
     
