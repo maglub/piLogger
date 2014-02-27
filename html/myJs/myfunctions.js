@@ -114,7 +114,7 @@ function printGauge(myPane, myData){
         },
         
         title: {
-            text: 'Thermometer'
+            text: myData.aliases[0]
         },
         
         pane: {
@@ -171,7 +171,7 @@ function printGauge(myPane, myData){
                 rotation: 'auto'
             },
             title: {
-                text: myData.aliases[0]
+                text: ''
             },
             plotBands: [{
                 from: 0,
@@ -189,7 +189,7 @@ function printGauge(myPane, myData){
         },
     
         series: [{
-            name: myData.aliases[0] ,
+            name: '' ,
             data: [ myData.temperature ] ,
             tooltip: {
                 valueSuffix: 'C'
