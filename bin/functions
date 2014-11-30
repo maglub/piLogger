@@ -148,3 +148,22 @@ getGraphColorFromGraphTemplateByAlias(){
 getAliasesFromGraphTemplate(){
   cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }
+
+
+#---------------------------------
+# getAliasesFromDeviceGroup()
+#---------------------------------
+getAliasesFromDeviceGroup(){
+  sqlite3 $appDbFile<<EOT
+  select a.alias from alias a, devicegroup b where a.id = b.device_id and b.groupname = '$1';
+EOT
+}
+
+#---------------------------------
+# getAllDeviceGroups()
+#---------------------------------
+getAllDeviceGroups(){
+  sqlite3 $appDbFile<<EOT
+  select distinct groupname from devicegroup;
+EOT
+}

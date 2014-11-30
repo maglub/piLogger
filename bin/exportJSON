@@ -6,6 +6,7 @@ this_script=$(basename $0)
 
 exportTime=24h
 [ -n "$2" ] && exportTime=$2
+[ -n "$3" ] && groupName=$3
 
 #---------------------------------
 # printUsage()
@@ -35,7 +36,7 @@ TS=$(date "$dateFormat")
 fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
-curAliases=$(getAliasesFromGraphTemplate $graphName)
+curAliases=$(getAliasesFromDeviceGroup $graphName)
 [ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
 
 printf "["

@@ -158,6 +158,17 @@ sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo
 [ ! -h /etc/lighttpd/conf-enabled/10-dir-listing.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-dir-listing.conf /etc/lighttpd/conf-enabled
 [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.conf /etc/lighttpd/conf-enabled
 
+
+#----------------------
+# php5
+#----------------------
+sudo dpkg -s php5 >/dev/null 2>&1 || { echo "  - Installing php5" ; sudo apt-get -y install php5 php5-sqlite php5-cgi ; }
+
+#================================
+# Setup index.html
+#================================
+[ ! -f $this_dir/html/index.html ] && ln -s index.html.template $this_dir/html/index.html
+
 #================================
 # alias.conf file template
 #================================

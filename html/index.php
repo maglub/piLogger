@@ -65,7 +65,7 @@
 
 */
 
-   var nothing = printGraph('piLogger12h', '12h');
+   var nothing = printGroupGraph('piLogger12h', 'radiators', '12h');
    var nothing = printGraph('piLogger24h', '24h');
    var nothing = printGraph('piLogger168h', '168h');
 
@@ -130,11 +130,10 @@
 <!-- Header and Nav -->
   <div class="row">
     <div class="large-2 columns">
-      <h1><img src="/images/rpi-logo.png" /></h1>
+      <h1><a href="/"><img src="/images/rpi-logo.png" /></a></h1>
     </div>
     <div class="large-10 columns">
       <ul class="inline-list right">
-        <li><a href="index.html">Home</a></li>
         <li><a href="https://github.com/maglub/piLogger">About</a></li>
       </ul>
     </div>
@@ -168,7 +167,24 @@
          <li><a href="/graphs">Graph files</a></li>
          <li><a href="/xml">XML files</a></li>
          <li><a href="/api/sensors">Devices</a></li>
-
+           <?php
+  print "<li><ul>\n";
+  $myDevices=getDevices();
+  foreach ($myDevices as $device) {
+    print "<li>{$device['alias']} <br>\n";
+  }
+  print "</ul></li>\n";
+           ?>
+         <li><a href="/api/sensors">Groups</a></li>
+           <?php
+  print "<li><ul>\n";
+  $myDeviceGroups=getDeviceGroups();
+  foreach ($myDeviceGroups as $deviceGroup) {
+    print "<li>{$deviceGroup['name']} <br>\n";
+  }
+  print "</ul></li>\n";
+           ?>
+         
          <div id="device-pane">some text</div>
       </ul>
     </div>
@@ -192,10 +208,10 @@
 </script>
 
 <?php
-  $myDevices=getDevices();
 
   print "<h2>Devices</h2>\n";
   print "<ul>\n";
+  $myDevices=getDevices();
   foreach ($myDevices as $device) {
     print "<li> {$device['id']} - {$device['alias']} <br>\n";
   }
@@ -205,8 +221,8 @@
   print "<ul>\n";
   $myDbFiles = getDeviceStores();
   foreach ($myDbFiles as $dbFile) {
-    preg_match('/^(...[^\.]*)/', $dbFile, $cur_id);
-    print "<li> {$dbFile} - Device: {$cur_id[0]} Alias: " . getDeviceAliasById($cur_id[0]) . "<br>\n";
+    preg_match('/^(.*)(\.rrd)/i', $dbFile, $cur_id);
+    print "<li> {$dbFile} - Device: {$cur_id[1]} Alias: " . getDeviceAliasById($cur_id[1]) . "<br>\n";
   }
   print "</ul>\n";
 

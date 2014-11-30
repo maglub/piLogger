@@ -265,3 +265,37 @@ function printGraph(curPane, curHours){
    return 0;
 
 }
+//----------------------------------------------------------
+// printGroupGraph(nameOfPane, groupName, numberOfHours)
+//----------------------------------------------------------
+function printGroupGraph(curPane, groupName, curHours){
+
+    var target = document.getElementById(curPane);
+    var spinner = new Spinner(getSpinnerOpts()).spin(target);
+
+    // print the graph
+
+    //var url="api/sensorData";
+    var url="cache/sensorData." + groupName + "."  + curHours.toString() + ".json";
+
+   console.log("XXX graph data url: " + url);
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: function(data) {
+        draw_chart(curPane, data);
+          console.log("XXX Stopping spinner");
+          spinner.stop();
+      },
+      error: function(data) {
+          spinner.stop();
+          var target2 = document.getElementById(curPane);
+          target2.innerHTML = 'Error: could not load data for graph';
+      }
+    //end of ajax
+    });
+
+   return 0;
+
+}

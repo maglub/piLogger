@@ -5,6 +5,23 @@
   db_connect();
 
 #-----------------------------------
+# getDeviceGroups()
+#-----------------------------------
+function getDeviceGroups(){
+
+  global $db;
+  $sql = "select distinct groupname from devicegroup;";
+
+  $n = 0;
+  $ret = $db->query($sql);
+  while($row = $ret->fetchArray()){
+    $retArray[$n]['name'] = $row['groupname'] ; 
+    $n++;
+  }
+  return $retArray;
+}
+
+#-----------------------------------
 # getDevices()
 #-----------------------------------
 function getDevices(){
@@ -33,7 +50,7 @@ function getDeviceAliasById($curId){
   if ($row = $ret->fetchArray() ) {
     return $row['alias'];
   } else {
-    return "";
+    return $curId;
   }
 }
 #-----------------------------------

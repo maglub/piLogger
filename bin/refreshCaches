@@ -36,10 +36,14 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
 case $1 in
   *h)
-    logIt "  - Refreshing sensorData.${1}.cache"
-    $htmlDir/api/sensorData --genCache ${1} > $tmpFile
-    mv $tmpFile $cacheDir/sensorData.${1}.json
-    chmod 666 $cacheDir/sensorData.${1}.json 
+    deviceGroups=$(getAllDeviceGroups)
+    for deviceGroup in $deviceGroups
+    do
+      logIt "  - Refreshing sensorData.$deviceGroup.${1}.cache"
+      $htmlDir/api/sensorData --genCache ${1} $deviceGroup > $tmpFile
+      mv $tmpFile $cacheDir/sensorData.$deviceGroup.${1}.json
+      chmod 666 $cacheDir/sensorData.$deviceGroup.${1}.json 
+    done
     ;;
   sensors)
     logIt "  - Refreshing sensorAllInfo.json"
