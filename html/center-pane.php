@@ -9,6 +9,7 @@
     <div class="large-10 large-push-2 small-11 small-push-1 columns">
        <div id="radiators-12h" style="margin: 0 auto" class="large-12 small-6 columns"></div>
        <div id="basement-12h" style="margin: 0 auto" class="large-12 small-6 columns"></div>
+       <div id="stg3" style="margin: 0 auto" class="large-12 small-12 columns"></div>
        <div id="piLogger24h" style="margin: 0 auto" class="large-12 small-12 columns"></div>
        <div id="piLogger168h" style="margin: 0 auto" class="large-12 small-12 columns"></div>
        <div id="deviceGauges1" class="large-3 small-3 columns"></div>

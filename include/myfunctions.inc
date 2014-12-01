@@ -53,6 +53,7 @@ function getDeviceAliasById($curId){
     return $curId;
   }
 }
+
 #-----------------------------------
 #
 #-----------------------------------
@@ -71,5 +72,20 @@ function getDeviceStores(){
   }
 
   return $cur_dbFiles;
+}
+#-----------------------------------
+#
+#-----------------------------------
+function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
+  global $db;
+  $sql = "select plot_type from plotgroup where groupname = '{$curPlotType} and device_id = '{$curId}';";
+ 
+  $ret = $db->query($sql);
+  if ($row = $ret->fetchArray() ) {
+    return $row['alias'];
+  } else {
+    return "AVERAGE";
+  }
+  return $retArray;
 }
 ?>

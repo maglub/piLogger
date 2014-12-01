@@ -43,10 +43,12 @@ printf "["
 curComma=" "
 for curAlias in $curAliases
 do
-  printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
   curVName=$(echo $curAlias | sed -e 's/\.//g')
+  curAggregateType=$(getAggregateTypeByPlotDeviceAlias $graphName $curAlias)
+#  echo "curAggregateType ($graphName $curAlias) = $curAggregateType" 1>&2
+  printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
   rrdtool xport -s now-${exportTime} -e now --step 300  \
-      DEF:${curVName}=$(getDBFileByAlias $curAlias):temperature:AVERAGE \
+      DEF:${curVName}=$(getDBFileByAlias $curAlias):temperature:${curAggregateType} \
       XPORT:${curVName}:$curVName | grep "<row>" | grep -v "NaN" | perl -ne 'm!.*t>(.*)</t><v>(.*?)</v>!; printf "[%i, %.2f],", $1*1000+3600000, $2*1;' | sed -e 's/,$//'
   curComma=","
   printf "]}"

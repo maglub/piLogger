@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="css/main.css">
   
     <script src="myJs/myfunctions.js"></script>
+    <script src="js/foundation/foundation.js"></script>
+    <script src="js/foundation/foundation.dropdown.js"></script>
 
   <!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
 <script type="text/javascript">
@@ -66,6 +68,7 @@
 */
 
    var nothing = printGroupGraph('radiators-12h', 'radiators', '12h');
+   var nothing = printGroupGraph('stg3', 'stg3', '12h');
    var nothing = printGroupGraph('basement-12h', 'basement', '12h');
    var nothing = printGraph('piLogger24h', '24h');
    var nothing = printGraph('piLogger168h', '168h');
@@ -108,13 +111,6 @@
     });
 
 
-// 2014-02-19
-//    $('#device-pane').hide();
-//    $('#deviceContainer').hover(function() {
-//        $('#device-pane').toggle();
-//    });
-
-
 //  var curData = { "sensorName" : "device1" , "temperature" : 80 };
 //  var nothing = printGauge('deviceGauges', curData ); 
 
@@ -126,23 +122,11 @@
   </head>
   <body>
 
-<!-- Header and Nav -->
-  <div class="row">
-    <div class="large-2 columns">
-      <h1><a href="/"><img src="/images/rpi-logo.png" /></a></h1>
-    </div>
-    <div class="large-10 columns">
-      <ul class="inline-list right">
-        <li><a href="https://github.com/maglub/piLogger">About</a></li>
-      </ul>
-    </div>
-  </div>
- 
+    <!-- ============================================================ -->
+    <!-- Header and Nav                                               -->
+    <!-- ============================================================ -->
+    <?php require('header-pane.php'); ?>
 
-<!-- End Header and Nav -->
-  
-  
-  <!-- before main row -->
     <!-- ============================================================ -->
     <!-- Main row (contains center/graphs, and side navigation        -->
     <!-- ============================================================ -->
@@ -167,5 +151,8 @@
     <!-- ============================================================ -->
     <?php require('footer-pane.php') ?>
 
+<script>
+  $(document).foundation();
+</script>
   </body>
 </html>
