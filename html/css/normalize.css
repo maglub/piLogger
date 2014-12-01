@@ -94,7 +94,7 @@
 
           //populate with data
           $(xml).find("row").each(function() {
-            var t = parseInt($(this).find("t").text()) * 1000
+            var t = parseInt($(this).find("t").text()) * 2000
 
             $(this).find("v").each(function(index) {
               var v = parseFloat($(this).text())

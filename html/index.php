@@ -65,7 +65,8 @@
 
 */
 
-   var nothing = printGroupGraph('piLogger12h', 'radiators', '12h');
+   var nothing = printGroupGraph('radiators-12h', 'radiators', '12h');
+   var nothing = printGroupGraph('basement-12h', 'basement', '12h');
    var nothing = printGraph('piLogger24h', '24h');
    var nothing = printGraph('piLogger168h', '168h');
 
@@ -125,8 +126,6 @@
   </head>
   <body>
 
-<!-- http://thule.mine.nu/html/ -->
-
 <!-- Header and Nav -->
   <div class="row">
     <div class="large-2 columns">
@@ -143,91 +142,30 @@
 <!-- End Header and Nav -->
   
   
-  <div class="row">    
-    <!-- Main Content Section -->
-    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
-    <div class="large-10 push-2 columns">      
-       <div id="piLogger12h" style="min-width: 600px; min-height: 400px ; margin: 0 auto"></div>
-       <div id="piLogger24h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
-       <div id="piLogger168h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
-       <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
-       <div id="deviceGauges1" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
-       <div id="deviceGauges2" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
-       <div id="deviceGauges3" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
-       <div id="deviceGauges4" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
-    </div>
+  <!-- before main row -->
+    <!-- ============================================================ -->
+    <!-- Main row (contains center/graphs, and side navigation        -->
+    <!-- ============================================================ -->
+  <div class="row">
+    <!-- ============================================================ -->
+    <!-- Center / Graphs                                              -->
+    <!-- ============================================================ -->
+    <?php  require('center-pane.php'); ?>
 
-    
-    <!-- Nav Sidebar -->
+    <!-- ============================================================ -->
+    <!-- Side Navigation bar                                          -->
+    <!-- ============================================================ -->
     <!-- This is source ordered to be pulled to the left on larger screens -->
-    <div class="large-2 pull-10 columns">
-      <ul class="side-nav">
-         <li class="nav-header">Temperature</li>
-         <li><a href="index.html?3h">Last 3h</a></li>
-         <li><a href="/graphs">Graph files</a></li>
-         <li><a href="/xml">XML files</a></li>
-         <li><a href="/api/sensors">Devices</a></li>
-           <?php
-  print "<li><ul>\n";
-  $myDevices=getDevices();
-  foreach ($myDevices as $device) {
-    print "<li>{$device['alias']} <br>\n";
-  }
-  print "</ul></li>\n";
-           ?>
-         <li><a href="/api/sensors">Groups</a></li>
-           <?php
-  print "<li><ul>\n";
-  $myDeviceGroups=getDeviceGroups();
-  foreach ($myDeviceGroups as $deviceGroup) {
-    print "<li>{$deviceGroup['name']} <br>\n";
-  }
-  print "</ul></li>\n";
-           ?>
-         
-         <div id="device-pane">some text</div>
-      </ul>
-    </div>
+    <?php  require('sidenav-pane.php'); ?>
+
   </div>
-  <!-- Footer -->
-  <footer class="row">
-    <div class="large-12 columns">
-      <hr />
-      <div class="row">
-        <div class="large-6 columns">
-          <p>&copy; KMG Group GmbH</p>
-        </div>
-        <div class="large-6 columns">
-          
-        </div>
-      </div>
-    </div> 
-  </footer>
+  </div>
+  <!-- end of main row -->
 
-<script>
-</script>
-
-<?php
-
-  print "<h2>Devices</h2>\n";
-  print "<ul>\n";
-  $myDevices=getDevices();
-  foreach ($myDevices as $device) {
-    print "<li> {$device['id']} - {$device['alias']} <br>\n";
-  }
-  print "</ul>\n";
-
-  print "<h2>DB Files</h2>\n";
-  print "<ul>\n";
-  $myDbFiles = getDeviceStores();
-  foreach ($myDbFiles as $dbFile) {
-    preg_match('/^(.*)(\.rrd)/i', $dbFile, $cur_id);
-    print "<li> {$dbFile} - Device: {$cur_id[1]} Alias: " . getDeviceAliasById($cur_id[1]) . "<br>\n";
-  }
-  print "</ul>\n";
-
-
-?>
+    <!-- ============================================================ -->
+    <!-- Footer pane                                                  -->
+    <!-- ============================================================ -->
+    <?php require('footer-pane.php') ?>
 
   </body>
 </html>

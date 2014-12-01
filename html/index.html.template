@@ -12,7 +12,7 @@
     <link rel="icon" href="/favicon.ico" >
 
     <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/20140227.0006.foundation.css">
     <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
 
@@ -125,7 +125,7 @@
 <!-- Header and Nav -->
   <div class="row">
     <div class="large-2 columns">
-      <h1><img src="http://i.imgur.com/cVS9fdC.png" /></h1>
+      <h1><img src="/images/rpi-logo.png" /></h1>
     </div>
     <div class="large-10 columns">
       <ul class="inline-list right">
@@ -143,14 +143,14 @@
     <!-- Main Content Section -->
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="large-10 push-2 columns">      
-       <div id="piLogger12h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
+       <div id="piLogger12h" style="min-width: 600px; min-height: 400px ; margin: 0 auto"></div>
        <div id="piLogger24h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
        <div id="piLogger168h" style="min-width: 400px; min-height: 400px ; margin: 0 auto"></div>
        <div id="deviceContainer" style="min-width: 400px; margin: 0 auto"></div>
-       <div id="deviceGauges1" style="width: 200px; margin: 0 auto; float:left"></div>
-       <div id="deviceGauges2" style="width: 200px; margin: 0 auto; float:left"></div>
-       <div id="deviceGauges3" style="width: 200px; margin: 0 auto; float:left"></div>
-       <div id="deviceGauges4" style="width: 200px; margin: 0 auto; float:left"></div>
+       <div id="deviceGauges1" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
+       <div id="deviceGauges2" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
+       <div id="deviceGauges3" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
+       <div id="deviceGauges4" style="width: 200px; height: 200px;  margin: 0 auto; float:left"></div>
     </div>
 
     
