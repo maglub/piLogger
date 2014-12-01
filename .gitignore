@@ -6,5 +6,7 @@ bin/.*.swp
 html/cache
 html/graphs
 html/xml
+html/index.html
 
 AbioWire
+*.swp
