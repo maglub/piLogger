@@ -17,7 +17,7 @@
     <link rel="icon" href="/favicon.ico" >
 
     <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/20140227.0006.foundation.css">
+    <link rel="stylesheet" href="css/foundation.css">
     <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
 
