@@ -169,10 +169,37 @@ EOT
 }
 
 #---------------------------------
+# getAllPlotGroups()
+#---------------------------------
+getAllPlotGroups(){
+  sqlite3 $appDbFile<<EOT
+  select distinct groupname from plotgroup;
+EOT
+}
+
+#---------------------------------
 # getAggregateTypeByPlotDeviceAlias
 #---------------------------------
 getAggregateTypeByPlotDeviceAlias(){
   sqlite3 $appDbFile<<EOT
   select plot_type from plotgroup a, alias b where a.groupname = '$1' and b.alias  = '$2' and a.device_id = b.id;
+EOT
+}
+
+#---------------------------------
+# dbGetAllDeviceIds()
+#---------------------------------
+dbGetAllDeviceIds(){
+  sqlite3 $appDbFile<<EOT
+  select id from device;
+EOT
+}
+
+#---------------------------------
+# dbGetDeviceAliasById()
+#---------------------------------
+dbGetDeviceAliasById(){
+  sqlite3 $appDbFile<<EOT
+  select alias from alias where id = '$1';
 EOT
 }
