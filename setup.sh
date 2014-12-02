@@ -201,6 +201,11 @@ echo "  - Setting up bash completion"
 [[ ! -r /etc/logrotate.d/piLogger ]] && sudo cp $configDir/logrotate.d/piLogger /etc/logrotate.d/piLogger
 
 #================================
+# Setup sudoers
+#================================
+[[ ! -f /etc/sudoers.d/piLogger ]] && { sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown 0440 /etc/sudoers.d/piLogger ; }
+
+#================================
 # Show info about timezones
 #================================
   echo "* If your timezone is not set, you can do so by running:"
