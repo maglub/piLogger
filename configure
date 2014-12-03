@@ -151,6 +151,14 @@ oneWireDataDir=/var/piLogger
 cacheDir=/var/piLogger/cache
 temperatureFile=temperature
 
+appDbFile=/var/piLogger/db/app.sqlite3
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"
+
+#-------------------------
+# for remote logging
+#-------------------------
+#--- remoteLoggin=true
+remoteLogging=""
+remoteHost=""
 EOT
