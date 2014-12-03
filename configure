@@ -150,6 +150,7 @@ oneWireDir=/mnt/1wire
 oneWireDataDir=/var/piLogger
 cacheDir=/var/piLogger/cache
 temperatureFile=temperature
+rrdDir=/var/piLogger/db
 
 appDbFile=/var/piLogger/db/app.sqlite3
 #----------------------
