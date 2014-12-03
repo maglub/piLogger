@@ -67,11 +67,12 @@
 
 */
 
-   var nothing = printGroupGraph('radiators-12h', 'radiators', '12h');
-   var nothing = printGroupGraph('stg3', 'stg3', '12h');
-   var nothing = printGroupGraph('basement-12h', 'basement', '12h');
-   var nothing = printGraph('piLogger24h', '24h');
-   var nothing = printGraph('piLogger168h', '168h');
+//   var nothing = printGroupGraph('radiators-12h', 'radiators', '12h');
+//   var nothing = printGroupGraph('stg3', 'stg3', '12h');
+   var nothing = printGroupGraph('stg3-panna', 'stg3-panna', '12h');
+//   var nothing = printGroupGraph('basement-12h', 'basement', '12h');
+   var nothing = printGroupGraph('basement-24h', 'basement', '24h');
+   var nothing = printGroupGraph('basement-168h', 'basement', '168h');
 
    console.log("XXX End of graph");
 
