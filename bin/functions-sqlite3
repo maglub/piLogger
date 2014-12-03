@@ -1,0 +1,215 @@
+#---------------------------------
+# dbGetDBFileByAlias()
+#---------------------------------
+dbGetDBFileByAlias(){
+  local curDeviceId=$(dbGetDeviceIdByDeviceAlias "$1")
+  echo $rrdDir/${curDeviceId}.rrd
+}
+#---------------------------------
+# dbGetDeviceIdByDeviceAlias()
+#---------------------------------
+dbGetDeviceIdByDeviceAlias(){
+  sqlite3 $appDbFile<<EOT
+  select id from alias where alias = '$1'; 
+EOT
+}
+#---------------------------------
+# dbGetAliasesFromDeviceGroup()
+#---------------------------------
+dbGetAliasesFromDeviceGroup(){
+  sqlite3 $appDbFile<<EOT
+  select a.alias from alias a, devicegroup b where a.id = b.device_id and b.groupname = '$1';
+EOT
+}
+
+
+
+#---------------------------------
+# dbGetAliasesFromPlotGroup()
+#---------------------------------
+dbGetAliasesFromPlotGroup(){
+  sqlite3 $appDbFile<<EOT
+  select a.alias from alias a, plotgroup b where a.id = b.device_id and b.groupname = '$1';
+EOT
+}
+
+#---------------------------------
+# dbGetDeviceIdsFromPlotGroup()
+#---------------------------------
+dbGetDeviceIdsFromPlotGroup(){
+  sqlite3 $appDbFile<<EOT
+  select device_id from plotgroup where groupname = '$1';
+EOT
+}
+
+
+#---------------------------------
+# dbGetAllDeviceGroups()
+#---------------------------------
+dbGetAllDeviceGroups(){
+  sqlite3 $appDbFile<<EOT
+  select distinct groupname from devicegroup;
+EOT
+}
+
+#---------------------------------
+# dbGetAllPlotGroups()
+#---------------------------------
+dbGetAllPlotGroups(){
+  sqlite3 $appDbFile<<EOT
+  select distinct groupname from plotgroup;
+EOT
+}
+
+#---------------------------------
+# dbGetAggregateTypeByPlotDeviceAlias
+#---------------------------------
+dbGetAggregateTypeByPlotDeviceAlias(){
+  local curAggregate=$(
+  sqlite3 $appDbFile<<EOT
+  select plot_type from plotgroup a, alias b where a.groupname = '$1' and b.alias  = '$2' and a.device_id = b.id;
+EOT
+)
+
+  [ -n "$curAggregate" ] && { echo "$curAggregate" ; return 0 ; }
+  [ -z "$curAggregate" ] && { echo "AVERAGE" ; return 0 ; }
+}
+
+#---------------------------------
+# dbGetAllDeviceIds()
+#---------------------------------
+dbGetAllDeviceIds(){
+  sqlite3 $appDbFile<<EOT
+  select id from device;
+EOT
+}
+
+#---------------------------------
+# dbGetDeviceAliasById()
+#---------------------------------
+dbGetDeviceAliasById(){
+  curRes=$(sqlite3 $appDbFile<<EOT
+  select alias from alias where id = '$1';
+EOT
+)
+
+  if [ -n "$curRes" ]
+  then
+    echo "$curRes"
+  else
+    echo "$1"
+  fi
+}
+
+#---------------------------------
+# dbAddDevice()
+#---------------------------------
+dbAddDevice(){
+  echo "  - Adding device: $1 type: $2 path: $3"
+  sqlite3 $appDbFile<<EOT
+  insert into device (id, type, path) values ('$1', '$2', '$3');
+EOT
+}
+
+#---------------------------------
+# dbRemoveDevice()
+#---------------------------------
+dbRemoveDevice(){
+  echo "  - Removing device: $1"
+  sqlite3 $appDbFile<<EOT
+  delete from device where id = '$1';
+EOT
+}
+
+#---------------------------------
+# dbAddDeviceAlias()
+#---------------------------------
+dbAddDeviceAlias(){
+  echo "  - Adding device alias: $1 -> $2"
+  sqlite3 $appDbFile<<EOT
+  insert into alias (id, alias) values ('$1', '$2');
+EOT
+}
+
+#---------------------------------
+# dbRemoveDeviceAlias()
+#---------------------------------
+dbRemoveDeviceAlias(){
+  echo "  - Removing device alias: $1 -> $2"
+  sqlite3 $appDbFile<<EOT
+  delete from alias where id = '$1' and alias = '$2';
+EOT
+}
+
+
+#---------------------------------
+# dbGetPlotGroups()
+#---------------------------------
+dbGetPlotGroups(){
+  sqlite3 $appDbFile<<EOT
+  select distinct groupname from plotgroup;
+EOT
+}
+
+#---------------------------------
+# dbGetPlotGroupMemberIdsByPlotGroupId()
+#---------------------------------
+dbGetPlotGroupMemberIdsByPlotGroupId(){
+  sqlite3 $appDbFile<<EOT
+  select device_id from plotgroup where groupname = '$1';
+EOT
+}
+
+#---------------------------------
+# dbPrintPrintGroups()
+#---------------------------------
+dbPrintPlotGroups(){
+  for dpapg_plotgroup in $(dbGetAllPlotGroups)
+  do
+    printf "%-20s :" $dpapg_plotgroup 
+    for dpapg_curDeviceId in $(dbGetPlotGroupMemberIdsByPlotGroupId $dpapg_plotgroup)
+    do
+      dpapg_curDeviceAlias=$(dbGetDeviceAliasById $dpapg_curDeviceId)
+      #echo -n " $dpapg_curDeviceId($dpapg_curDeviceAlias)"
+      echo -n " $dpapg_curDeviceAlias"
+    done
+    echo
+  done
+}
+
+#---------------------------------
+# dbAddDeviceIdToPlotGroup()
+#---------------------------------
+dbAddDeviceIdToPlotGroup(){
+  echo "  - Adding device id to plotgroup: $1 -> $2"
+  sqlite3 $appDbFile<<EOT
+  insert into plotgroup (groupname, device_id) values ('$1', '$2');
+EOT
+}
+
+#---------------------------------
+# dbAddDeviceAliasToPlotGroup()
+#---------------------------------
+dbAddDeviceAliasToPlotGroup(){
+  echo "  - Adding device alias: $1 -> $2"
+  dbAddDeviceIdToPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
+}
+
+#---------------------------------
+# dbRemoveDeviceIdFromPlotGroup()
+#---------------------------------
+dbRemoveDeviceIdFromPlotGroup(){
+  echo "  - Removing device id from plotgroup: $1 -> $2"
+  sqlite3 $appDbFile<<EOT
+  delete from plotgroup where groupname = '$1' and device_id = '$2';
+EOT
+}
+
+#---------------------------------
+# dbRemoveDeviceAliasFromPlotGroup()
+#---------------------------------
+dbRemoveDeviceAliasFromPlotGroup(){
+  echo "  - Removing device alias from plotgroup: $1 -> $2"
+  dbRemoveDeviceIdFromPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
+}
+

@@ -31,4 +31,5 @@ rrdtool create $dbFile \
   RRA:MAX:0.5:6:86400 \
   RRA:MAX:0.5:60:86400
 
-
+chmod g+w $dbFile
+sudo chgrp www-data $dbFile

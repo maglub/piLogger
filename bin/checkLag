@@ -1,0 +1,23 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`; pwd)
+. $this_dir/../etc/piLogger.conf
+. $this_dir/functions
+
+sleepTime=1
+lastEpoc=$(date "+%s")
+
+while true
+do
+  epoc=$(date "+%s")
+  (( delay = $epoc - $lastEpoc ))
+  if [ $delay -gt $sleepTime ]
+  then
+    logIt " * Delay $delay > expected $sleepTime" 
+  else
+    logIt " * Delay $delay <= expected $sleepTime" 
+  fi
+
+  lastEpoc=$epoc
+  sleep 1
+done

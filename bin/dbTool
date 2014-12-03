@@ -1,7 +1,9 @@
 #!/bin/bash
 
 this_dir=$(cd `dirname $0`; pwd)
+. $this_dir/../etc/piLogger.conf
 . $this_dir/functions
+. $this_dir/functions-sqlite3
 
 
 #--------------------------------
@@ -14,12 +16,20 @@ Uage:
 
   `basename $0` { --db } [options]
 
+Actions:
+  -l --list { list options }        - List
+
+List options:
+  -a               - List aliases
+  -d               - List devices
+
 Options:
 
   --db             - List content of the database
   -a|--aliases     - Show aliases for devices
   -af|--aliasFile  - generate a dummy alias file output
   --scan           - Scan for devices into etc/devices.scanned
+  -l --list        - List verbose db content
 
 EOT
 }
@@ -108,16 +118,53 @@ printDbDeviceAliases(){
   done
 }
 
+printDbVerbose(){
+  printDbDeviceAliases
+}
+
 #====================================
 # MAIN
 #====================================
 
-[ -z "$1" ] && printNormal
+[ -z "$1" ] && { usage ; exit 0 ; }
+
+listDB=true
+actionList=true
+cmdAction=list
 
 all_devices=$(getAllDevices $oneWireDir)
 while [ -n "$1" ]
 do
   case $1 in
+    --add)
+      cmdAction=add
+      actionAdd=true
+      shift
+      ;;
+    --remove)
+      cmdAction=remove
+      shift
+      ;;
+    --deviceId)
+      deviceId="$2"
+      shift ; shift 
+      ;;
+    --deviceType)
+      deviceType="$2"
+      shift ; shift
+      ;;
+    --devicePath)
+      devicePath="$2"
+      shift ; shift
+      ;;
+    --deviceAlias)
+      deviceAlias="$2"
+      shift ; shift
+      ;;
+    --plotGroup)
+      plotGroup="$2"
+      shift ; shift
+      ;;
     --db)
       listDB=true
       shift
@@ -127,12 +174,16 @@ do
       shift
       exit 0
       ;;
-    -a|--aliases)
-      listAliases=true
+    --alias|-a)
+      actionType=alias
       shift
       ;;
-    -d)
-      listDeviceIds=true
+    -d|--device)
+      actionType=device
+      shift
+      ;;
+    -p|--plotGroup)
+      actionType=plotGroup
       shift
       ;;
     --info)
@@ -145,6 +196,10 @@ do
       ;;
     --scan)
       scanDevices=true
+      shift
+      ;;
+    -l|--list)
+      actionList=true
       shift
       ;;
     *)
@@ -163,16 +218,22 @@ done
   exit 0 
 }
 
-if [ -n "$listDB" ]
-then
-  [[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
-  [[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
-  [[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
-  [[ -n "$listAliases" ]] && { printDbDeviceAliases ; exit 0 ; }
-  [[ -n "$listDeviceIds" ]] && { dbGetAllDeviceIds ; exit 0 ; }
-else
-  [[ -n "$printJSON" && "$listInfo" ]] && { printAllJSON ; exit 0 ; }
-  [[ -n "$printJSON" && "$listAliases" ]] && { printAliasesJSON ; exit 0 ; }
-  [[ -n "$printJSON" ]] && { printPathJSON ; exit 0 ; }
-  [[ -n "$listDB" && -n "$listDeviceIds" ]] && { dbGetAllDeviceIds ; exit 0 ; }
-fi
+case $cmdAction in
+  list)
+    [[ -n "$actionType" && "$actionType" = "alias" ]] &&   { printDbDeviceAliases ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "device" ]] && { dbGetAllDeviceIds ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotGroup" ]] && { dbPrintPlotGroups ; exit 0 ; }
+    [[ -n "$actionList" ]]   && { printDbVerbose ; exit 0 ; } 
+    ;;
+  add)
+    [[ -n "$actionType" && "$actionType" = "device" ]] && { dbAddDevice "$deviceId" "$deviceType" "$devicePath" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbAddDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceId" ]] && { dbAddDeviceIdToPrintGroup "$plotGroup" "$deviceId" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbAddDeviceAliasToPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
+    ;;
+  remove)
+    [[ -n "$actionType" && "$actionType" = "device" ]] && { dbRemoveDevice "$deviceId" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbRemoveDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbRemoveDeviceAliasFromPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
+    ;;
+esac

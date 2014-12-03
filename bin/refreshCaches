@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/bash 
 
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 . $this_dir/functions
+. $this_dir/functions-sqlite3
 
 logIt "  - Refreshing caches"
 
@@ -36,7 +37,7 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
 case $1 in
   *h)
-    deviceGroups=$(getAllDeviceGroups)
+    deviceGroups=$(dbGetAllPlotGroups)
     for deviceGroup in $deviceGroups
     do
       logIt "  - Refreshing sensorData.$deviceGroup.${1}.cache"

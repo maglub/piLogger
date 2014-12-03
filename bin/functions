@@ -94,10 +94,19 @@ logTemperature(){
 
   lt_dbFile=$dbDir/${lt_device}.rrd
 
-  [ ! -f $lt_dbFile ] && $this_dir/createRRD $lt_device
+  [ ! -f $lt_dbFile ] && sudo -u pi $this_dir/createRRD $lt_device
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
   rrdtool update $lt_dbFile N:${lt_temperature}
 
+  [ -n "$remoteLogging" ] && logTemperatureRemote $lt_device $lt_temperature
+
+}
+
+logTemperatureRemote(){
+  ltr_device=$1
+  ltr_temperature=$2
+
+  wget -q -O - "http://d1wire/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
 }
 #---------------------------------
 # getDBFilesFromGraphTemplate
@@ -149,57 +158,3 @@ getAliasesFromGraphTemplate(){
   cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }
 
-
-#---------------------------------
-# getAliasesFromDeviceGroup()
-#---------------------------------
-getAliasesFromDeviceGroup(){
-  sqlite3 $appDbFile<<EOT
-  select a.alias from alias a, devicegroup b where a.id = b.device_id and b.groupname = '$1';
-EOT
-}
-
-#---------------------------------
-# getAllDeviceGroups()
-#---------------------------------
-getAllDeviceGroups(){
-  sqlite3 $appDbFile<<EOT
-  select distinct groupname from devicegroup;
-EOT
-}
-
-#---------------------------------
-# getAllPlotGroups()
-#---------------------------------
-getAllPlotGroups(){
-  sqlite3 $appDbFile<<EOT
-  select distinct groupname from plotgroup;
-EOT
-}
-
-#---------------------------------
-# getAggregateTypeByPlotDeviceAlias
-#---------------------------------
-getAggregateTypeByPlotDeviceAlias(){
-  sqlite3 $appDbFile<<EOT
-  select plot_type from plotgroup a, alias b where a.groupname = '$1' and b.alias  = '$2' and a.device_id = b.id;
-EOT
-}
-
-#---------------------------------
-# dbGetAllDeviceIds()
-#---------------------------------
-dbGetAllDeviceIds(){
-  sqlite3 $appDbFile<<EOT
-  select id from device;
-EOT
-}
-
-#---------------------------------
-# dbGetDeviceAliasById()
-#---------------------------------
-dbGetDeviceAliasById(){
-  sqlite3 $appDbFile<<EOT
-  select alias from alias where id = '$1';
-EOT
-}
