@@ -203,7 +203,7 @@ echo "  - Setting up bash completion"
 #================================
 # Setup sudoers
 #================================
-[[ ! -f /etc/sudoers.d/piLogger ]] && { sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown 0440 /etc/sudoers.d/piLogger ; }
+[[ ! -f /etc/sudoers.d/piLogger ]] && { sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chmod 0440 /etc/sudoers.d/piLogger ; }
 
 #================================
 # Show info about timezones
