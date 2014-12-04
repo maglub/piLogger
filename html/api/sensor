@@ -13,8 +13,64 @@ IFS="/"
 [ -z "$par3" ] && par3=$3
 [ -z "$par4" ] && par4=$4
 
+[ -n "$debug" ] && {
+cat 1>&2<<EOT
+par1=$par1
+par2=$par2
+par3=$par3
+par4=$par4
+EOT
+}
+
 #--- api:
-#  - /api/{sensor|all}/{path|temperature}
+#            par1       par2        par3           par4
+#  - /api/{sensor|all}/get/path
+#  - /api/{sensor|all}/{get|set}/temperature/[temperature]
+#  - /api/{sensor|all}/info
+
+[ -z "$par2" ] && exit 0
+
+case $par2 in
+  get)
+      [ -n "$debug" ] && echo "par2=get" 1>&2
+
+      case $par3 in
+        path)
+          case $par1 in
+            all) /home/pi/piLogger/bin/listDevices --json ;;
+              *) echo "Not yet implemented" ;;
+          esac
+          ;;
+
+        temperature)
+          case $par1 in
+            all) echo "Not yet implemented" ;;
+              *)
+                /home/pi/piLogger/bin/getTemperature -rrd $par1
+              ;;
+          esac
+          ;;
+        info)
+            case $par1 in
+              all) /home/pi/piLogger/bin/listDevices --json --info ;;
+                *) echo "Not yet implemented" ;;
+            esac
+          ;;
+      esac
+
+    ;;
+  set)
+      case $par3 in
+        temperature)
+            [ -z "$par4" ] && { echo "Error: No temperature passed as parameter" 1>&2 ; exit 1 ; }
+            echo "Setting temperature for $par1 -> $par4 C"
+            /home/pi/piLogger/bin/logTemperature $par1 $par4
+          ;;
+      esac
+    ;;
+esac
+
+exit
 
 if [ -n "$par2" ]
 then
