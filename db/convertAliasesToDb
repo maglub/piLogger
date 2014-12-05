@@ -1,0 +1,13 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+
+aliasesFile=$this_dir/../etc/aliases.conf
+
+for devicePath in $(cat $aliasesFile | cut -d";" -f3)
+do
+  deviceId=$(basename $devicePath)
+  deviceAlias=$(grep $deviceId $aliasesFile | cut -d";" -f1)
+  echo "insert into device (id, path, type) values ('$deviceId', '$devicePath', '1wire');"
+  echo "insert into alias (id, alias) values ('$deviceId', '$deviceAlias');"
+done
