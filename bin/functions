@@ -33,6 +33,8 @@ getAllDevices(){
   ld_force="$2"
 
   [[ -f $configDir/devices.scanned && -z "$ld_force" ]] && { cat $configDir/devices.scanned ; return 0 ; }
+  local curRes=$(dbGetAllDevicePaths)
+  [ -n "$curRes" ] && { echo $curRes ; return 0 ; }
   logIt "No scanned devices, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
@@ -60,7 +62,8 @@ getTemperatureByDeviceAlias(){
 
 getDeviceAliasesByDevicePath() {
   #cur_deviceAliases=$(grep -v "^#" $piLoggerDeviceAliasFile | grep -v "^#" | awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}')
-  cur_deviceAliases=$(awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}'  $piLoggerDeviceAliasFile )
+  #cur_deviceAliases=$(awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}'  $piLoggerDeviceAliasFile )
+  cur_deviceAliases=$(dbGetDeviceAliasByDevicePath $1)
   [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
   echo "$cur_deviceAliases"
 }

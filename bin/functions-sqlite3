@@ -85,11 +85,37 @@ EOT
 }
 
 #---------------------------------
+# dbGetAllDevicePaths()
+#---------------------------------
+dbGetAllDevicePaths(){
+  sqlite3 $appDbFile<<EOT
+  select path from device where path <> '';
+EOT
+}
+
+#---------------------------------
 # dbGetDeviceAliasById()
 #---------------------------------
 dbGetDeviceAliasById(){
   curRes=$(sqlite3 $appDbFile<<EOT
   select alias from alias where id = '$1';
+EOT
+)
+
+  if [ -n "$curRes" ]
+  then
+    echo "$curRes"
+  else
+    echo "$1"
+  fi
+}
+
+#---------------------------------
+# dbGetDeviceAliasByDevicePath()
+#---------------------------------
+dbGetDeviceAliasByDevicePath(){
+  curRes=$(sqlite3 $appDbFile<<EOT
+  select a.alias from alias a, device b where b.path = '$1' and a.id = b.id;
 EOT
 )
 

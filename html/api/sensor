@@ -65,9 +65,16 @@ case $par2 in
             [ -z "$par4" ] && { echo "Error: No temperature passed as parameter" 1>&2 ; exit 1 ; }
             echo "Setting temperature for $par1 -> $par4 C"
             /home/pi/piLogger/bin/logTemperature $par1 $par4
+            exit 0
           ;;
       esac
     ;;
+  info)
+    case $par1 in
+      all) /home/pi/piLogger/bin/listDevices --json --info ;;
+        *) echo "Not yet implemented" ;;
+    esac
+  ;;
 esac
 
 exit

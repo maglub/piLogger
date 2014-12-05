@@ -1,4 +1,5 @@
 <?php
+  global $root;
   require_once($root . "dbconfig.inc");
   require_once($root . "sqlite3.inc");
 
@@ -87,5 +88,39 @@ function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
     return "AVERAGE";
   }
   return $retArray;
+}
+#-----------------------------------
+#
+#-----------------------------------
+function printDbPlotConfig(){
+
+  global $db;
+  $sql = "select * from plotconfig where visible='true' order by prio;";
+ 
+  $ret = $db->query($sql);
+  while ($row = $ret->fetchArray() ) {
+    $curName = $row['name'];
+    $curPlotgroup = $row['plotgroup'];
+    $curTimespan = $row['timespan'];
+    $curSize = $row['size'];
+    $curPrio = $row['prio'];
+
+    print<<<EOT
+<script type="text/javascript">
+ $(function(){
+   var nothing = printGroupGraph('{$curName}-{$curTimespan}', '{$curName}', '{$curTimespan}');
+ })
+</script>
+       <div id="{$curName}-{$curTimespan}" style="margin: 0 auto" class="large-{$curSize} small-{$curSize} columns"></div>
+EOT;
+  } 
+
+  return 0;
+}
+#-----------------------------------
+# 
+#-----------------------------------
+function printCenterPane(){
+  require($_SERVER['DOCUMENT_ROOT'] . '/center-pane.php');
 }
 ?>
