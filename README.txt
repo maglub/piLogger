@@ -78,9 +78,26 @@ sudo reboot
 
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
 
-~/piLogger/bin/listDevices --scan
+~/piLogger/bin/dbTool --scan
 
-This should show your connected devices and add them to ~/piLogger/etc/devices.scanned.
+This should show your connected devices and add them to ~/piLogger/etc/devices.scanned, and show you what ./dbTool commands to run to add the devices to the configuration database.
+
+Example:
+
+```
+./dbTool --scan
+20150112_184949;dbTool;  - Scanning for devices into /home/pi/piLogger/bin/../etc/devices.scanned
+/mnt/1wire/28.263943050000
+/mnt/1wire/28.41622F050000
+/mnt/1wire/28.EFBB4E050000
+Add devices not yet in the database by copy/paste the following:
+
+./dbTool --add -d --deviceType 1wire --deviceId 28.263943050000 --devicePath /mnt/1wire/28.263943050000
+./dbTool --add -d --deviceType 1wire --deviceId 28.41622F050000 --devicePath /mnt/1wire/28.41622F050000
+./dbTool --add -d --deviceType 1wire --deviceId 28.EFBB4E050000 --devicePath /mnt/1wire/28.EFBB4E050000
+```
+
+Add your devices by copy/paste the "./dbTool" rows into your shell.
 
 2) Set up aliases for your devices
 
