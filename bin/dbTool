@@ -228,6 +228,19 @@ done
   printNormal > $configDir/devices.scanned.new
   cat $configDir/devices.scanned.new 
   mv $configDir/devices.scanned.new $configDir/devices.scanned
+
+  echo "Add devices not yet in the database by copy/paste the following:"
+  echo
+  
+  for device in $(cat $configDir/devices.scanned 2>/dev/null)
+  do
+    shortDevice=$(basename $device);
+    if ! dbCheckDeviceExistById $shortDevice
+    then
+      echo ./dbTool --add -d --deviceType 1wire --deviceId $shortDevice --devicePath $device;
+    fi
+  done
+
   exit 0 
 }
 

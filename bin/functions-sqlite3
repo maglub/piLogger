@@ -260,6 +260,7 @@ function dbSetupDatabase(){
     
 }
 
+
 #---------------------------------
 # dbCheckTableExist()
 #---------------------------------
@@ -268,6 +269,27 @@ function dbCheckTableExist(){
   local res=$(
   sqlite3 $appDbFile<<EOT
       select count(name) from sqlite_master where type='table' and name = '$tableName';
+EOT
+)
+
+  if [ $res -eq 1 ]
+  then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+#---------------------------------
+# dbCheckDeviceExistById()
+#---------------------------------
+function dbCheckDeviceExistById(){
+
+  local deviceId="$1"
+  local res=$(
+  sqlite3 $appDbFile<<EOT
+      select count(id) from device where id = '$deviceId';
 EOT
 )
 
