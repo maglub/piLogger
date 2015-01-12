@@ -81,3 +81,30 @@ _genGraph(){
   return 0
 }
 complete -F _genGraph genGraph
+
+_dbTool(){
+
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  first="${COMP_WORDS[1]}"
+  second="${COMP_WORDS[2]}"
+  third="${COMP_WORDS[3]}"
+
+  #--- options to complete
+  opt="-a -d -p --add --remove --deviceId --deviceAlias --plotGroup"
+
+  case "${prev}" in
+    --deviceId)
+      local deviceIds=$( ~/piLogger/bin/dbTool -d )
+      COMPREPLY=( $(compgen -W "${deviceIds}" -- ${cur} ) )
+      return 0
+      ;;
+  esac
+
+  COMPREPLY=( $(compgen  -W "${opt}" -- ${cur} ) )
+  return 0
+}
+complete -F _dbTool dbTool
+complete -F _dbTool ./dbTool
