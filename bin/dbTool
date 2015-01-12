@@ -22,6 +22,7 @@ Actions:
 List options:
   -a               - List aliases
   -d               - List devices
+  -p               - List print groups
 
 Options:
 
