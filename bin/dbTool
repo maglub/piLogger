@@ -47,6 +47,11 @@ Examples:
   #--- Add alias to a device
   ./$this_script --add -a --deviceId 28.263943050000 --deviceAlias first
 
+  #--- Remove an alias
+  ./$this_script --remove -a --deviceAlias first
+
+  #--- Create a plot group "default" consisting of all devices
+
 EOT
 }
 #--------------------------------
@@ -207,7 +212,8 @@ do
       actionType=device
       shift
       ;;
-    -p|--plotGroup)
+    -p)
+      #--- for print plot group
       actionType=plotGroup
       shift
       ;;
@@ -266,7 +272,7 @@ case $cmdAction in
   add)
     [[ -n "$actionType" && "$actionType" = "device" ]] && { dbAddDevice "$deviceId" "$deviceType" "$devicePath" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbAddDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
-    [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceId" ]] && { dbAddDeviceIdToPrintGroup "$plotGroup" "$deviceId" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceId" ]] && { dbAddDeviceIdToPlotGroup "$plotGroup" "$deviceId" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbAddDeviceAliasToPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
     ;;
   remove)
