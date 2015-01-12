@@ -78,7 +78,8 @@ sudo reboot
 
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
 
-~/piLogger/bin/dbTool --scan
+cd ~/piLogger/bin
+./dbTool --scan
 
 This should show your connected devices and add them to ~/piLogger/etc/devices.scanned, and show you what ./dbTool commands to run to add the devices to the configuration database.
 
@@ -99,13 +100,23 @@ Add devices not yet in the database by copy/paste the following:
 
 Add your devices by copy/paste the "./dbTool" rows into your shell.
 
+Check that the devices were added to the database:
+
+./dbTool -d
+
 2) Set up aliases for your devices
 
-To generate an alias file from scratch:
+Check the current aliases.
 
-~/piLogger/bin/listDevices --aliasFile > ~/piLogger/etc/aliases.conf
+./dbTool -a
 
-Edit this file and give your devices names that you like better.
+If the aliases are the same as the device id's, you can set an alias by running the following command:
+
+./dbTool --add -a --deviceId XXXX --deviceAlias your_alias
+
+3) Set up a "default" plot group with all devices:
+
+./dbTool -d | xargs -L1 -I X ./dbTool --add -p --plotGroup default --deviceId X
 
 3) Set up the capture file by adding the aliases you want to log. The easiest way is to take all aliases in aliases.conf
 
