@@ -110,6 +110,24 @@ EOT
   fi
 }
 
+
+#---------------------------------
+# dbGetDevicePathByDeviceAlias()
+#---------------------------------
+function dbGetDevicePathByDeviceAlias(){
+  local alias="$1"
+  local res=$(
+    sqlite3 $appDbFile<<EOT
+    select a.path from device a, alias b where a.id = b.id and b.alias = '$alias';
+EOT
+)
+
+  if [ -n "$res" ]
+  then
+    echo "$res"
+  fi
+}
+
 #---------------------------------
 # dbGetDeviceAliasByDevicePath()
 #---------------------------------
@@ -126,6 +144,8 @@ EOT
     echo "$1"
   fi
 }
+
+
 
 #---------------------------------
 # dbAddDevice()

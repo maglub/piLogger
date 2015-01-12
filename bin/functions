@@ -57,8 +57,15 @@ getTemperatureByDevicePath(){
   echo $curOut
 }
 
-getTemperatureByDeviceAlias(){
-  getTemperatureByDevicePath $(getDevicePathByAlias $1)
+function getTemperatureByDeviceAlias(){
+  local curAlias="$1"
+  local devicePath=$(dbGetDevicePathByDeviceAlias $curAlias)
+  if [ -n "$devicePath" ]
+  then
+    getTemperatureByDevicePath $devicePath
+  else 
+    getTemperatureByDevicePath $(getDevicePathByAlias $1)
+  fi
 }
 
 getDeviceAliasesByDevicePath() {

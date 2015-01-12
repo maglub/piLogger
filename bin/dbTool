@@ -1,6 +1,8 @@
 #!/bin/bash
 
 this_dir=$(cd `dirname $0`; pwd)
+this_script=$(basename $0)
+
 . $this_dir/../etc/piLogger.conf
 . $this_dir/functions
 . $this_dir/functions-sqlite3
@@ -34,6 +36,16 @@ Options:
 
   --setup --db     - Will check the database for needed tables, and create them if needed
 
+Examples:
+
+  ./$this_script --scan             ; # scan for new devices. new devices need to be added to the database by copy/paste
+  ./$this_script --setup --db       ; # repair the application configuration database
+
+  #--- Add new 1wire device by id and device path
+  ./$this_script --add -d --deviceType 1wire --deviceId 28.EFBB4E050000 --devicePath /mnt/1wire/28.EFBB4E050000
+
+  #--- Add alias to a device
+  ./$this_script --add -a --deviceId 28.263943050000 --deviceAlias first
 
 EOT
 }

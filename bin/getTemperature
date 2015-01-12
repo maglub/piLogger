@@ -2,6 +2,7 @@
 
 this_dir=$(cd `dirname $0`; pwd)
 . $this_dir/functions
+. $this_dir/functions-sqlite3
 
 #--------------------------------
 # usage()
