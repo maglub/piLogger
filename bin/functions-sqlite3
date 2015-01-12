@@ -251,9 +251,9 @@ function dbSetupDatabase(){
   do
     if dbCheckTableExist $table
     then
-      echo "  - Table $table exists"    
+      echo "    - Table $table exists"    
     else
-      echo "  - Table $table does not exist -> creating"
+      echo "    - Table $table does not exist -> creating"
       dbCreateTableFromDDLFile $table
     fi
   done

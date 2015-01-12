@@ -166,6 +166,7 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 
 #--- setup the sqlite3 config database
 [ ! -f $appDbFile ] && {
+  echo "  - Setting upp $appDbFile database" 
   $binDir/dbTool --setup --db 
 }
 
