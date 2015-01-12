@@ -32,6 +32,9 @@ Options:
   --scan           - Scan for devices into etc/devices.scanned
   -l --list        - List verbose db content
 
+  --setup --db     - Will check the database for needed tables, and create them if needed
+
+
 EOT
 }
 #--------------------------------
@@ -137,6 +140,7 @@ all_devices=$(getAllDevices $oneWireDir)
 while [ -n "$1" ]
 do
   case $1 in
+    #--- cmdAction
     --add)
       cmdAction=add
       actionAdd=true
@@ -146,6 +150,11 @@ do
       cmdAction=remove
       shift
       ;;
+    --setup|-s)
+      cmdAction=setup
+      shift
+      ;;
+
     --deviceId)
       deviceId="$2"
       shift ; shift 
@@ -166,10 +175,13 @@ do
       plotGroup="$2"
       shift ; shift
       ;;
+
+     
     --db)
-      listDB=true
+      actionType=db
       shift
       ;;
+
     --aliasFile|-af)
       printAliasFileFormat
       shift
@@ -237,4 +249,7 @@ case $cmdAction in
     [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbRemoveDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbRemoveDeviceAliasFromPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
     ;;
+  setup)
+    [[ -n "$actionType" && "$actionType" = "db" ]] && { dbSetupDatabase ; exit 0 ; }
+    ;; 
 esac

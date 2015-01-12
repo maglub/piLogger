@@ -164,6 +164,12 @@ sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo
 #----------------------
 sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo apt-get -y install sqlite3 ; }
 
+#--- setup the sqlite3 config database
+[ ! -f $appDbFile ] && {
+  $binDir/dbTool --setup --db 
+}
+
+
 #----------------------
 # php5
 #----------------------

@@ -239,3 +239,60 @@ dbRemoveDeviceAliasFromPlotGroup(){
   dbRemoveDeviceIdFromPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
 }
 
+
+#---------------------------------
+# dbSetupDatabase()
+#---------------------------------
+function dbSetupDatabase(){
+  local tables="device alias devicegroup plotgroup plotconfig"
+  local table=""
+
+  for table in $tables
+  do
+    if dbCheckTableExist $table
+    then
+      echo "  - Table $table exists"    
+    else
+      echo "  - Table $table does not exist -> creating"
+      dbCreateTableFromDDLFile $table
+    fi
+  done
+    
+}
+
+#---------------------------------
+# dbCheckTableExist()
+#---------------------------------
+function dbCheckTableExist(){
+  local tableName="$1"
+  local res=$(
+  sqlite3 $appDbFile<<EOT
+      select count(name) from sqlite_master where type='table' and name = '$tableName';
+EOT
+)
+
+  if [ $res -eq 1 ]
+  then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+#---------------------------------
+# dbCreateTableFromDDLFile()
+#---------------------------------
+function dbCreateTableFromDDLFile(){
+  local tableName="$1"
+  echo "  - Creating table $tableName from ddl.sql"
+  [ ! -f $baseDir/db/ddl.sql ] && { echo "Error: ddl.sql not found in $baseDir/db/ddl.sql" 1>&2 ; exit 1 ; }
+  local ddlStatement=$(grep "create table $tableName " $baseDir/db/ddl.sql)
+
+  [ -z "$ddlStatement" ] && { echo "Error: table $tableName not found in $baseDir/db/ddl.sql" 1>&2 ; exit 1; }
+
+  sqlite3 $appDbFile<<EOT
+$ddlStatement
+EOT
+
+}
