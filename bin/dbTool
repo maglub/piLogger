@@ -51,6 +51,7 @@ Examples:
   ./$this_script --remove -a --deviceAlias first
 
   #--- Create a plot group "default" consisting of all devices
+  ./dbTool -d | xargs -L1 -I X ./dbTool --add -p --plotGroup default --deviceId X
 
 EOT
 }
