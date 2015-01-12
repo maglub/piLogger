@@ -6,7 +6,7 @@
 <!-- Header and Nav -->
   <div class="row">
     <div class="large-2 small-2 columns">
-      <h1><a href="/"><img src="/images/rpi-logo.png" /></a></h1>
+      <h1><a href="/"><img src="/images/rpi-logo.png" alt="RPi logo"></a></h1>
     </div>
     <div class="large-10 small-10 columns">
       <ul class="inline-list right">

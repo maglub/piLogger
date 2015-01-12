@@ -33,9 +33,10 @@ getAllDevices(){
   ld_force="$2"
 
   [[ -f $configDir/devices.scanned && -z "$ld_force" ]] && { cat $configDir/devices.scanned ; return 0 ; }
+  [[ -n "$ld_force" ]] && { echo $ld_dir/[0-9]*  | grep -v "\*$" ; return 0 ; }
   local curRes=$(dbGetAllDevicePaths)
   [ -n "$curRes" ] && { echo $curRes ; return 0 ; }
-  logIt "No scanned devices, cheking in fs."
+  logIt "No scanned devices in the database, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
 
@@ -109,7 +110,7 @@ logTemperatureRemote(){
   ltr_device=$1
   ltr_temperature=$2
 
-  wget -q -O - "http://d1wire/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
+  wget -t 1 -q -O - "http://d1wire/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
 }
 #---------------------------------
 # getDBFilesFromGraphTemplate

@@ -106,12 +106,12 @@ function printDbPlotConfig(){
     $curPrio = $row['prio'];
 
     print<<<EOT
+       <div id="{$curName}-{$curTimespan}" style="margin: 0 auto" class="large-{$curSize} small-{$curSize} columns"></div>
 <script type="text/javascript">
  $(function(){
    var nothing = printGroupGraph('{$curName}-{$curTimespan}', '{$curName}', '{$curTimespan}');
  })
 </script>
-       <div id="{$curName}-{$curTimespan}" style="margin: 0 auto" class="large-{$curSize} small-{$curSize} columns"></div>
 EOT;
   } 
 

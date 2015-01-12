@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <?php
   require_once($_SERVER['DOCUMENT_ROOT']."/stub.inc");
   require_once($root . "myfunctions.inc");
@@ -21,17 +22,17 @@
     <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
 
-    <script src="http://fgnass.github.io/spin.js/spin.js"></script>
+    <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/highcharts-more.js"></script>
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script>
 
     <link rel="stylesheet" href="css/main.css">
   
-    <script src="myJs/myfunctions.js"></script>
-    <script src="js/foundation/foundation.js"></script>
-    <script src="js/foundation/foundation.dropdown.js"></script>
+    <script type="text/javascript" src="myJs/myfunctions.js"></script>
+    <script type="text/javascript" src="js/foundation/foundation.js"></script>
+    <script type="text/javascript" src="js/foundation/foundation.dropdown.js"></script>
 
   <!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
 <script type="text/javascript">
@@ -136,7 +137,6 @@
     <!-- This is source ordered to be pulled to the left on larger screens -->
     <?php  require('sidenav-pane.php'); ?>
 
-  </div>
   </div>
   <!-- end of main row -->
 
