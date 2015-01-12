@@ -180,10 +180,12 @@ EOT
 #---------------------------------
 # dbRemoveDeviceAlias()
 #---------------------------------
-dbRemoveDeviceAlias(){
-  echo "  - Removing device alias: $1 -> $2"
+function dbRemoveDeviceAlias(){
+  local id="$1"
+  local alias="$2"
+  echo "  - Removing device alias: $1 $2"
   sqlite3 $appDbFile<<EOT
-  delete from alias where id = '$1' and alias = '$2';
+  delete from alias where alias = '$2';
 EOT
 }
 
