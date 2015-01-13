@@ -200,7 +200,7 @@ base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1
 * Almost always, you want the same aliases in your caputre.conf file as in your aliases.conf file. You can easily do this by running:
   -> cat ~/piLogger/etc/aliases.conf | cut -d";" -f1 > ~/piLogger/etc/capture.conf
 
-* Almost always, you wamt the same aliases in yoru graph.default.conf file. You can easily do this by running:
+* Almost always, you want the same aliases in yoru graph.default.conf file. You can easily do this by running:
   -> cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
 
