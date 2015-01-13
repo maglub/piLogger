@@ -87,7 +87,7 @@ sudo chown pi:pi "$graphDir"
 sudo chown pi:pi "$cacheDir"
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
-[ ! -d $this_dir/html/graphs ] && { mkdir $dataDir/graphs ; ln -s $dataDir/graphs $this_dir/html/graphs ; }
+[ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
 [ ! -d $this_dir/html/xml ] && { mkdir $dataDir/xml ; ln -s $dataDir/xml $this_dir/html/xml ; }
 
 #================================
