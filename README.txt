@@ -94,6 +94,8 @@ cd ~/piLogger/bin
 ./dbSetup --setup
 ```
 
+Now you will have a setup that is ready to be used through the web gui. Note that you have not set up any aliases for your devices yet. See 2) below.
+
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
 
 cd ~/piLogger/bin
