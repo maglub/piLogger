@@ -22,27 +22,35 @@ Actions:
   -l --list { list options }        - List
 
 List options:
-  -a               - List aliases
-  -d               - List devices
-  -pg               - List plot groups (devices added to plot groups)
-  -pc               - List plot config (what plot groups will be visible on the web page at what priority) 
+  -a                     - List aliases
+  -d                     - List devices
+  -pg                    - List plot groups (devices added to plot groups)
+  -pc                    - List plot config (what plot groups will be visible on the web page at what priority) 
 
 Options:
 
-  --db             - List content of the database
-  -a|--aliases     - Show aliases for devices
-  -af|--aliasFile  - generate a dummy alias file output
-  --scan           - Scan for devices into etc/devices.scanned
-  -l --list        - List verbose db content
+  --db                   - List content of the database
+  -a|--aliases           - Show aliases for devices
+  -af|--aliasFile        - generate a dummy alias file output
+  --scan                 - Scan for devices into etc/devices.scanned
+  -l --list              - List verbose db content
+
+  --deviceId ID          - Device Id
+  --deviceAlias ALIAS    - Device alias
+  --devicePath PATH      - Device path
+  --deviceType NAME      - Device type, i.e --deviceType 1wire
+  --plotGroup NAME       - Plot group name
+
+  --rowId ROWID          - When using row id to remove items
 
   --setup --db     - Will check the database for needed tables, and create them if needed
 
 Examples:
 
+  ./$this_script --setup --db       ; # setup or repair the application configuration database
   ./$this_script --scan             ; # scan for new devices. new devices need to be added to the database by copy/paste
-  ./$this_script --setup --db       ; # repair the application configuration database
 
-  #--- Add new 1wire device by id and device path
+  #--- Add new 1wire device by id and device path (can be copy/pasted from --scan output)
   ./$this_script --add -d --deviceType 1wire --deviceId 28.EFBB4E050000 --devicePath /mnt/1wire/28.EFBB4E050000
 
   #--- Add alias to a device
@@ -52,7 +60,10 @@ Examples:
   ./$this_script --remove -a --deviceAlias first
 
   #--- Create a plot group "default" consisting of all devices
-  ./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
+  ./$this_script -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
+
+  #--- Create a plot config "default" consisting of all devices in plot group "default". 
+  ./$this_script -pc --add --plotConfig default --plotGroup default --timeSpan 12h --plotWidth 12 --plotPriority 1
 
 EOT
 }
@@ -194,6 +205,31 @@ do
       plotGroup="$2"
       shift ; shift
       ;;
+    --plotConfig)
+      plotConfig="$2"
+      shift ; shift
+      ;;
+    --timeSpan)
+      timeSpan="$2"
+      shift ; shift
+      ;;
+    --plotWidth)
+      plotWidth="$2"
+      shift ; shift
+      ;;
+    --plotPriority)
+      plotPriority="$2"
+      shift ; shift
+      ;;
+    --plotVisibility)
+      plotVisibility="$2"
+      shift ; shift
+      ;;
+    
+    --rowId)
+      rowId="$2"
+      shift; shift
+      ;;
 
      
     --db)
@@ -282,11 +318,13 @@ case $cmdAction in
     [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbAddDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceId" ]] && { dbAddDeviceIdToPlotGroup "$plotGroup" "$deviceId" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbAddDeviceAliasToPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotConfig" ]] && { dbAddPlotGroupToPlotConfig "$plotConfig" "$plotGroup" "$timeSpan" "$plotWidth" "$plotPriority" "$plotVisibility" ; exit 0 ; }
     ;;
   remove)
     [[ -n "$actionType" && "$actionType" = "device" ]] && { dbRemoveDevice "$deviceId" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "alias" ]] && { dbRemoveDeviceAlias "$deviceId" "$deviceAlias" ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" && -n "$deviceAlias" ]] && { dbRemoveDeviceAliasFromPlotGroup "$plotGroup" "$deviceAlias" ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotConfig" && -n "$rowId" ]] && { dbRemovePlotConfigByRowId "$rowId" ; exit 0 ; }
     ;;
   setup)
     [[ -n "$actionType" && "$actionType" = "db" ]] && { dbSetupDatabase ; exit 0 ; }
