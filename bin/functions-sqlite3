@@ -331,7 +331,7 @@ function dbCreateTableFromDDLFile(){
   local tableName="$1"
   echo "      - Creating table $tableName from ddl.sql"
   [ ! -f $baseDir/db/ddl.sql ] && { echo "Error: ddl.sql not found in $baseDir/db/ddl.sql" 1>&2 ; exit 1 ; }
-  local ddlStatement=$(grep "create table $tableName " $baseDir/db/ddl.sql)
+  local ddlStatement=$(grep -i "create table $tableName " $baseDir/db/ddl.sql)
 
   [ -z "$ddlStatement" ] && { echo "Error: table $tableName not found in $baseDir/db/ddl.sql" 1>&2 ; exit 1; }
 
