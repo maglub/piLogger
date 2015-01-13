@@ -1,6 +1,8 @@
 #!/bin/bash 
 
 this_dir=$(cd `dirname $0`; pwd)
+this_script=$(basename $0)
+
 . $this_dir/functions
 . $this_dir/functions-sqlite3
 
@@ -12,8 +14,8 @@ cat<<EOT
 
 Usage:
 
-  `basename $0` alias|/path/to/device
-  `basename $0` deviceAddress temperature
+  $this_script [ alias | /path/to/device ]
+  $this_script deviceAddress temperature
 
 EOT
 }
@@ -32,6 +34,7 @@ case $action in
   readSensor)
     #--- get the deviceId and temperature
     curDevice=$(getDeviceIdByAny "$1")
+    [ -z "$curDevice" ] && { errorExit "There is no device $1" ; }
     curTemperature=$(getTemperature "$curDevice")
     [ -z "$curTemperature" ] && errorExit "Could not read temperature from $curDevice"
     ;;

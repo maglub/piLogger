@@ -114,6 +114,10 @@ If the aliases are the same as the device id's, you can set an alias by running 
 
 ./dbTool --add -a --deviceId XXXX --deviceAlias your_alias
 
+To speed things up, you can use the following command to help you create the aliases:
+
+./dbTool -d | xargs -L1 -IX echo ./dbTool -a --add --deviceId X --deviceAlias YYY
+
 3) Set up a "default" plot group with all devices:
 
 ./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
@@ -128,7 +132,7 @@ under-table
 
 4) Test that the logging works, and that new rrd files are created.
 
-~/piLogger/bin/logAll ~/piLogger/etc/capture.conf 
+~/piLogger/bin/logAll --db
 
 Check that the RRD files are created properly, one per device connected to your 1wire interface.
 
@@ -138,10 +142,6 @@ drwxr-xr-x 2 pi pi     4096 Feb  7 14:28 .
 drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.12ED2F040000.rrd
 -rw-r--r-- 1 pi pi 10370124 Feb  7 14:28 28.90EC2F040000.rrd
-
-5) If the logAll command works, you can setup the default plot group
-
-cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
 
 6) Refresh the cache files
 
@@ -165,7 +165,7 @@ drwxr-xr-x 6 pi pi 4096 Feb  8 14:26 ..
 Your crontab should look something like this:
 
 # m h  dom mon dow   command*/1 * * * *
-base=/home/pi/piLogger ; $base/bin/logAll $base/etc/capture.conf >/dev/null 2>&1 ; $base/bin/refreshCaches 12h ; $base/bin/refreshCaches sensors
+base=/home/pi/piLogger ; $base/bin/logAll --db >/dev/null 2>&1 ; $base/bin/refreshCaches 12h ; $base/bin/refreshCaches sensors
 */10 * * * * /home/pi/piLogger/bin/refreshCaches 24h 
 4 * * * * /home/pi/piLogger/bin/refreshCaches 48h
 5 */6 * * * /home/pi/piLogger/bin/refreshCaches 168h

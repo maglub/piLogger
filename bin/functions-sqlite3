@@ -76,6 +76,15 @@ EOT
 }
 
 #---------------------------------
+# dbGetAllLocalDeviceIds()
+#---------------------------------
+dbGetAllLocalDeviceIds(){
+  sqlite3 $appDbFile<<EOT
+  select id from device where type='1wire';
+EOT
+}
+
+#---------------------------------
 # dbGetAllDeviceIds()
 #---------------------------------
 dbGetAllDeviceIds(){

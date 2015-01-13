@@ -1,7 +1,10 @@
 #!/bin/bash
 
 this_dir=$(cd `dirname $0`; pwd)
+this_script=$(basename $0)
+
 . $this_dir/functions
+. $this_dir/functions-sqlite3
 
 #--------------------------------
 # usage()
@@ -11,7 +14,8 @@ cat<<EOT
 
 Usage:
 
-  `basename $0` path/to/config/file/capture.NAME.conf
+  $this_script --db                 - Get device ID's from the database 
+  $this_script capture.NAME.conf    - Get device ID's from a config file
 
 EOT
 }
@@ -21,11 +25,17 @@ EOT
 #================================
 [ -z "$1" ] && { usage ; exit 1 ; }
 
-curConfigFile=$1
-[ ! -f $curConfigFile ] && errorExit "Could not find config file: $curConfigFile"
+  case $1 in
+    --db)
+      aliases=$(dbGetAllLocalDeviceIds)
+      ;;
+    *)
+      curConfigFile=$1
+      [ ! -f $curConfigFile ] && errorExit "Could not find config file: $curConfigFile"
 
-#--- at this point, there HAS to be a device, and ther has to be a temperature
-aliases="$(cat $curConfigFile | grep -v "^#")"
+      aliases="$(cat $curConfigFile | grep -v "^#")"
+      ;;
+  esac
 
 for curAlias in $aliases
 do

@@ -112,7 +112,8 @@ function getDeviceIdByAny(){
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
 
   #--- lastly check the alias file
-  basename $(getDeviceByAlias "$curDevice") ; return 0
+  res=$(getDeviceByAlias "$curDevice") 
+  [ -n "$res" ] && { basename $(getDeviceByAlias "$curDevice") ; return 0 ; }
 
 }
 
