@@ -349,8 +349,8 @@ function dbAddPlotGroupToPlotConfig(){
   [ -z "$timeSpan" ]       && { errorExit "timeSpan not set"  ;      }
   [ -z "$plotWidth" ]      && { errorExit "plotWidth not set" ;      }
   [ -z "$plotPriority" ]   && { errorExit "plotPriority not set" ;   }
-  [ -z "$plotVisibility" ] && { plotVisibility=true ;                }
   [ -n "$plotVisibility" ] && { plotVisibility=false ;               }
+  [ -z "$plotVisibility" ] && { plotVisibility=true ;                }
 
   logIt "Adding plot config using the following values:"
   logIt "plotConfig=$plotConfig"
