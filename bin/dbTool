@@ -24,7 +24,8 @@ Actions:
 List options:
   -a               - List aliases
   -d               - List devices
-  -p               - List print groups
+  -pg               - List plot groups (devices added to plot groups)
+  -pc               - List plot config (what plot groups will be visible on the web page at what priority) 
 
 Options:
 
@@ -51,7 +52,7 @@ Examples:
   ./$this_script --remove -a --deviceAlias first
 
   #--- Create a plot group "default" consisting of all devices
-  ./dbTool -d | xargs -L1 -I X ./dbTool --add -p --plotGroup default --deviceId X
+  ./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
 
 EOT
 }
@@ -213,9 +214,14 @@ do
       actionType=device
       shift
       ;;
-    -p)
+    -pg)
       #--- for print plot group
       actionType=plotGroup
+      shift
+      ;;
+    -pc)
+      #--- for print plot group
+      actionType=plotConfig
       shift
       ;;
     --info)
@@ -268,6 +274,7 @@ case $cmdAction in
     [[ -n "$actionType" && "$actionType" = "alias" ]] &&   { printDbDeviceAliases ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "device" ]] && { dbGetAllDeviceIds ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" ]] && { dbPrintPlotGroups ; exit 0 ; }
+    [[ -n "$actionType" && "$actionType" = "plotConfig" ]] && { dbPrintPlotConfig ; exit 0 ; }
     [[ -n "$actionList" ]]   && { printDbVerbose ; exit 0 ; } 
     ;;
   add)

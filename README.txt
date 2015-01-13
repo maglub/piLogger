@@ -116,7 +116,7 @@ If the aliases are the same as the device id's, you can set an alias by running 
 
 3) Set up a "default" plot group with all devices:
 
-./dbTool -d | xargs -L1 -I X ./dbTool --add -p --plotGroup default --deviceId X
+./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
 
 3) Set up the capture file by adding the aliases you want to log. The easiest way is to take all aliases in aliases.conf
 

@@ -191,11 +191,11 @@ EOT
 
 
 #---------------------------------
-# dbGetPlotGroups()
+# dbGetAllPlotConfigs()
 #---------------------------------
-dbGetPlotGroups(){
+dbGetAllPlotConfigs(){
   sqlite3 $appDbFile<<EOT
-  select distinct groupname from plotgroup;
+  select distinct name from plotconfig;
 EOT
 }
 
@@ -209,20 +209,73 @@ EOT
 }
 
 #---------------------------------
-# dbPrintPrintGroups()
+# dbPrintPlotGroups()
 #---------------------------------
-dbPrintPlotGroups(){
-  for dpapg_plotgroup in $(dbGetAllPlotGroups)
+function dbPrintPlotGroups(){
+  local plotgroup=""
+  local curDeviceId=""
+
+  for plotgroup in $(dbGetAllPlotGroups)
   do
-    printf "%-20s :" $dpapg_plotgroup 
-    for dpapg_curDeviceId in $(dbGetPlotGroupMemberIdsByPlotGroupId $dpapg_plotgroup)
+    printf "%-20s :" $plotgroup 
+    for curDeviceId in $(dbGetPlotGroupMemberIdsByPlotGroupId $plotgroup)
     do
-      dpapg_curDeviceAlias=$(dbGetDeviceAliasById $dpapg_curDeviceId)
-      #echo -n " $dpapg_curDeviceId($dpapg_curDeviceAlias)"
-      echo -n " $dpapg_curDeviceAlias"
+      local curDeviceAlias=$(dbGetDeviceAliasById $curDeviceId)
+      #echo -n " $dpapg_curDeviceId($curDeviceAlias)"
+      echo -n " $curDeviceAlias"
     done
     echo
   done
+}
+
+
+#---------------------------------
+# dbPrintPlotConfig_outputFormat()
+#---------------------------------
+function dbPrintPlotConfig_outputFormat(){
+  cat | awk -F"|" '
+       BEGIN {
+         printFormat="%-20s %-20s %-20s %-20s %-20s %-20s\n";
+         printf printFormat, "Name", "| Display name", "| Time span", "| Width on screen", "| Priority/Order", "| Visible";
+         printf "--------------------------------------------------------------------------------------------------------------------\n";
+       }
+       { 
+         printf printFormat, $1, "  "$2, "  "$3, "  "$4, "  "$5, "  "$6;
+       }'
+
+}
+#---------------------------------
+# dbPrintPlotConfig()
+#---------------------------------
+function dbPrintPlotConfig(){
+  local plotgconfig=""
+
+  echo "Visible"
+  echo "========"
+  echo
+
+  (
+  sqlite3 $appDbFile <<EOT
+    select * from plotconfig where visible='true' order by prio;
+EOT
+) | dbPrintPlotConfig_outputFormat
+
+  echo
+  echo "Invisible"
+  echo "========="
+  echo
+
+(
+  sqlite3 $appDbFile <<EOT
+    select * from plotconfig where visible='false' order by prio;
+EOT
+) | dbPrintPlotConfig_outputFormat
+
+#  for plotconfig in $(dbGetAllPlotConfigs)
+#  do
+#    printf "%-20s :" $plotconfig 
+#    echo
+#  done
 }
 
 #---------------------------------
