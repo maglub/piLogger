@@ -5,7 +5,7 @@ this_script=$(basename $0)
 . $this_dir/functions
 . $this_dir/functions-sqlite3
 
-logIt "  - Refreshing caches"
+logIt "  - Refreshing caches $1"
 
 tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
@@ -18,19 +18,15 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
   mv $tmpFile $cacheDir/sensorData.json
   chmod 666 $cacheDir/sensorData.json 
 
+  #--- recursively call this script again
   for time in 12h 24h 168h
   do
-    logIt "  - Refreshing sensorData.${time}.json"
-    $htmlDir/api/sensorData --genCache ${time} > $tmpFile
-    mv $tmpFile $cacheDir/sensorData.${time}.json
-    chmod 666 $cacheDir/sensorData.${time}.json 
+     $this_dir/$this_script $time
   done
 
   #--- sensors
-    logIt "  - Refreshing sensorAllInfo.json"
-  $htmlDir/api/sensor all info > $tmpFile
-  mv $tmpFile $cacheDir/sensorAllInfo.json
-  chmod 666 $cacheDir/sensorAllInfo.json 
+  #--- recursively call this script again
+    $this_dir/$this_script sensors
 
   exit
 }
