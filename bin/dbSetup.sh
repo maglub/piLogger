@@ -23,7 +23,7 @@ This script will perform an initial setup of the database, doing the following:
 
 Uage:
 
-  $this_script { --db } [options]
+  $this_script --setup 
 
 Actions:
   --setup   - Setup the application database the first time
