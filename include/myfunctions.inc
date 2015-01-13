@@ -11,6 +11,7 @@
 function getDeviceGroups(){
 
   global $db;
+  $retArray = array();
   $sql = "select distinct groupname from devicegroup;";
 
   $n = 0;
