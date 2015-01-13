@@ -78,20 +78,20 @@ sudo reboot
 
 0) Quick setup (skip this step if you really want to understand what is happening):
 
+This will: 
+
+* Create any missing tables in the database
+* Scan the 1wire filesystem for sensor devices
+* Setup the "default" plot group with all found devices
+* Setup three plot configurations for the web gui
+  - 12h
+  - 24h
+  - 168h
+
+
 ```
 cd ~/piLogger/bin
-./dbTool --setup --db
-./dbTool --scan
-./dbTool --scan | grep "^./dbTool" | xargs -L1 -IX sh -c "X"
-./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
-./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 12h --plotWidth 6 --plotPriority 1
-./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 24h --plotWidth 6 --plotPriority 2
-./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 168h --plotWidth 12 --plotPriority 3
-
-./logAll --db
-./refreshCaches 12h
-./refreshCaches 24h
-./refreshCaches 168h
+./dbSetup --setup
 ```
 
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
