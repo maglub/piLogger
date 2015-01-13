@@ -28,8 +28,10 @@ EOT
 # dbGetAliasesFromPlotGroup()
 #---------------------------------
 dbGetAliasesFromPlotGroup(){
+  #--- Make sure to return deviceId if there is no alias for the device
   sqlite3 $appDbFile<<EOT
-  select a.alias from alias a, plotgroup b where a.id = b.device_id and b.groupname = '$1';
+  select ifnull(al.alias,pg.device_id) from plotgroup pg left outer join alias al on pg.device_id = al.id where pg.groupname = '$1';
+  -- select a.alias from alias a, plotgroup b where a.id = b.device_id and b.groupname = '$1';
 EOT
 }
 

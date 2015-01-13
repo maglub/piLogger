@@ -29,16 +29,14 @@ EOT
 graphName=$1
 [ -z "$graphName" ] && graphName=default
 
-#logIt "* Generating graph $graphName from: $fromDate to: $toDate"
-
-#[ ! -d "$oneWireDataDir/xml" ] && { errorExit "Could not find $oneWireDataDir/xml" ; }
 TS=$(date "$dateFormat")
 
 fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
 curAliases=$(dbGetAliasesFromPlotGroup $graphName)
-#curDeviceIds=$(dbGetDeviceIdsFromPlotGroup $graphName)
+#--- XXX 2015-01-13 very bad construct
+#--- XXX we really don't want to get all devices in the filesystem if there is no aliases
 [ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
 
 printf "["

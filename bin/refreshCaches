@@ -33,13 +33,13 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
 case $1 in
   *h)
-    deviceGroups=$(dbGetAllPlotGroups)
-    for deviceGroup in $deviceGroups
+    plotGroups=$(dbGetAllPlotGroups)
+    for plotGroup in $plotGroups
     do
-      logIt "  - Refreshing sensorData.$deviceGroup.${1}.cache"
-      $htmlDir/api/sensorData --genCache ${1} $deviceGroup > $tmpFile
-      mv $tmpFile $cacheDir/sensorData.$deviceGroup.${1}.json
-      chmod 666 $cacheDir/sensorData.$deviceGroup.${1}.json 
+      logIt "  - Refreshing sensorData.$plotGroup.${1}.cache"
+      $htmlDir/api/sensorData --genCache ${1} $plotGroup > $tmpFile
+      mv $tmpFile $cacheDir/sensorData.$plotGroup.${1}.json
+      chmod 666 $cacheDir/sensorData.$plotGroup.${1}.json 
     done
     ;;
   sensors)
