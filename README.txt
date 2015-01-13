@@ -76,9 +76,28 @@ sudo reboot
 = Configuration of your setup
 ====================================================
 
+0) Quick setup (skip this step if you really want to understand what is happening):
+
+```
+cd ~/piLogger/bin
+./dbTool --setup --db
+./dbTool --scan
+./dbTool --scan | grep "^./dbTool" | xargs -L1 -IX sh -c "X"
+./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 12h --plotWidth 6 --plotPriority 1
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 24h --plotWidth 6 --plotPriority 2
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 168h --plotWidth 12 --plotPriority 3
+
+./logAll --db
+./refreshCaches 12h
+./refreshCaches 24h
+./refreshCaches 168h
+```
+
 1) Scan for devices (into ~/piLogger/etc/devices.scanned)
 
 cd ~/piLogger/bin
+./dbTool --setup --db
 ./dbTool --scan
 
 This should show your connected devices and add them to ~/piLogger/etc/devices.scanned, and show you what ./dbTool commands to run to add the devices to the configuration database.
@@ -122,13 +141,12 @@ To speed things up, you can use the following command to help you create the ali
 
 ./dbTool -d | xargs -L1 -I X ./dbTool --add -pg --plotGroup default --deviceId X
 
-3) Set up the capture file by adding the aliases you want to log. The easiest way is to take all aliases in aliases.conf
+4) Set up a default web gui layout/plot config
 
-pi@raspberrypi ~/piLogger/bin $ cat ~/piLogger/etc/aliases.conf | cut -d";" -f1 > ~/piLogger/etc/capture.conf
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 12h --plotWidth 6 --plotPriority 1
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 24h --plotWidth 6 --plotPriority 2
+./dbTool -pc --add --plotConfig default --plotGroup default --timeSpan 168h --plotWidth 12 --plotPriority 3
 
-pi@raspberrypi ~/piLogger/bin $ cat ~/piLogger/etc/capture.conf 
-tabletop
-under-table
 
 4) Test that the logging works, and that new rrd files are created.
 
