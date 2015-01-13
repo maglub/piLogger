@@ -35,7 +35,6 @@ fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
 curAliases=$(dbGetAliasesFromPlotGroup $graphName)
-logIt "$curAliases"
 #--- XXX 2015-01-13 very bad construct
 #--- XXX we really don't want to get all devices in the filesystem if there is no aliases
 [ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
