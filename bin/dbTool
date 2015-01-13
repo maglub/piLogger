@@ -65,6 +65,9 @@ Examples:
   #--- Create a plot config "default" consisting of all devices in plot group "default". 
   ./$this_script -pc --add --plotConfig default --plotGroup default --timeSpan 12h --plotWidth 12 --plotPriority 1
 
+  #-- Remove a plot config (get rowId from ./$this_script -pc)
+  ./$this_script -pc --remove --rowId 5
+
 EOT
 }
 #--------------------------------
