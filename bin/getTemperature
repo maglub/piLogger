@@ -29,14 +29,11 @@ case $1 in
     ;;
   -rrd)
     [ -n "$debug" ] && logIt "device: $2"
-    time getLastRRDUpdate $2
+    getLastRRDUpdate $2
     exit 0
     ;;
    *)
     curDevice=$1
-    [ -n "$debug" ] && logIt "device: $1"
-    [ -d $curDevice ] && { getTemperatureByDevicePath $curDevice ; exit 0 ; }
-    [ -d /mnt/1wire/$curDevice ] && { getTemperatureByDevicePath /mnt/1wire/$curDevice ; exit 0 ; }
-    [ ! -d $curDevice ] && getTemperatureByDeviceAlias $curDevice
+    getTemperature $curDevice
     ;;
 esac

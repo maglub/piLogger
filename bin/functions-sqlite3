@@ -118,7 +118,7 @@ function dbGetDevicePathByDeviceAlias(){
   local alias="$1"
   local res=$(
     sqlite3 $appDbFile<<EOT
-    select a.path from device a, alias b where a.id = b.id and b.alias = '$alias';
+    select a.path from device a, alias b where a.id = b.id and b.alias = '$alias' limit 1;
 EOT
 )
 
