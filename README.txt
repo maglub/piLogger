@@ -184,8 +184,8 @@ drwxr-xr-x 6 pi pi 4096 Feb  8 14:26 ..
 
 Your crontab should look something like this:
 
-# m h  dom mon dow   command*/1 * * * *
-base=/home/pi/piLogger ; $base/bin/logAll --db >/dev/null 2>&1 ; $base/bin/refreshCaches 12h ; $base/bin/refreshCaches sensors
+# m h  dom mon dow   command
+*/1 * * * * base=/home/pi/piLogger ; $base/bin/logAll --db >/dev/null 2>&1 ; $base/bin/refreshCaches 12h ; $base/bin/refreshCaches sensors
 */10 * * * * /home/pi/piLogger/bin/refreshCaches 24h 
 4 * * * * /home/pi/piLogger/bin/refreshCaches 48h
 5 */6 * * * /home/pi/piLogger/bin/refreshCaches 168h
