@@ -35,6 +35,7 @@ fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
 curAliases=$(dbGetAliasesFromPlotGroup $graphName)
+logIt "$curAliases"
 #--- XXX 2015-01-13 very bad construct
 #--- XXX we really don't want to get all devices in the filesystem if there is no aliases
 [ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
@@ -46,12 +47,16 @@ do
 #  echo $curAlias 1>&2
   curVName=$(echo $curAlias | sed -e 's/\.//g')
   curAggregateType=$(dbGetAggregateTypeByPlotDeviceAlias $graphName $curAlias)
+
   #--- xxx add alias check
 #  echo "curAggregateType ($graphName $curAlias) = $curAggregateType" 1>&2
+
   printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
 
+  curDbFile=$(dbGetDBFileByAlias $curAlias)
+
   rrdtool xport -s now-${exportTime} -e now --step 300  \
-      DEF:${curVName}=$(dbGetDBFileByAlias $curAlias):temperature:${curAggregateType} \
+      DEF:${curVName}=${curDbFile}:temperature:${curAggregateType} \
       XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000+3600000, $2*1; }'
   curComma=","
   printf "]}"
