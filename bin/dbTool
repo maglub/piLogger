@@ -308,10 +308,10 @@ done
   exit 0 
 }
 
-[[ -n "$cmdAction" && "$actionType" != "setup" ]] &&  all_devices=$(getAllDevices $oneWireDir)
 
 case $cmdAction in
   list)
+    all_devices=$(getAllDevices $oneWireDir)
     [[ -n "$actionType" && "$actionType" = "alias" ]] &&   { printDbDeviceAliases ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "device" ]] && { dbGetAllDeviceIds ; exit 0 ; }
     [[ -n "$actionType" && "$actionType" = "plotGroup" ]] && { dbPrintPlotGroups ; exit 0 ; }
