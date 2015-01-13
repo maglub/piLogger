@@ -169,7 +169,6 @@ listDB=true
 actionList=true
 cmdAction=list
 
-all_devices=$(getAllDevices $oneWireDir)
 while [ -n "$1" ]
 do
   case $1 in
@@ -286,6 +285,7 @@ do
   esac 
 done
 
+
 [[ -n "$scanDevices" ]] && { 
   all_devices=$(getAllDevices $oneWireDir -f)
   logIt "  - Scanning for devices into $configDir/devices.scanned" 
@@ -307,6 +307,8 @@ done
 
   exit 0 
 }
+
+[[ -n "$cmdAction" && "$actionType" != "setup" ]] &&  all_devices=$(getAllDevices $oneWireDir)
 
 case $cmdAction in
   list)
