@@ -81,13 +81,14 @@ EOT
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 
 # first get our username - just in case we dont use the default pi user
-myownuser=$(who am i | awk '{print $1}')
+myUser=$(id -u)
+myGroup=$(id -g)
 
-sudo chown $myownuser:$myownuser "$dataDir"
-sudo chown $myownuser:$myownuser "$logDir"
-sudo chown $myownuser:$myownuser "$dbDir"
-sudo chown $myownuser:$myownuser "$graphDir"
-sudo chown $myownuser:$myownuser "$cacheDir"
+sudo chown $myUser:$myGroup "$dataDir"
+sudo chown $myUser:$myGroup "$logDir"
+sudo chown $myUser:$myGroup "$dbDir"
+sudo chown $myUser:$myGroup "$graphDir"
+sudo chown $myUser:$myGroup "$cacheDir"
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
