@@ -60,7 +60,7 @@ echo "  - adding i2c-dev to /etc/modules"
     sudo locale-gen
   }
 
-  [[ -z "$(grep 'LANGUAGE=' ~/.bash_profile)" ]] && {
+  [[ ! -f .bash_profile || -z "$(grep 'LANGUAGE=' ~/.bash_profile)" ]] && {
     cat>>~/.bash_profile<<EOT
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
