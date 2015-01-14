@@ -80,11 +80,14 @@ EOT
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
 
-sudo chown pi:pi "$dataDir"
-sudo chown pi:pi "$logDir"
-sudo chown pi:pi "$dbDir"
-sudo chown pi:pi "$graphDir"
-sudo chown pi:pi "$cacheDir"
+myUser=$(id -u)
+myGroup=$(id -g)
+
+sudo chown ${myUser}:${myGroup} "$dataDir"
+sudo chown ${myUser}:${myGroup} "$logDir"
+sudo chown ${myUser}:${myGroup} "$dbDir"
+sudo chown ${myUser}:${myGroup} "$graphDir"
+sudo chown ${myUser}:${myGroup} "$cacheDir"
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
