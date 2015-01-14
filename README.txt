@@ -20,7 +20,7 @@ Features:
 Installation
 ============
 
-The installation is easy. Just clone this repository, run ./configure then ./setup.sh. The result is an etc/piLogger.conf file, which is ready to go for most configurations. After the initial installation, set up eventual aliases in the etc/aliases.conf file.
+The installation is easy. Just clone this repository, run `./configure` then `./setup.sh`. The result is an `etc/piLogger.conf` file, which is ready to go for most configurations. After the initial installation, set up eventual aliases in the `etc/aliases.conf` file.
 
 ====================================================
 = Installation of the software
@@ -28,49 +28,33 @@ The installation is easy. Just clone this repository, run ./configure then ./set
 
 1) Get yourself a Raspberry Pi
 2) Install an SD card with the latest version of Raspbian
-     - Set an IP address
-     - Expand the filesystem
-     - Set the correct time zone
-     - Update the system
-     - Reboot
-     
-#-- ip address in /etc/network/interfaces
-#-- fs expand
-sudo raspi-config
+     - Set an IP address in `/etc/network/interfaces`
+     - Expand the filesystem with the `sudo raspi-config` utility
+     - Set the correct time zone with the `sudo raspi-config` utility
+     - Update sources `sudo apt-get update`
+     - Upgrade the system `sudo apt-get -y dist-upgrade`
+     - Reboot `sudo reboot`
 
-#-- update system
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo reboot
-     
+3) Fetch the piLogger software from GitHub
 
-3) Create your .ssh directory and ssh-keys
-
-mkdir ~/.ssh
-cd ~/.ssh
-ssh-keygen -t dsa
-
-4) Fetch the piLogger software from GitHub
-
-ssh git@github.com
 git clone https://github.com/maglub/piLogger
 cd piLogger
 
-5) Configure the installation
+4) Configure the installation
 
-./configure
+`./configure`
 
 or, if you have the AbioWire interface (http://www.axiris.eu/en/index.php/one-wire/abiowire)
 
-./configure --withAbioWire --withLocale
+`./configure --withAbioWire --withLocale`
 
-6) Run setup, which will install necessary packages (this will take ca 5 - 10 minutes)
+5) Run setup, which will install necessary packages (this will take ca 5 - 10 minutes)
 
-./setup.sh
+`./setup.sh`
 
-7) Reboot - since the install of owfs will not work before
+6) Reboot - since the install of owfs will not work before
 
-sudo reboot
+`sudo reboot`
 
 ====================================================
 = Configuration of your setup
