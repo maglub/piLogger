@@ -1,4 +1,50 @@
 //----------------------------------------------------------
+// Autostart the data gathering
+//----------------------------------------------------------
+
+console.log("XXX Here it starts");
+
+$(function(){
+	
+   //========================================
+   // Devices
+   //========================================
+   console.log("XXX Start of device listing");
+
+   var target = document.getElementById('deviceContainer');
+   var dp = document.getElementById('device-pane');
+   var spinner2 = new Spinner(getSpinnerOptsSmall()).spin(target);
+
+   // print the devices into the devicesContainer
+   var url="api/sensor/all/info";
+   console.log("XXX url: " + url);
+
+   $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: function(data) {
+        updateDevicesPane(data);
+        var nothing = printGauge('deviceGauges1', data[0] ); 
+        var nothing = printGauge('deviceGauges2', data[1] ); 
+        var nothing = printGauge('deviceGauges3', data[2] ); 
+        var nothing = printGauge('deviceGauges4', data[3] ); 
+        spinner2.stop();
+      },
+      error: function(data) {
+        spinner2.stop();
+        var target2 = document.getElementById('deviceContainer');
+        target2.innerHTML = 'Error: could not load data for devices';
+      }
+    //end of ajax
+   });
+
+  console.log("XXX End of jquery block");
+});
+
+console.log("XXX Here it ends");
+
+//----------------------------------------------------------
 // spinnerOpts()
 //----------------------------------------------------------
 function getSpinnerOpts(){
