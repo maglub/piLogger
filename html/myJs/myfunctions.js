@@ -26,11 +26,11 @@ $(function(){
       success: function(data) {
         updateDevicesPane(data);
         
-        for (i = 0; i < data.length; i++) { 
-	        var renderToInt = i + 1;
-			var nothing = printGauge('deviceGauges' + renderToInt, data[i] );
-		}
-        
+        for (i = 1; i <= 4 ; i++) { 
+	        if(data[i - 1]){
+		    	printGauge('deviceGauges' + i, data[i - 1] );
+	        }
+        }
         spinner2.stop();
       },
       error: function(data) {
