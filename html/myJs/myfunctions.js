@@ -25,10 +25,12 @@ $(function(){
       dataType: "json",
       success: function(data) {
         updateDevicesPane(data);
-        var nothing = printGauge('deviceGauges1', data[0] ); 
-        var nothing = printGauge('deviceGauges2', data[1] ); 
-        var nothing = printGauge('deviceGauges3', data[2] ); 
-        var nothing = printGauge('deviceGauges4', data[3] ); 
+        
+        for (i = 0; i < data.length; i++) { 
+	        var renderToInt = i + 1;
+			var nothing = printGauge('deviceGauges' + renderToInt, data[i] );
+		}
+        
         spinner2.stop();
       },
       error: function(data) {
