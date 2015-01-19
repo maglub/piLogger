@@ -2,14 +2,14 @@
 // Autostart the data gathering
 //----------------------------------------------------------
 
-console.log("XXX Here it starts");
+log.log("XXX Here it starts");
 
 $(function(){
 	
    //========================================
    // Devices
    //========================================
-   console.log("XXX Start of device listing");
+   log.log("XXX Start of device listing");
 
    var target = document.getElementById('deviceContainer');
    var dp = document.getElementById('device-pane');
@@ -17,7 +17,7 @@ $(function(){
 
    // print the devices into the devicesContainer
    var url="api/sensor/all/info";
-   console.log("XXX url: " + url);
+   log.log("XXX url: " + url);
 
    $.ajax({
       url: url,
@@ -41,10 +41,10 @@ $(function(){
     //end of ajax
    });
 
-  console.log("XXX End of jquery block");
+  log.log("XXX End of jquery block");
 });
 
-console.log("XXX Here it ends");
+log.log("XXX Here it ends");
 
 //----------------------------------------------------------
 // spinnerOpts()
@@ -148,7 +148,7 @@ function getSpinnerOptsSmall(){
 }
 
 function printGauge(myPane, myData){
-  console.log("XXX printing gauge");
+  log.log("XXX printing gauge");
 
     var chart = new Highcharts.Chart({
     
@@ -270,7 +270,7 @@ function updateDevicesPane(deviceData){
 
     var target2 = document.getElementById('deviceContainer');
     target2.innerHTML = outputString;
-    console.log("XXX device listing - after updating content");
+    log.log("XXX device listing - after updating content");
 }
 
   function show(id) {
@@ -292,14 +292,14 @@ function printGraph(curPane, curHours){
     //var url="api/sensorData";
     var url="cache/sensorData." + curHours.toString() + ".json";
 
-   console.log("XXX graph data url: " + url);
+   log.log("XXX graph data url: " + url);
     $.ajax({
       url: url,
       type: 'GET',
       dataType: "json",
       success: function(data) {
         draw_chart(curPane, data);
-          console.log("XXX Stopping spinner");
+          log.log("XXX Stopping spinner");
           spinner.stop();
       },
       error: function(data) {
@@ -326,14 +326,14 @@ function printGroupGraph(curPane, groupName, curHours){
     //var url="api/sensorData";
     var url="cache/sensorData." + groupName + "."  + curHours.toString() + ".json";
 
-   console.log("XXX graph data url: " + url);
+   log.log("XXX graph data url: " + url);
     $.ajax({
       url: url,
       type: 'GET',
       dataType: "json",
       success: function(data) {
         draw_chart(curPane, data);
-          console.log("XXX Stopping spinner");
+          log.log("XXX Stopping spinner");
           spinner.stop();
       },
       error: function(data) {

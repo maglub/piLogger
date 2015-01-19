@@ -23,10 +23,10 @@
     <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts-more.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script>
-
-    <script type="text/javascript" src="myJs/myfunctions.js"></script>
-    <script type="text/javascript" src="js/foundation/foundation.js"></script>
-    <script type="text/javascript" src="js/foundation/foundation.dropdown.js"></script>
+	<script type="text/javascript" src="js/log.js"></script>
+    <script type="text/javascript" src="js/myfunctions.js"></script>
+    <script type="text/javascript" src="js/foundation.js"></script>
+    <script type="text/javascript" src="js/foundation.dropdown.js"></script>
     
   </head>
   <body>
