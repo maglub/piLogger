@@ -123,6 +123,17 @@ EOT
   fi
 }
 
+dbDeviceHasDeviceAlias(){
+  local device="$1"
+
+  local res=$(
+    sqlite3 $appDbFile<<EOT
+   select count(*) from alias where id = '$device'; 
+EOT
+)
+  [ $res -gt 0 ] && return 0
+  return 1
+}
 
 #---------------------------------
 # dbGetDevicePathByDeviceAlias()
@@ -184,6 +195,11 @@ EOT
 # dbAddDeviceAlias()
 #---------------------------------
 dbAddDeviceAlias(){
+  if dbDeviceHasDeviceAlias "$1"
+  then
+    dbRemoveDeviceAliasByDeviceId "$1"
+  fi
+
   echo "  - Adding device alias: $1 -> $2"
   sqlite3 $appDbFile<<EOT
   insert into alias (id, alias) values ('$1', '$2');
@@ -196,11 +212,24 @@ EOT
 function dbRemoveDeviceAlias(){
   local id="$1"
   local alias="$2"
-  echo "  - Removing device alias: $1 $2"
+  echo "  - Removing device alias: $id $alias"
   sqlite3 $appDbFile<<EOT
-  delete from alias where alias = '$2';
+  delete from alias where alias = '$alias';
 EOT
 }
+
+#---------------------------------
+# dbRemoveDeviceAliasByDeviceId()
+#---------------------------------
+function dbRemoveDeviceAliasByDeviceId(){
+  local id="$1"
+  echo "  - Removing device alias for device: $1"
+  sqlite3 $appDbFile<<EOT
+  delete from alias where id = '$id';
+EOT
+}
+
+
 
 
 #===================================================================================================
