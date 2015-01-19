@@ -127,6 +127,13 @@ done
 # MAIN
 #=============================
 
+#--- have SUDO ask for password if necessary
+
+sudo -v
+sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the following/ {printit="true"}' | grep "ALL$" | wc -l)
+[ $sudoCount -eq 0 ] && { echo "WARNING: you will need sudo rights for the installation. Check with sudo -l" ; }
+
+
 [ ! -d "$configDir" ] && mkdir -p $configDir
 
 #--- prepare the config file
