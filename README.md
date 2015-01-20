@@ -188,6 +188,8 @@ Notes and references
 
 * By setting the variable `debug=true` in `~/piLogger/etc/piLogger.conf` file, you will get more output on the screen and in the logfiles in `/var/log/piLogger`
 
+* The debug=true can also be set in the URL for more information (i.e device info in the footer), http://your.server.name/?debug=true
+
 * You can list your devices at any time by running the following commands, which will NOT alter any config files:
   ```
   ~/piLogger/bin/listDevices

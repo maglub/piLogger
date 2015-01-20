@@ -1,5 +1,8 @@
 <?php
   global $root;
+
+  $vars = $_REQUEST;
+
   require_once($root . "dbconfig.inc");
   require_once($root . "sqlite3.inc");
 
