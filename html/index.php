@@ -9,111 +9,25 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>piLogger</title>
 
-    <!--
-    <link rel="shortcut icon" href="http://pilogger.smalometern.com/favicon.ico" type="image/vnd.microsoft.icon"/>
-    <link rel="icon" href="http://pilogger.smalometern.com/favicon.ico" type="image/x-ico"/>
-    -->
-
     <link rel="shortcut icon" href="/favicon.ico" >
     <link rel="icon" href="/favicon.ico" >
 
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/foundation.css">
-    <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/foundation.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Corben:bold">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Nobile" >
+	<link rel="stylesheet" type="text/css" href="css/main.css">
 
     <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts-more.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script>
-
-    <link rel="stylesheet" href="css/main.css">
-  
-    <script type="text/javascript" src="myJs/myfunctions.js"></script>
-    <script type="text/javascript" src="js/foundation/foundation.js"></script>
-    <script type="text/javascript" src="js/foundation/foundation.dropdown.js"></script>
-
-  <!-- http://www.highcharts.com/docs/getting-started/your-first-chart -->
-<script type="text/javascript">
-   console.log("XXX Here it starts");
-
-  $(function(){
-/*
-    var target = document.getElementById('highcharts');
-    var spinner = new Spinner(getSpinnerOpts()).spin(target);
-
-    // print the graph
-
-    var url="api/sensorData";
-    //var url="cache/sensorData.json";
-    console.log("XXX graph data url: " + url);
-
-    $.ajax({
-      url: url,
-      type: 'GET',
-      dataType: "json",
-      success: function(data) {
-        draw_chart(data);
-          console.log("XXX Stopping spinner");
-          spinner.stop();
-      },
-      error: function(data) {
-          spinner.stop();
-          var target2 = document.getElementById('highcharts');
-          target2.innerHTML = 'Error: could not load data for graph';
-      }
-    //end of ajax
-    });
-
-*/
-
-   console.log("XXX End of graph");
-
-  //========================================
-  // Devices
-  //========================================
-    console.log("XXX Start of device listing");
-
-    var target = document.getElementById('deviceContainer');
-    var dp = document.getElementById('device-pane');
-    var spinner2 = new Spinner(getSpinnerOptsSmall()).spin(target);
-
-    // print the devices into the devicesContainer
-   var url="api/sensor/all/info";
-   //var url="cache/sensorAllInfo.json";
-   console.log("XXX url: " + url);
-
-    $.ajax({
-      url: url,
-      type: 'GET',
-      dataType: "json",
-      success: function(data) {
-        updateDevicesPane(data);
-        var nothing = printGauge('deviceGauges1', data[0] ); 
-        var nothing = printGauge('deviceGauges2', data[1] ); 
-        var nothing = printGauge('deviceGauges3', data[2] ); 
-        var nothing = printGauge('deviceGauges4', data[3] ); 
-//        dp.innerHTML = 'Device: ' + data[0].sensorName;
-        spinner2.stop();
-      },
-      error: function(data) {
-        spinner2.stop();
-        var target2 = document.getElementById('deviceContainer');
-        target2.innerHTML = 'Error: could not load data for devices';
-      }
-    //end of ajax
-    });
-
-
-//  var curData = { "sensorName" : "device1" , "temperature" : 80 };
-//  var nothing = printGauge('deviceGauges', curData ); 
-
-  console.log("XXX End of jquery block");
-});
-
-   console.log("XXX Here it ends");
-</script>
+	<script type="text/javascript" src="js/log.js"></script>
+    <script type="text/javascript" src="js/myfunctions.js"></script>
+    <script type="text/javascript" src="js/foundation.js"></script>
+    <script type="text/javascript" src="js/foundation.dropdown.js"></script>
+    
   </head>
   <body>
 
@@ -125,7 +39,7 @@
     <!-- ============================================================ -->
     <!-- Main row (contains center/graphs, and side navigation        -->
     <!-- ============================================================ -->
-  <div class="row">
+    <div class="row">
     <!-- ============================================================ -->
     <!-- Center / Graphs                                              -->
     <!-- ============================================================ -->
@@ -137,7 +51,7 @@
     <!-- This is source ordered to be pulled to the left on larger screens -->
     <?php  require('sidenav-pane.php'); ?>
 
-  </div>
+    </div>
   <!-- end of main row -->
 
     <!-- ============================================================ -->
@@ -145,8 +59,6 @@
     <!-- ============================================================ -->
     <?php require('footer-pane.php') ?>
 
-<script>
-  $(document).foundation();
-</script>
+  <script>$(document).foundation();</script>
   </body>
 </html>
