@@ -3,7 +3,7 @@ thisScript=$(basename $0)
 logFile=$logDir/$thisScript.log
 configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
-
+dataDir=/var/piLogger
 . $configDir/piLogger.conf
 [ -z "$dbDir" ] && dbDir=$dataDir/db
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
