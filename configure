@@ -25,8 +25,9 @@ Usage:
 
 Options:
 
-  --withAbioWire  -> Using abio wire interface (will use Axiris port of owfs)
-  --withLocale    -> Setting up en_US.UTF-8 locale
+  --withAbioWire    -> Using abio wire interface (will use Axiris port of owfs)
+  --withLocale      -> Setting up en_US.UTF-8 locale
+  --minimizeInstall -> Remove any unnecessary package/files from the Raspbian installation (Caution, will remove a lot!)
 
 Default:
 
@@ -85,7 +86,7 @@ check(){
   echo ""
 
   [ -f $configDir/piLogger.conf ] && {
-    for parameter in interface piLoggerLocale baseDir htmlDir oneWireDir oneWireDataDir cacheDir temperatureFile
+    for parameter in interface piLoggerLocale baseDir htmlDir oneWireDir cacheDir temperatureFile
     do
       echo "  - $parameter="$(grep "^${parameter}=" $configDir/piLogger.conf | cut -d"=" -f2 )
     done
@@ -113,6 +114,10 @@ do
     --withLocale)
       withLocale=true
       piLoggerLocale=true
+      shift
+      ;;
+    --minimizeInstall)
+      minimizeInstall=true
       shift
       ;;
     *)
@@ -152,14 +157,17 @@ interface=$interface
 piLoggerLocale=$piLoggerLocale
 
 baseDir=$this_dir
-htmlDir=$this_dir/html
+dataDir=/var/piLogger
 oneWireDir=/mnt/1wire
-oneWireDataDir=/var/piLogger
-cacheDir=/var/piLogger/cache
-temperatureFile=temperature
-rrdDir=/var/piLogger/db
 
-appDbFile=/var/piLogger/db/app.sqlite3
+htmlDir=\$baseDir/html
+cacheDir=\$dataDir/cache
+temperatureFile=temperature
+rrdDir=\$dataDir/db
+dbDir=\$dataDir/db
+
+appDbFile=\$dbDir/app.sqlite3
+
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"
 
@@ -170,3 +178,5 @@ dateFormat="+%Y%m%d %H%M%S"
 remoteLogging=""
 remoteHost=""
 EOT
+
+[ -n "$minimizeInstall" ] && { echo "minimizeInstall=true" >> $configFile ; }
