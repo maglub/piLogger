@@ -54,7 +54,7 @@ errorExit(){
   sudo apt-get -y autoremove -y scratch
   sudo apt-get -y autoremove -y dillo
   sudo apt-get -y autoremove -y galculator
-  sudo apt-get -y autoremove -y psmisc
+#  sudo apt-get -y autoremove -y psmisc
   sudo apt-get -y autoremove -y netsurf-common
   sudo apt-get -y autoremove -y netsurf-gtk
   sudo apt-get -y autoremove -y lxde-common
