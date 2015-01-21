@@ -40,6 +40,40 @@ errorExit(){
 [ -z "$interface" ] && errorExit "_interface_ variable in $configFile not set, please run $this_dir/configure"
 
 #================================
+# Minimize install
+#================================
+
+[ -z "$minimizeInstall" ] && {
+  sudo rm -rf python_games
+  sudo apt-get -y autoremove x11-common
+  sudo apt-get -y autoremove midori
+  sudo apt-get -y autoremove python*
+  sudo apt-get -y autoremove lxde-icon-theme
+  sudo apt-get -y autoremove omxplayer
+  sudo apt-get -y autoremove wolfram-engine  
+  sudo apt-get -y autoremove -y scratch
+  sudo apt-get -y autoremove -y dillo
+  sudo apt-get -y autoremove -y galculator
+  sudo apt-get -y autoremove -y psmisc
+  sudo apt-get -y autoremove -y netsurf-common
+  sudo apt-get -y autoremove -y netsurf-gtk
+  sudo apt-get -y autoremove -y lxde-common
+  sudo apt-get -y autoremove -y lxdeterminal
+  sudo apt-get -y autoremove -y hicolor-icon-theme 
+  sudo apt-get -y autoremove
+  sudo apt-get -y clean
+  sudo rm -rf /usr/share/icons/*
+  sudo rm -rf /opt/vc/src/*
+  sudo rm -rf /usr/share/icons/*
+  sudo rm -rf /usr/share/wallpapers
+  sudo rm -rf /usr/share/themes
+  sudo rm -rf /usr/share/kde4
+
+  echo "sudo find / -name *.wav -exec rm {} \\; " ; # 29.80MB
+  echo "sudo find / -name *.mp3 -exec rm {} \\; " ; # 1.94MB
+}
+
+#================================
 # Update some system files
 #================================
 

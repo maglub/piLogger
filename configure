@@ -25,8 +25,9 @@ Usage:
 
 Options:
 
-  --withAbioWire  -> Using abio wire interface (will use Axiris port of owfs)
-  --withLocale    -> Setting up en_US.UTF-8 locale
+  --withAbioWire    -> Using abio wire interface (will use Axiris port of owfs)
+  --withLocale      -> Setting up en_US.UTF-8 locale
+  --minimizeInstall -> Remove any unnecessary package/files from the Raspbian installation (Caution, will remove a lot!)
 
 Default:
 
@@ -115,6 +116,10 @@ do
       piLoggerLocale=true
       shift
       ;;
+    --minimizeInstall)
+      minimizeInstall=true
+      shift
+      ;;
     *)
       usage
       exit 1
@@ -170,3 +175,5 @@ dateFormat="+%Y%m%d %H%M%S"
 remoteLogging=""
 remoteHost=""
 EOT
+
+[ -n "$minimizeInstall" ] && { echo "minimizeInstall=true >> $configFile ; }
