@@ -157,14 +157,16 @@ interface=$interface
 piLoggerLocale=$piLoggerLocale
 
 baseDir=$this_dir
+dataDir=/var/piLogger
 htmlDir=$this_dir/html
 oneWireDir=/mnt/1wire
-oneWireDataDir=/var/piLogger
-cacheDir=/var/piLogger/cache
+oneWireDataDir=\$dataDir
+cacheDir=\$dataDir/cache
 temperatureFile=temperature
-rrdDir=/var/piLogger/db
+rrdDir=\$dataDir/db
 
-appDbFile=/var/piLogger/db/app.sqlite3
+appDbFile=\$dataDir/db/app.sqlite3
+
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"
 
@@ -176,4 +178,4 @@ remoteLogging=""
 remoteHost=""
 EOT
 
-[ -n "$minimizeInstall" ] && { echo "minimizeInstall=true >> $configFile ; }
+[ -n "$minimizeInstall" ] && { echo "minimizeInstall=true" >> $configFile ; }
