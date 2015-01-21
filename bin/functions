@@ -5,8 +5,8 @@ configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
 
 . $configDir/piLogger.conf
-[ -z "$dbDir" ] && dbDir=$oneWireDataDir/db
-[ -z "$graphDir" ] && graphDir=$oneWireDataDir/graphs
+[ -z "$dbDir" ] && dbDir=$dataDir/db
+[ -z "$graphDir" ] && graphDir=$dataDir/graphs
 
 #------------------------------------
 # errorExit
@@ -140,7 +140,7 @@ function getLastRRDUpdate(){
 
   [ -n "$debug" ] && logIt "getLastRRDUpdate: $curDevice at $devicePath"
 
-  rrdtool info $oneWireDataDir/db/${deviceId}.rrd | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
+  rrdtool info $dataDir/db/${deviceId}.rrd | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
 }
 
 #---------------------------------

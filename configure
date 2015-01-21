@@ -86,7 +86,7 @@ check(){
   echo ""
 
   [ -f $configDir/piLogger.conf ] && {
-    for parameter in interface piLoggerLocale baseDir htmlDir oneWireDir oneWireDataDir cacheDir temperatureFile
+    for parameter in interface piLoggerLocale baseDir htmlDir oneWireDir cacheDir temperatureFile
     do
       echo "  - $parameter="$(grep "^${parameter}=" $configDir/piLogger.conf | cut -d"=" -f2 )
     done
@@ -158,14 +158,15 @@ piLoggerLocale=$piLoggerLocale
 
 baseDir=$this_dir
 dataDir=/var/piLogger
-htmlDir=$this_dir/html
 oneWireDir=/mnt/1wire
-oneWireDataDir=\$dataDir
+
+htmlDir=\$baseDir/html
 cacheDir=\$dataDir/cache
 temperatureFile=temperature
 rrdDir=\$dataDir/db
+dbDir=\$dataDir/db
 
-appDbFile=\$dataDir/db/app.sqlite3
+appDbFile=\$dbDir/app.sqlite3
 
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"
