@@ -12,13 +12,7 @@
     <?php  printDbPlotConfig(); ?>
     <!-- XXX -->
 
-<!--
-       <div id="radiators-12h" style="margin: 0 auto" class="large-12 small-6 columns"></div>
-       <div id="stg3" style="margin: 0 auto" class="large-12 small-12 columns"></div>
-       <div id="stg3-panna" style="margin: 0 auto" class="large-12 small-12 columns"></div>
-       <div id="basement-24h" style="margin: 0 auto" class="large-12 small-12 columns"></div>
-       <div id="basement-168h" style="margin: 0 auto" class="large-12 small-12 columns"></div>
--->
+       <!-- XXX this should be made dynamic as well -->
        <div id="deviceGauges1" class="large-3 small-3 columns"></div>
        <div id="deviceGauges2" class="large-3 small-3 columns"></div>
        <div id="deviceGauges3" class="large-3 small-3 columns"></div>
