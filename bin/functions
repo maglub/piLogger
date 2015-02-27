@@ -9,6 +9,11 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
 
 #------------------------------------
+# Variables (normally set in piLogger.conf)
+#------------------------------------
+[ -z "$parallelProcessing" ] && parallelProcessing=1
+
+#------------------------------------
 # errorExit
 #------------------------------------
 errorExit(){

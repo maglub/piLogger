@@ -37,8 +37,5 @@ EOT
       ;;
   esac
 
-for curAlias in $aliases
-do
-  logIt "  - Logging data from $curAlias"
-  $this_dir/logTemperature $curAlias
-done
+  [ -z "$parallelProcessing" ] && parallelProcessing=1
+  echo $aliases | xargs -n 1 -P${parallelProcessing}  $this_dir/logTemperature 
