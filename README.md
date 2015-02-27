@@ -31,6 +31,12 @@ Installation of the software
      - Upgrade the system `sudo apt-get -y dist-upgrade`
      - Reboot `sudo reboot`
 
+2.1 Optional environment config
+
+```
+  sudo update-alternatives --set editor /usr/bin/vim.tiny
+```
+
 3. Fetch the piLogger software from GitHub
 
     ```
