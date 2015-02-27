@@ -19,10 +19,13 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
   chmod 666 $cacheDir/sensorData.json 
 
   #--- recursively call this script again
-  for time in 12h 24h 168h
-  do
-     $this_dir/$this_script $time
-  done
+  #for time in 12h 24h 168h
+  #do
+  #   $this_dir/$this_script $time
+  #done
+  [ -z "$parallelProcessing" ] && parallelProcessing=1
+   echo 12h 24h 168h | xargs -n 1 -P${parallelProcessing}  $this_dir/$this_script $time
+
 
   #--- sensors
   #--- recursively call this script again
