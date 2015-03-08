@@ -40,7 +40,7 @@ getAllDevices(){
   [[ -f $configDir/devices.scanned && -z "$ld_force" ]] && { cat $configDir/devices.scanned ; return 0 ; }
   [[ -n "$ld_force" ]] && { echo $ld_dir/[0-9]*  | grep -v "\*$" ; return 0 ; }
   local curRes=$(dbGetAllDevicePaths)
-  [ -n "$curRes" ] && { echo $curRes ; return 0 ; }
+  [ -n "$curRes" ] && { echo $curRes ; logIt "Found devices in the database." ; return 0 ; }
   logIt "No scanned devices in the database, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
@@ -86,8 +86,6 @@ function getTemperatureByDeviceAlias(){
 }
 
 getDeviceAliasesByDevicePath() {
-  #cur_deviceAliases=$(grep -v "^#" $piLoggerDeviceAliasFile | grep -v "^#" | awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}')
-  #cur_deviceAliases=$(awk -F";" -v ID=$1 ' $0 !~ /^#/ { if (match ($NF, ID)) { printf "%s ", $1 }}'  $piLoggerDeviceAliasFile )
   cur_deviceAliases=$(dbGetDeviceAliasByDevicePath $1)
   [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
   echo "$cur_deviceAliases"
@@ -137,15 +135,26 @@ function getDevicePathByAny(){
 
 function getLastRRDUpdate(){
 
-  local curDevice=$1
-  local devicePath=$(getDevicePathByAny "$curDevice")
-  local deviceId=$(basename $devicePath)
+  local curDevice=$(basename $1)
+  local deviceId=""
+  local dbFile=""
 
-  [ -z "$devicePath" ] && return 1
+#  printf "\ndebug: curDevice=$curDevice" 1>&2
 
+  #--- the goal is to get a device-id or something mapping to a database file
+  if [ -f "$dataDir/db/${curDevice}.rrd" ]
+  then
+    dbFile="$dataDir/db/${curDevice}.rrd"
+  else
+    #--- perhaps it is an alias? 
+    deviceId=$(dbGetDeviceIdByDeviceAlias $curDevice)
+    dbFile="$dataDir/db/${curDevice}.rrd"
+  fi
+
+  [ ! -f "$dbFile" ] && { echo "ERROR: no file $dbFile" 1>&2 ; return 1 ; }
   [ -n "$debug" ] && logIt "getLastRRDUpdate: $curDevice at $devicePath"
 
-  rrdtool info $dataDir/db/${deviceId}.rrd | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
+  rrdtool info $dbFile | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
 }
 
 #---------------------------------

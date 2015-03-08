@@ -54,14 +54,17 @@ printAliasFileFormat(){
   done
 }
 
-printAllJSON(){
+function printAllJSON(){
   printf "["
   local prependComma=" "
+  #--- get short name of all devices
+  all_devices=$(dbGetAllDevices)
+
   for device in $all_devices
   do
-    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    local deviceAliases=$(dbGetDeviceAliasById $device | sed -e 's/ $//' -e 's/ /","/g')
     deviceTemperature=$(getLastRRDUpdate ${device##*/} )
-    printf '%s\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"], "temperature":%s }' "$prependComma" "${device##*/}" "${device}" "${pj_deviceAliases}" "${deviceTemperature}"
+    printf '%s\n{ "sensorName":"%s", "devicePath":"%s" , "aliases":["%s"], "temperature":%s }' "$prependComma" "${device##*/}" "${device}" "${deviceAliases}" "${deviceTemperature}"
     prependComma=","
   done
   printf '\n]\n'

@@ -1,4 +1,14 @@
 #---------------------------------
+# dbGetAllDevices()
+#---------------------------------
+
+function dbGetAllDevices(){
+  sqlite3 $appDbFile<<EOT
+  select id from device;
+EOT
+}
+
+#---------------------------------
 # dbGetDBFileByAlias()
 #---------------------------------
 function dbGetDBFileByAlias(){
@@ -10,7 +20,7 @@ function dbGetDBFileByAlias(){
 #---------------------------------
 # dbGetDeviceIdByDeviceAlias()
 #---------------------------------
-dbGetDeviceIdByDeviceAlias(){
+function dbGetDeviceIdByDeviceAlias(){
   sqlite3 $appDbFile<<EOT
   select id from alias where alias = '$1'; 
 EOT
@@ -278,7 +288,7 @@ EOT
 #---------------------------------
 # dbAddDeviceAliasToPlotGroup()
 #---------------------------------
-dbAddDeviceAliasToPlotGroup(){
+function dbAddDeviceAliasToPlotGroup(){
   echo "  - Adding device alias: $1 -> $2"
   dbAddDeviceIdToPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
 }
