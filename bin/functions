@@ -178,7 +178,8 @@ logTemperatureRemote(){
   ltr_device=$1
   ltr_temperature=$2
 
-  wget -t 1 -q -O - "http://d1wire/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
+  logIt "Logging $ltr_device:$ltr_temperature to $remoteHost"
+  wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
 }
 #---------------------------------
 # getDBFilesFromGraphTemplate
