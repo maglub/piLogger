@@ -28,6 +28,7 @@ EOT
   case $1 in
     --db)
       aliases=$(dbGetAllLocalDeviceIds)
+      compositeDevices="$(dbGetAllCompositeDevices)"
       ;;
     *)
       curConfigFile=$1
@@ -37,5 +38,12 @@ EOT
       ;;
   esac
 
+  #--- local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   echo $aliases | xargs -n 1 -P${parallelProcessing}  $this_dir/logTemperature 
+
+  for compositeDevice in $compositeDevices
+  do
+    curTemp=$($this_dir/getComposite $compositeDevice)
+    $this_dir/logTemperature $compositeDevice $curTemp
+  done

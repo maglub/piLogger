@@ -107,6 +107,7 @@ dbGetAllDeviceIds(){
 EOT
 }
 
+
 #---------------------------------
 # dbGetAllDevicePaths()
 #---------------------------------
@@ -143,6 +144,40 @@ EOT
 )
   [ $res -gt 0 ] && return 0
   return 1
+}
+
+
+#========================================
+# Composite devices
+#========================================
+function isCompositeDevice(){
+  local curDevice="$1"
+  curRes=$(sqlite3 $appDbFile "select count(*) from device where type = 'composite' and id = '$curDevice';")
+
+  [ $curRes -eq 0 ] && return 1
+  return 0
+}
+
+function dbGetAllCompositeDevices(){
+  sqlite3 $appDbFile "select id from device where type = 'composite';"
+}
+
+
+#---------------------------------
+# dbGetDevicePathByDeviceId()
+#---------------------------------
+function dbGetDevicePathByDeviceId(){
+  local alias="$1"
+  local res=$(
+    sqlite3 $appDbFile<<EOT
+    select a.path from device a where a.id = '$alias';
+EOT
+)
+
+  if [ -n "$res" ]
+  then
+    echo "$res"
+  fi
 }
 
 #---------------------------------

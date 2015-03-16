@@ -127,6 +127,10 @@ function getDevicePathByAny(){
 
   [ -d $curDevice ] && { echo "$curDevice" ; return 0 ; }
   [ -d $oneWireDir/$curDevice ] && { echo "$oneWireDir/$curDevice" ; return 0 ; }
+
+  res=$(dbGetDevicePathByDeviceId $curDevice)
+  [ -n "$res" ] && { echo "$res" ; return 0 ; }
+
   res=$(dbGetDevicePathByDeviceAlias $curDevice)
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
   getDeviceByAlias "$curDevice" ; return 0
