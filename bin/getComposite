@@ -1,0 +1,76 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`; pwd)
+this_script=$(basename $0)
+
+. $this_dir/functions
+. $this_dir/functions-sqlite3
+
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+cat<<EOT
+
+Usage:
+
+  $this_script [-rrd] alias|/path/to/device
+
+EOT
+}
+
+#================================
+# MAIN
+#================================
+[ -z "$1" ] && { usage ; exit 1 ; }
+
+if isCompositeDevice "$1"
+then
+  devicePath=$(getDevicePathByAny "$1")
+  d1=$(echo $devicePath | cut -d" " -f1)
+  d2=$(echo $devicePath | cut -d" " -f3)
+  sign=$(echo $devicePath | cut -d" " -f2)
+
+  d1Temp=$($this_dir/getTemperature -rrd $d1)
+  d2Temp=$($this_dir/getTemperature -rrd $d2)
+
+#  case $sign in
+#    "+") (( res = $d1Temp + $d2Temp )) ;;
+#    "-") (( res = $d1Temp - $d2Temp )) ;;
+#    *) echo "Error" 1>&2 ; exit 1 ;;
+#  esac
+  res=$(echo "scale=2;$d1$sign$d2" | bc)
+
+if [ -n "$debug" ]
+then
+(
+  cat<<EOT
+d: $1
+sign: $sign
+d1: $d1 = $d1Temp
+d2: $d2 = $d2Temp
+res: $res
+EOT
+) 1>&2
+fi
+
+  printf "%.3f\n" $res
+  exit 0
+fi
+
+exit 0 
+case $1 in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  -rrd)
+    [ -n "$debug" ] && logIt "device: $2"
+    getLastRRDUpdate $2
+    exit 0
+    ;;
+   *)
+    curDevice=$1
+    getTemperature $curDevice
+    ;;
+esac
