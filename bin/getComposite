@@ -39,7 +39,8 @@ then
 #    "-") (( res = $d1Temp - $d2Temp )) ;;
 #    *) echo "Error" 1>&2 ; exit 1 ;;
 #  esac
-  res=$(echo "scale=2;$d1$sign$d2" | bc)
+  res=$(echo "scale=2;${d1Temp}${sign}${d2Temp}" | bc)
+[ -n "$debug" ] &&  echo "scale=2;$d1Temp$sign$d2Temp" 1>&2
 
 if [ -n "$debug" ]
 then
