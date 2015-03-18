@@ -235,3 +235,4 @@ getAliasesFromGraphTemplate(){
   cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }
 
+
