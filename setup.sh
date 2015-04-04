@@ -145,6 +145,11 @@ aptTS=$(stat -c %Y /var/cache/apt/)
 echo "  - Interface: $interface"
 
 #--------------
+# bc
+#--------------
+sudo dpkg -s bc >/dev/null 2>&1 || { echo "  - Installing bc" ; sudo apt-get -y install bc ; }
+
+#--------------
 # OWFS
 #--------------
 sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get -y install owfs ; }
