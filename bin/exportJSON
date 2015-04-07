@@ -56,7 +56,7 @@ do
 
   rrdtool xport -s now-${exportTime} -e now --step 300  \
       DEF:${curVName}=${curDbFile}:temperature:${curAggregateType} \
-      XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000+3600000, $2*1; }'
+      XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000, $2*1; }'
   curComma=","
   printf "]}"
 done
