@@ -148,6 +148,7 @@ echo "  - Interface: $interface"
 # bc
 #--------------
 sudo dpkg -s bc >/dev/null 2>&1 || { echo "  - Installing bc" ; sudo apt-get -y install bc ; }
+sudo dpkg -s dnsutils >/dev/null 2>&1 || { echo "  - Installing dnsutils" ; sudo apt-get -y install dnsutils ; }
 
 #--------------
 # OWFS
