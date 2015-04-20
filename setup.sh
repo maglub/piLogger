@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 this_dir=$(cd `dirname $0`; pwd)
 binDir=$this_dir/bin
 logDir=/var/log/piLogger
