@@ -1,0 +1,108 @@
+[ -z "$appDbFile" ] && { echo "Error: no database file defined in \$appDbFile" 1>&2 ; }
+
+#--------------------------------------
+# Maintenance functions
+#--------------------------------------
+function piLogger_getCurrentVersion(){
+  echo "20150423-003"
+}
+
+function piLogger_getInstalledVersion(){
+  local installedVersion=$(sqlite3 $appDbFile "select id from version order by rowid desc limit 1")
+  [ -z "$installedVersion" ] && { echo "20150422-001" ; return 0 ; }
+  echo $installedVersion
+  return 0
+}
+
+function piLogger_setInstalledVersion(){
+  sqlite3 $appDbFile <<EOT
+insert into version (id) values ('$1');
+EOT
+}
+
+function piLogger_setupVersionsTable(){
+  sqlite3 $appDbFile "create table version (id text);" >/dev/null 2>&1
+}
+
+
+#========================================
+# DO! Upgrade function
+#========================================
+function piLogger_upgrade(){
+  local fromVersion="$1"
+  local toVersion="$2"
+
+  echo "  * Upgrading from $fromVersion to $toVersion"
+  [ -z "$doIt" ] && { echo "    - Dry run -> skipping" ; return 0 ; }
+
+  piLogger_doUpgrade_${fromVersion}_to_${toVersion}
+  local rc=$?
+
+  [ $rc -eq 0 ] && { piLogger_setInstalledVersion "$toVersion" ; echo "    - Success" ; }
+  [ $rc -ne 0 ] && { echo "    - FAILED" ; return 1 ; }
+}
+
+#========================================
+# from 20150422-001 to 20150423-001
+#========================================
+function piLogger_doUpgrade_20150422-001_to_20150423-001(){
+  return 0
+}
+
+#========================================
+# from 20150423-001 to 20150423-002
+#========================================
+function piLogger_doUpgrade_20150423-001_to_20150423-002(){
+
+  #--- Between 20150423-001 and 20150423-002 we moved the directory /var/piLogger to /var/lib/piLogger
+  #--- the scripts are not yet changed to reflect the directory change, so we need a symbolic link
+
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+
+  #--- doing the upgrade
+  echo "    - Upgrading"
+  echo "      - Moving /var/piLogger"
+  [[ -d /var/piLogger && ! -h /var/piLogger ]] && sudo mv /var/piLogger /var/lib/piLogger || echo "      - No moving of directory needed"
+  echo "      - Creating symbolic link for /var/piLogger"
+  [ ! -d /var/piLogger ] && sudo ln -s /var/lib/piLogger /var || echo "      - No symbolic link needed"
+
+  echo "      - Updating config file ~/piLogger/etc/piLogger.conf"
+  sed -i 's!dataDir=/var/piLogger!dataDir=/var/lib/piLogger!' ~/piLogger/etc/piLogger.conf 
+  return 0
+}
+
+#========================================
+# from 20150423-002 to 20150423-003
+#========================================
+function piLogger_doUpgrade_20150423-002_to_20150423-003(){
+
+  #--- Between 20150423-002 and 20150423-003 we renamed the rrd files so that the default
+  #--- metric is temperature and the default rrd file should be named <device id>.temperature.rrd
+
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+
+  #--- doing the upgrade
+  echo "    - Upgrading"
+  echo "      - Gathering rrd file names"
+
+  local dbDir=/var/lib/piLogger/db
+  for curDevice in $(ls $dbDir/*.rrd | grep -v "temperature.rrd$")
+  do
+    if [ ! -h $curDevice ] 
+    then
+      deviceName=$(basename $curDevice .rrd)
+      [ -f $dbDir/$deviceName.temperature.rrd ] && { echo "ERROR: $dbDir/$deviceName.temperature.rrd already exists" ; } || {
+        echo "      - mv $curDevice $dbDir/$deviceName.temperature.rrd"
+        mv $curDevice $dbDir/$deviceName.temperature.rrd
+        ln -s $deviceName.temperature.rrd $curDevice
+      }
+    else
+      echo "Skipping already resolved $curDevice (link)"
+    fi
+  done
+
+  return 0
+}
+
