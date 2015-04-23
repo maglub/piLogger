@@ -49,7 +49,7 @@ check(){
   
   echo "* Directories:"
 
-  for dir in /var/piLogger /var/piLogger/db /var/piLogger/cache /var/piLogger/xml /var/piLogger/graphs 
+  for dir in /var/lib/piLogger /var/lib/piLogger/db /var/lib/piLogger/cache /var/lib/piLogger/xml /var/lib/piLogger/graphs 
   do
     echo -n "  - $dir:"
     [ -d $dir ] && echo -n " OK! exists" || echo -n " ERROR: does not exist"
@@ -149,6 +149,8 @@ sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the foll
 
 [ -z "$interface" ] && interface=default
 
+numCpu=$(cat /proc/cpuinfo | grep Processor | wc -l)
+
 cat>$configFile<<EOT
 #----------------------------
 # Config file for piLogger
@@ -157,7 +159,7 @@ interface=$interface
 piLoggerLocale=$piLoggerLocale
 
 baseDir=$this_dir
-dataDir=/var/piLogger
+dataDir=/var/lib/piLogger
 oneWireDir=/mnt/1wire
 
 htmlDir=\$baseDir/html
@@ -170,6 +172,11 @@ appDbFile=\$dbDir/app.sqlite3
 
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"
+
+#-------------------------
+# Parallel processing
+#-------------------------
+parallelProcessing=$numCpu
 
 #-------------------------
 # for remote logging

@@ -1,4 +1,4 @@
 <?php
-static $db_target = '/var/piLogger/db/app.sqlite3';
-static $db_dir = '/var/piLogger/db';
+static $db_target = '/var/lib/piLogger/db/app.sqlite3';
+static $db_dir = '/var/lib/piLogger/db';
 ?>

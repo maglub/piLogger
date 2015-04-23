@@ -148,7 +148,7 @@ Now you will have a setup that is ready to be used through the web gui. Note tha
    Check that the RRD files are created properly, one per device connected to your 1wire interface.
 
    ```
-   pi@raspberrypi ~/piLogger/bin $ ls -la /var/piLogger/db
+   pi@raspberrypi ~/piLogger/bin $ ls -la /var/lib/piLogger/db
    total 20264
    drwxr-xr-x 2 pi pi     4096 Feb  7 14:28 .
    drwxr-xr-x 5 pi pi     4096 Feb  7 14:21 ..
@@ -184,7 +184,7 @@ Now you will have a setup that is ready to be used through the web gui. Note tha
 Notes and references
 =====================================================
 
-* Data files are found in `/var/piLogger`
+* Data files are found in `/var/lib/piLogger`
 
 * Log files are found in `/var/log/piLogger`
 

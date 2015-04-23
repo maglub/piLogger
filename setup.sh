@@ -4,7 +4,7 @@
 this_dir=$(cd `dirname $0`; pwd)
 binDir=$this_dir/bin
 logDir=/var/log/piLogger
-dataDir=/var/piLogger
+dataDir=/var/lib/piLogger
 dbDir=$dataDir/db
 cacheDir=$dataDir/cache
 graphDir=$dataDir/graphs
