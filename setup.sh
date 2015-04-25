@@ -101,13 +101,13 @@ EOT
 #================================
 # setup directories
 #================================
-[ ! -d "$logDir" ] &&  sudo mkdir -p "$logDir"        || echo "Cannot create logDir: $logDir"
-[ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"       || echo "Cannot create dataDir: $dataDir"
-[ ! -d "$dbDir" ] && sudo mkdir -p "$dbDir"           || echo "Cannot create dbDir: $dbDir"
-[ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"     || echo "Cannot create graphDir: $graphDir"
-[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"     || echo "Cannot create cacheDir: $cacheDir"
-[ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir" || echo "Cannot create oneWireDir: $oneWireDir"
-[ ! -d "$backupDir" ] && sudo mkdir -p "$backupDir"   || echo "Cannot create backupDir: $backupDir"
+[ ! -d "$logDir" ]     && { echo "Creating logDir: $logDir" ; sudo mkdir -p "$logDir"       ; }
+[ ! -d "$dataDir" ]    && { echo "Creating dataDir: $dataDir" ; sudo mkdir -p "$dataDir"      ; }
+[ ! -d "$dbDir" ]      && { echo "Creating dbDir: $dbDir" ; sudo mkdir -p "$dbDir"           ; }
+[ ! -d "$graphDir" ]   && { echo "Creating graphDir: $graphDir" ; sudo mkdir -p "$graphDir"     ; }
+[ ! -d "$cacheDir" ]   && { echo "Creating cacheDir: $cacheDir" ; sudo mkdir -p "$cacheDir"     ; }
+[ ! -d "$oneWireDir" ] && { echo "Creating oneWireDir: $oneWireDir" ; sudo mkdir -p "$oneWireDir" ; }
+[ ! -d "$backupDir" ]  && { echo "Creating backupDir: $backupDir" ; sudo mkdir -p "$backupDir"   ; }
 
 myUser=$(id -u)
 myGroup=$(id -g)
