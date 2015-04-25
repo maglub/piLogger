@@ -167,8 +167,12 @@ cacheDir=\$dataDir/cache
 temperatureFile=temperature
 rrdDir=\$dataDir/db
 dbDir=\$dataDir/db
+graphDir=\$dataDir/graphs
+backupDir=\$dataDir/backup
 
 appDbFile=\$dbDir/app.sqlite3
+
+logDir=/var/log/piLogger
 
 #----------------------
 dateFormat="+%Y%m%d %H%M%S"

@@ -4,7 +4,7 @@
 # Maintenance functions
 #--------------------------------------
 function piLogger_getCurrentVersion(){
-  echo "20150423-003"
+  cat $baseDir/currentVersion
 }
 
 function piLogger_getInstalledVersion(){
@@ -102,6 +102,38 @@ function piLogger_doUpgrade_20150423-002_to_20150423-003(){
       echo "Skipping already resolved $curDevice (link)"
     fi
   done
+
+  return 0
+}
+
+#========================================
+# from 20150423-003 to 20150425-001
+#========================================
+function piLogger_doUpgrade_20150423-003_to_20150425-001(){
+
+  #--- Between 20150423-003 and 20150425-001 we removed the /var/piLogger directory nad
+  #--- made new links in the ~/piLogger/html directory to cache and graphs
+  #--- We also removed the link to the xml directory, which is no longer used
+
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+
+  #--- doing the upgrade
+  echo "    - Upgrading"
+
+  echo "      - Removing /var/piLogger link"
+  [ -h /var/piLogger ] && sudo rm /var/piLogger
+
+  echo "      - Removing $baseDir/html/xml link and adding new link"
+  [ -h $baseDir/html/xml ] && rm $baseDir/html/xml
+
+  echo "      - Removing ~/piLogger/html/cache symbolic link and adding new link"
+  [ -h $baseDir/html/cache ] && rm $baseDir/html/cache
+  ln -s $dataDir/cache $baseDir/html/cache
+
+  echo "      - Removing ~/piLogger/html/graphs symbolic link and adding new link"
+  [ -h $baseDir/html/graphs ] && rm $baseDir/html/graphs
+  ln -s $dataDir/graphs $baseDir/html/graphs
 
   return 0
 }

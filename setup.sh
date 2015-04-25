@@ -3,14 +3,10 @@
 
 this_dir=$(cd `dirname $0`; pwd)
 binDir=$this_dir/bin
-logDir=/var/log/piLogger
-dataDir=/var/lib/piLogger
-dbDir=$dataDir/db
-cacheDir=$dataDir/cache
-graphDir=$dataDir/graphs
-oneWireDir=/mnt/1wire
 configDir=$this_dir/etc
-configFile=$configDir/piLogger.conf
+
+[ ! -f $configDir/piLogger.conf ] && errorExit "No config file $configDir/piLogger.conf, please run $this_dir/configure"
+. $configDir/piLogger.conf
 
 needReboot=""
 
@@ -31,20 +27,18 @@ errorExit(){
 # Variables:
 #  - interface
 
-[ ! -f $configFile ] && errorExit "No config file $configFile, please run $this_dir/configure"
-. $configDir/piLogger.conf
 
 #================================
 # Check that required variables are set
 #================================
 
-[ -z "$interface" ] && errorExit "_interface_ variable in $configFile not set, please run $this_dir/configure"
+[ -z "$interface" ] && errorExit "_interface_ variable in $configDir/piLogger.conf not set, please run $this_dir/configure"
 
 #================================
 # Minimize install
 #================================
 
-[ -z "$minimizeInstall" ] && {
+[ -n "$minimizeInstall" ] && {
   sudo rm -rf python_games
   sudo apt-get -y autoremove x11-common
   sudo apt-get -y autoremove midori
@@ -55,7 +49,6 @@ errorExit(){
   sudo apt-get -y autoremove -y scratch
   sudo apt-get -y autoremove -y dillo
   sudo apt-get -y autoremove -y galculator
-#  sudo apt-get -y autoremove -y psmisc
   sudo apt-get -y autoremove -y netsurf-common
   sudo apt-get -y autoremove -y netsurf-gtk
   sudo apt-get -y autoremove -y lxde-common
@@ -114,6 +107,7 @@ EOT
 [ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"
 [ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
 [ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
+[ ! -d "$backupDir" ] && sudo mkdir -p "$backupDir"
 
 myUser=$(id -u)
 myGroup=$(id -g)
@@ -123,6 +117,7 @@ sudo chown ${myUser}:${myGroup} "$logDir"
 sudo chown ${myUser}:${myGroup} "$dbDir"
 sudo chown ${myUser}:${myGroup} "$graphDir"
 sudo chown ${myUser}:${myGroup} "$cacheDir"
+sudo chown ${myUser}:${myGroup} "$backupDir"
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
@@ -266,6 +261,12 @@ echo "  - Setting up bash completion"
 #================================
   echo "* If your timezone is not set, you can do so by running:"
   echo "sudo cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime"
+#================================
+# Run the upgrade script
+#================================
+
+$this_dir/bin/upgrade.sh --doIt
+
 #================================
 # End
 #================================

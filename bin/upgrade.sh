@@ -18,11 +18,53 @@ this_script=$(basename $0)
 # 
 #
 #============================================
+#============================================
+# Functions
+#============================================
 
+function usage(){
+  cat<<EOT
+
+Usage: $this_script [ --doIt | --dryRun ]
+
+EOT
+}
+
+#============================================
+# Setup
+#============================================
 piLogger_setupVersionsTable
 
 currentVersion=$(piLogger_getCurrentVersion)
 installedVersion=$(piLogger_getInstalledVersion)
+
+
+#==========================================
+# MAIN
+#==========================================
+
+while [ -n "$1" ]
+do
+  case $1 in
+    --doIt)
+      doIt=true
+      shift
+      ;;
+    --dryRun)
+      dryRun=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown parameter $1" 1>&2
+      usage
+      exit 0
+      ;;
+  esac
+done
 
 #--------------------------------------------
 # Installed version started to be marked 2015-04-23
@@ -40,24 +82,26 @@ EOT
 
 [ "$currentVersion" = "$installedVersion" ] && { echo "No upgrade needed" ; exit 0 ; }
 
-[[ -n "$1" && "$1" = "--doIt" ]] && doIt=true
-
-[ -z "$doIt" ] && { echo "No --doIt flag passed to this script, so no action will be taken" ; exit 0 ; }
-
-fromVersion="20150422-001"
-  toVersion="20150423-001"
-[ "$installedVersion" = "$fromVersion" ] && piLogger_upgrade "$fromVersion" "$toVersion"
-installedVersion=$(piLogger_getInstalledVersion)
-
-fromVersion="20150423-001"
-  toVersion="20150423-002"
-[ "$installedVersion" = "$fromVersion" ] && piLogger_upgrade "$fromVersion" "$toVersion"
-installedVersion=$(piLogger_getInstalledVersion)
-
-fromVersion="20150423-002"
-  toVersion="20150423-003"
-[ "$installedVersion" = "$fromVersion" ] && piLogger_upgrade "$fromVersion" "$toVersion"
-installedVersion=$(piLogger_getInstalledVersion)
+[ -z "$doIt" ] && { echo "No --doIt flag passed to this script, so no action will be taken" ; }
+[ -n "$dryRun" ] && { echo "This will show what steps that will be taken, without performing any upgrade." ; }
 
 
+[[ -z "$doIt" && -z "$dryRun" ]] && { echo "Neither --doIt or --dryRun was passed as parameter, exiting." 1>&2 ; exit 0 ; }
 
+versions="20150422-001
+20150423-001
+20150423-001
+20150423-002
+20150423-003
+20150425-001"
+
+fromVersion=""
+for toVersion in $versions
+do
+  if [ -n "$fromVersion" ]
+  then
+    [ "$installedVersion" = "$fromVersion" ] && piLogger_upgrade "$fromVersion" "$toVersion"
+    installedVersion=$(piLogger_getInstalledVersion)
+  fi
+    fromVersion=$toVersion
+done
