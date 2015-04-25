@@ -101,13 +101,13 @@ EOT
 #================================
 # setup directories
 #================================
-[ ! -d "$logDir" ] &&  sudo mkdir -p "$logDir" 
-[ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"
-[ ! -d "$dbDir" ] && sudo mkdir -p "$dbDir"
-[ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"
-[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"
-[ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir"
-[ ! -d "$backupDir" ] && sudo mkdir -p "$backupDir"
+[ ! -d "$logDir" ] &&  sudo mkdir -p "$logDir"        || echo "Cannot create logDir: $logDir"
+[ ! -d "$dataDir" ] && sudo mkdir -p "$dataDir"       || echo "Cannot create dataDir: $dataDir"
+[ ! -d "$dbDir" ] && sudo mkdir -p "$dbDir"           || echo "Cannot create dbDir: $dbDir"
+[ ! -d "$graphDir" ] && sudo mkdir -p "$graphDir"     || echo "Cannot create graphDir: $graphDir"
+[ ! -d "$cacheDir" ] && sudo mkdir -p "$cacheDir"     || echo "Cannot create cacheDir: $cacheDir"
+[ ! -d "$oneWireDir" ] && sudo mkdir -p "$oneWireDir" || echo "Cannot create oneWireDir: $oneWireDir"
+[ ! -d "$backupDir" ] && sudo mkdir -p "$backupDir"   || echo "Cannot create backupDir: $backupDir"
 
 myUser=$(id -u)
 myGroup=$(id -g)
@@ -254,7 +254,7 @@ echo "  - Setting up bash completion"
 #================================
 # Setup sudoers
 #================================
-[[ ! -f /etc/sudoers.d/piLogger ]] && { sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:root /etc/sudoers.d/piLogger ; sudo chmod 0440 /etc/sudoers.d/piLogger ; }
+sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:root /etc/sudoers.d/piLogger ; sudo chmod 0440 /etc/sudoers.d/piLogger 
 
 #================================
 # Show info about timezones
