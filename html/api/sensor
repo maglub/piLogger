@@ -3,10 +3,50 @@
 #export debug=true
 bin_dir=/home/pi/piLogger/bin
 
+#===========================================
+# Functions
+#===========================================
+function usage(){
+
+  cat <<EOT
+
+  $this_script all get path 
+  http://pilogger/api/sensor/all/get/path
+
+  $this_script [SENSOR_NAME|all]  [get|set] [temperature|humidity] 
+  http://pilogger/api/sensor/{SENSOR_NAME|all}/{get|set}/temperature
+  http://pilogger/api/sensor/{SENSOR_NAME|all}/{get|set}/humidity
+  
+EOT
+	
+	
+}
+
+function htmlUsage(){
+
+	cat<<EOT
+
+	<html>
+	<head>
+	</head>
+	<body>
+	<h1>sensor</h1>
+	</body>
+	</html>
+EOT
+
+}
+
+
+#===========================================
+# Parse options or URL
+#===========================================
+
+
 #--- read tokens
 OLD_IFS=$IFS
 IFS="/"
-[ -n "$PATH_INFO" ] && { set $PATH_INFO ; shift ; }
+[ -n "$PATH_INFO" ] && { set $PATH_INFO ; shift ; callType=html ; }
 
 [ -z "$par1" ] && par1=$1
 [ -z "$par2" ] && par2=$2
@@ -24,9 +64,19 @@ EOT
 
 #--- api:
 #            par1       par2        par3           par4
-#  - /api/{sensor|all}/get/path
-#  - /api/{sensor|all}/{get|set}/temperature/[temperature]
-#  - /api/{sensor|all}/info
+#  - /api/sensor/{sensorName|all}/get/path
+#  - /api/sensor/{sensorName|all}/{get|set}/temperature/[temperature]
+#  - /api/sensor/{sensorName|all}/info
+
+#--- example url:
+#
+# http://pilogger.kmggruop.ch/api/sensor/all/info
+# http://pilogger.kmggruop.ch/api/sensor/all/info
+
+
+
+[[ -z "$1" && -n "${callType}" ]] && { usageHtml ; exit 0 ; }
+[[ -z "$1" && -z "${callType}" ]] && { usage ; exit 0 ; }
 
 [ -z "$par2" ] && exit 0
 
