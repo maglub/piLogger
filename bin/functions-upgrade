@@ -138,3 +138,29 @@ function piLogger_doUpgrade_20150423-003_to_20150425-001(){
   return 0
 }
 
+#========================================
+# from 20150425-001 to 20150427-001
+#========================================
+function piLogger_doUpgrade_20150425-001_to_20150427-001(){
+
+  #--- Between 20150425-001 and 20150425-001 we removed the need for symbolic links
+  #--- between a database file <device id>.rrd and <device id>.temperature.rrd
+
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+
+  #--- doing the upgrade
+  echo "    - Upgrading"
+
+  echo "      - Removing symbolic links in $dbDir"
+  for file in $dbDir/*.rrd
+  do
+    if [ -h "$file" ]
+    then
+      echo "      * Symlink $file - is symlink, removing"
+      sudo rm $file
+    fi
+  done
+
+  return 0
+}

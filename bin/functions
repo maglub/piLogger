@@ -140,19 +140,21 @@ function getDevicePathByAny(){
 function getLastRRDUpdate(){
 
   local curDevice=$(basename $1)
+  local curDeviceType=$2
+  [ -z "$curDeviceType" ] && curDeviceType=temperature
   local deviceId=""
   local dbFile=""
 
 #  printf "\ndebug: curDevice=$curDevice" 1>&2
 
   #--- the goal is to get a device-id or something mapping to a database file
-  if [ -f "$dataDir/db/${curDevice}.rrd" ]
+  if [ -f "$dataDir/db/${curDevice}.$curDeviceType.rrd" ]
   then
-    dbFile="$dataDir/db/${curDevice}.rrd"
+    dbFile="$dataDir/db/${curDevice}.$curDeviceType.rrd"
   else
     #--- perhaps it is an alias? 
     deviceId=$(dbGetDeviceIdByDeviceAlias $curDevice)
-    dbFile="$dataDir/db/${curDevice}.rrd"
+    dbFile="$dataDir/db/${curDevice}.$curDeviceType.rrd"
   fi
 
   [ ! -f "$dbFile" ] && { echo "ERROR: no file $dbFile" 1>&2 ; return 1 ; }
@@ -165,16 +167,18 @@ function getLastRRDUpdate(){
 #logTemperature
 #---------------------------------
 function logTemperature(){
-  local lt_device=$1
-  local lt_temperature=$2
+  local curDevice=$1
+  local curTemperature=$2
+  local curDeviceType=$3
+  [ -z "$curDeviceType" ] && curDeviceType=temperature
 
-  lt_dbFile=$dbDir/${lt_device}.rrd
+  local lt_dbFile=$dbDir/${curDevice}.${curDeviceType}.rrd
 
-  [ ! -f $lt_dbFile ] && sudo -u pi $this_dir/createRRD $lt_device
+  [ ! -f $lt_dbFile ] && sudo -u pi $this_dir/createRRD $curDevice
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
-  rrdtool update $lt_dbFile N:${lt_temperature}
+  rrdtool update $lt_dbFile N:${curTemperature}
 
-  [ -n "$remoteLogging" ] && logTemperatureRemote $lt_device $lt_temperature
+  [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature
 
 }
 

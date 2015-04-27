@@ -12,10 +12,12 @@ EOT
 # dbGetDBFileByAlias()
 #---------------------------------
 function dbGetDBFileByAlias(){
-  [ -f "$rrdDir/${1}.rrd" ] && { echo "$rrdDir/$1.rrd" ; return 0 ; }
+  local curDeviceType=temperature
+
+  [ -f "$rrdDir/${1}.${curDeviceType}.rrd" ] && { echo "$rrdDir/$1.${curDeviceType}.rrd" ; return 0 ; }
 
   local curDeviceId=$(dbGetDeviceIdByDeviceAlias "$1")
-  echo $rrdDir/${curDeviceId}.rrd
+  echo $rrdDir/${curDeviceId}.${curDeviceType}.rrd
 }
 #---------------------------------
 # dbGetDeviceIdByDeviceAlias()
