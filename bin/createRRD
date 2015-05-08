@@ -3,10 +3,12 @@
 this_dir=$(cd `dirname $0`;pwd)
 . $this_dir/functions
 sensorName=$1
+sensorType=$2
 
 [ -z "$dbDir" ] && errorExit "No data directory: $dbDir"
+[ -z "$sensorType" ] && sensorType=temperature
 
-dbFile=$dbDir/${sensorName}.rrd
+dbFile=$dbDir/${sensorName}.${sensorType}.rrd
 
 #--- rrd file starts today
 startDate="$(date "+%Y%m%d 00:00")"
