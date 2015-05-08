@@ -164,3 +164,43 @@ function piLogger_doUpgrade_20150425-001_to_20150427-001(){
 
   return 0
 }
+
+#========================================
+# from 20150427-001 to 20150508-001
+#========================================
+function piLogger_doUpgrade_20150427-001_to_20150508-001(){
+
+  #--- in version 20150508-001 we adjust the database so we can 
+  #--- capture multiple metrics from just one sensor
+
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+
+  #--- doing the upgrade
+  echo "    - Upgrading"
+
+  echo "      - adding new device metric table in sqlite3"
+  sqlite3 $appDbFile <<EOT
+create table devicemetric (id text, metric text);
+EOT
+
+  echo "      - filling up newly created table with default temperature values"
+
+  local dbDir=/var/lib/piLogger/db
+  for curDevice in $(ls $dbDir/*.rrd)
+  do
+     
+     deviceId=$(basename $curDevice | cut -d. -f1-2)     
+     deviceMetric=$(basename $curDevice | cut -d. -f3)
+
+     sqlite3 $appDbFile <<EOT
+insert into devicemetric (id, metric) values ("$deviceId","$deviceMetric");
+EOT
+
+  
+  done
+
+
+  return 0
+
+}
