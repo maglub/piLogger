@@ -3,16 +3,19 @@
 this_dir=$(cd `dirname $0`;pwd)
 . $this_dir/functions
 sensorName=$1
+sensorType=$2
 
 [ -z "$dbDir" ] && errorExit "No data directory: $dbDir"
+[ -z "$sensorName" ] && errorExit "No sensorName parameter given"
+[ -z "$sensorType" ] && errorExit "No sensorType parameter given"
 
-dbFile=$dbDir/${sensorName}.rrd
+dbFile=$dbDir/${sensorName}.${sensorType}.rrd
 
 #--- rrd file starts today
 startDate="$(date "+%Y%m%d 00:00")"
 startDateEpoc=$(date -d "$startDate" "+%s")
 
-logIt "  - Creating new RRD $dbDir/$sensorName start: $startDate "
+logIt "  - Creating new RRD $dbFile start: $startDate "
 
 #--- 259200 samples of 10 seconds -> 1 month
 #--- 86400 sampes of 1 minute -> 60 days
