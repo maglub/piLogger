@@ -202,19 +202,20 @@ Notes and references
   ~/piLogger/bin/listDevices --aliasFile
   ```
   
-* You can rescan your devices, and automatically update the `~/piLogger/etc/devices.conf` file with:
+* You can rescan your devices, and automatically update the database with new devices by issuing the following command:
    ```
-   ~/piLogger/bin/listDevices --scan
-   ```
-
-* Almost always, you want the same aliases in your `caputre.conf` file as in your `aliases.conf` file. You can easily do this by running:
-   ```
-   cat ~/piLogger/etc/aliases.conf | cut -d";" -f1 > ~/piLogger/etc/capture.conf
+   ~/piLogger/bin/dbTool --scan
    ```
 
-* Almost always, you want the same aliases in your `graph.default.conf` file. You can easily do this by running: 
-  ```
-  cp ~/piLogger/etc/capture.conf ~/piLogger/etc/graph.default.conf
-  ```
+Copy and paste the output into the terminal window to add the new devices.
 
+* Backup / Recovery
+
+Backup to /var/lib/piLogger/backup
+
+```
+~/piLogger/bin/backup.sh
+```
+
+For a recovery, do a fresh install on new SD card, then copy content of the backup.tgz file into /var/lib/piLogger/db.  Run ~/piLogger/bin/refreshCaches
 
