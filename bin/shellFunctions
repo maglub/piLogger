@@ -93,7 +93,8 @@ _dbTool(){
   third="${COMP_WORDS[3]}"
 
   #--- options to complete
-  opt="-a -d -p --add --remove --deviceId --deviceAlias --plotGroup"
+  opt="-a --add -af --aliases --aliasFile --conf -d --scan --db --deviceAlias --deviceId --devicePath --deviceType -h --help -p -pg -pc -l --list --plotGroup --remove --rowId --setup"
+
 
   case "${prev}" in
     --deviceId)
