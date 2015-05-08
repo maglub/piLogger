@@ -100,6 +100,7 @@ for toVersion in $versions
 do
   if [ -n "$fromVersion" ]
   then
+    . $this_dir/../etc/piLogger.conf
     [ "$installedVersion" = "$fromVersion" ] && piLogger_upgrade "$fromVersion" "$toVersion"
     installedVersion=$(piLogger_getInstalledVersion)
   fi
