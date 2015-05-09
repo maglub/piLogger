@@ -191,7 +191,7 @@ EOT
   do
      
      deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)}')
-     deviceId=$(basename $curDevice ${deviceMetric}.rrd)     
+     deviceId=$(basename $curDevice .${deviceMetric}.rrd)     
 
      sqlite3 $appDbFile <<EOT
 insert into devicemetric (id, metric) values ("$deviceId","$deviceMetric");
