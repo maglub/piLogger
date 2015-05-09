@@ -190,7 +190,7 @@ EOT
   for curDevice in $(ls $dbDir/*.rrd)
   do
      
-     deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)')
+     deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)}')
      deviceId=$(basename $curDevice ${deviceMetric}.rrd)     
 
      sqlite3 $appDbFile <<EOT
