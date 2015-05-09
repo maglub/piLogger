@@ -163,17 +163,18 @@ case $interface in
     AbioWire)
       abioDir=$this_dir/AbioWire
       [ ! -d /opt/ows ] && {
-         [ ! -d $this_dir/AbioWire ] && {
+         [ ! -d $abioDir ] && {
            echo "  - Fetching AbioWire owfs from http://www.axiris.eu/en/index.php/one-wire/one-wire-software"
-           echo "    - creating directory $this_dir/AbioWire"
-           mkdir -p $this_dir/AbioWire
-           cd $this_dir/AbioWire
+           echo "    - creating directory $abioDir"
+           mkdir -p $abioDir
+           cd $abioDir
            wget http://www.axiris.eu/download/ows/1.3.2/ows-1.3.2-linux-armel.tar.gz
            tar xvzf ows-1.3.2-linux-armel.tar.gz
          }
-         cd $this_dir/AbioWire/ows-1.3.2-linux-armel
+         cd $abioDir/ows-1.3.2-linux-armel
          ./install.sh
          cd $this_dir
+         rm -rf $abioDir
       }
       ;;
     *)
