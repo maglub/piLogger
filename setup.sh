@@ -156,32 +156,6 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 #--- remove dummy devices from the config file /etc/owfs.conf
 sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf 
 
-#--------------
-# OWS
-#--------------
-case $interface in
-    AbioWire)
-      abioDir=$this_dir/AbioWire
-      [ ! -d /opt/ows ] && {
-         [ ! -d $abioDir ] && {
-           echo "  - Fetching AbioWire owfs from http://www.axiris.eu/en/index.php/one-wire/one-wire-software"
-           echo "    - creating directory $abioDir"
-           mkdir -p $abioDir
-           cd $abioDir
-           wget http://www.axiris.eu/download/ows/1.3.2/ows-1.3.2-linux-armel.tar.gz
-           tar xvzf ows-1.3.2-linux-armel.tar.gz
-         }
-         cd $abioDir/ows-1.3.2-linux-armel
-         ./install.sh
-         cd $this_dir
-         rm -rf $abioDir
-      }
-      ;;
-    *)
-      echo "  - No special interfaces"
-      ;;
-esac
-
 #------------------
 # RRDTool
 #------------------
