@@ -30,6 +30,20 @@ logIt(){
   echo "$logIt_TS;$thisScript;$@" 1>&2
 }
 
+logCommand(){
+  local curCommand=$@
+
+  if [ -n "$debug" ]
+  then
+    logIt "Running command
+$curCommand
+"
+  fi
+
+  $curCommand
+
+}
+
 #------------------------------------
 # listDevices
 #------------------------------------
