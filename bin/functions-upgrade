@@ -227,3 +227,18 @@ function piLogger_doUpgrade_20150508-001_to_20150509-001(){
 
 }
 
+#========================================
+# from 20150509-001 to 20150615-001
+#========================================
+function piLogger_doUpgrade_20150509-001_to_20150615-001(){
+   
+  echo "    - Starting upgrade"
+  
+  local remoteLoggingDir=/var/lib/piLogger/remote-logging-enabled
+  
+  [ ! -d $remoteLoggingDir ] && mkdir remoteLoggingDir 
+  
+  return 0
+
+}
+
