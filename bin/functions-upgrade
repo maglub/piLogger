@@ -236,7 +236,7 @@ function piLogger_doUpgrade_20150509-001_to_20150615-001(){
   
   local remoteLoggingDir=/var/lib/piLogger/remote-logging-enabled
   
-  [ ! -d $remoteLoggingDir ] && mkdir remoteLoggingDir 
+  [ ! -d $remoteLoggingDir ] && mkdir $remoteLoggingDir 
   
   return 0
 
