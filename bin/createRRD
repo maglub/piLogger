@@ -6,6 +6,7 @@ sensorName=$1
 sensorType=$2
 
 [ -z "$dbDir" ] && errorExit "No data directory: $dbDir"
+[ -z "$sensorName" ] && errorExit "No sensorName parameter given"
 [ -z "$sensorType" ] && sensorType=temperature
 
 dbFile=$dbDir/${sensorName}.${sensorType}.rrd
