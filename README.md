@@ -191,7 +191,7 @@ If you upgrade from a previous version please follow the steps below:
 
 2. run the upgrade script:
    ```
-   ~/piLogger/bin/upgrade --doIt
+   ~/piLogger/bin/upgrade.sh --doIt
    ```
 
 
