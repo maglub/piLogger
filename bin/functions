@@ -239,7 +239,7 @@ function logTemperatureRemote(){
   # export the time, device and the value for remote-logging-plugins to use
   export PILOGGER_BASE_DIR=$baseDir
   export PILOGGER_AUTH_TOKEN=$authToken
-  export PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+  export PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
   export PILOGGER_DEVICE_NAME="$HOSTNAME"
   export PILOGGER_SENSOR="$sensor"
   export PILOGGER_METRIC_VALUE="$temperature"

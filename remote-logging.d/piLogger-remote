@@ -5,7 +5,7 @@ this_script=$(basename $0)
 
 # PILOGGER_BASE_DIR=$baseDir
 # PILOGGER_AUTH_TOKEN=$authToken
-# PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+# PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
 # PILOGGER_DEVICE_NAME="$HOSTNAME"
 # PILOGGER_SENSOR="$sensor"
 # PILOGGER_METRIC_VALUE="$temperature"
