@@ -188,6 +188,11 @@ parallelProcessing=$numCpu
 #--- remoteLogging=true
 remoteLogging=""
 remoteHost=""
+
+#-----------------------------
+# piLogger Cloud Plugin Config
+#-----------------------------
+authToken=
 EOT
 
 [ -n "$minimizeInstall" ] && { echo "minimizeInstall=true" >> $configFile ; }
