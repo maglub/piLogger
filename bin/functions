@@ -232,7 +232,7 @@ logTemperatureRemote(){
   # export the time, device and the value for remote-logging-plugins to use
   export PILOGGER_DEVICE="$ltr_device"
   export PILOGGER_METRIC_VALUE="$ltr_temperature"
-  export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%I:%S")
+  export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
   
   # now call all the activated remote logging plugins
   callRemoteLoggingPlugins
