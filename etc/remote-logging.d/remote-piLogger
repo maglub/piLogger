@@ -1,0 +1,63 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+
+
+# PILOGGER_BASE_DIR=$baseDir
+# PILOGGER_AUTH_TOKEN=$authToken
+# PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+# PILOGGER_DEVICE_NAME="$HOSTNAME"
+# PILOGGER_SENSOR="$sensor"
+# PILOGGER_METRIC_VALUE="$ltr_temperature"
+# PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+#----------------------------------------
+# functions
+#----------------------------------------
+function errorExit(){
+  echo "$*" 1>&2
+  usage
+  exit 1
+}
+
+function usage(){
+  cat<<EOT
+
+Usage:
+
+The following environment variables have to be set to run this script:
+
+  * PILOGGER_BASE (i.e PILOGGER_BASE=/home/pi/piLogger)
+  * PILOGGER_SENSOR
+  * PILOGGER_METRIC_VALUE
+
+To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
+
+Example:
+
+If debugging from the command line:
+
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=apa PILOGGER_METRIC_VALUE=55.5 ./$this_script
+
+EOT
+}
+
+#===================================
+# Setup environment
+#===================================
+
+[ -z "$PILOGGER_BASE_DIR" ] && { errorExit "Error: PILOGGER_BASE_DIR not set" ; }
+[ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+
+. $PILOGGER_BASE_DIR/etc/piLogger.conf
+
+[ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+
+#===================================
+# MAIN
+#===================================
+
+logIt "Logging $sensor:$temperature to $remoteHost"
+wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${sensor}/set/temperature/${temperature}"
+

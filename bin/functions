@@ -232,13 +232,23 @@ function logTemperature(){
 #---------------------------------
 # logTemperatureRemote
 #---------------------------------
-logTemperatureRemote(){
-  ltr_device=$1
-  ltr_temperature=$2
+function logTemperatureRemote(){
+  local sensor=$1
+  local temperature=$2
 
-  logIt "Logging $ltr_device:$ltr_temperature to $remoteHost"
-  wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${ltr_device}/set/temperature/${ltr_temperature}"
+  # export the time, device and the value for remote-logging-plugins to use
+  export PILOGGER_BASE_DIR=$baseDir
+  export PILOGGER_AUTH_TOKEN=$authToken
+  export PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+  export PILOGGER_DEVICE_NAME="$HOSTNAME"
+  export PILOGGER_SENSOR="$sensor"
+  export PILOGGER_METRIC_VALUE="$temperature"
+  export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+  
+  # now call all the activated remote logging plugins
+  callRemoteLoggingPlugins
 }
+
 
 #---------------------------------
 # getDBFilesFromGraphTemplate
@@ -286,5 +296,15 @@ getAliasesFromGraphTemplate(){
   cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }
 
-
-
+#---------------------------------
+# callRemoteLoggingPlugins
+#---------------------------------
+callRemoteLoggingPlugins(){
+   
+   # lets get the activated plugins and iterate over them
+   for activePlugin in $(ls $dataDir/remote-logging-enabled)
+   do
+      . $configDir/remote-logging.d/$activePlugin
+   done
+   
+}
