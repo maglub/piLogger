@@ -100,7 +100,7 @@ function registerDevice(){
 
   echo "#--- register this device"
   cat<<EOT
-curl -q -w "%{http_code}\n" -H 'Content-Type: application/json' -X POST -d "{\"deviceName\":\"$curHostname\",\"authToken\":\"$authToken\"}" http://$cloudHost/api/device/$deviceIdentifier
+curl -q -w "%{http_code}\n" -H 'Content-Type: application/json' -X POST -d "{\"deviceName\":\"$HOSTNAME\",\"authToken\":\"$authToken\"}" http://$cloudHost/api/device/$deviceIdentifier
 EOT
 
   #===========================
