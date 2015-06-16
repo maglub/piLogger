@@ -59,6 +59,6 @@ EOT
 # MAIN
 #===================================
 
-logIt "Logging $sensor:$temperature to $remoteHost"
+logIt "Logging $PILOGGER_SENSOR:$PILOGGER_METRIC_VALUE to $remoteHost"
 wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}/set/temperature/${PILOGGER_METRIC_VALUE}"
 

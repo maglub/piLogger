@@ -307,7 +307,7 @@ callRemoteLoggingPlugins(){
       logIt "    - callRemoteLoggingPlugins: found $activePlugin"
       #--- Sourcing the plugin is ugly. Only works for bash scripts
       #. $configDir/remote-logging.d/$activePlugin
-      $binDir/remote-logging.d/$activePlugin
+      $baseDir/remote-logging.d/$activePlugin
    done
    
 }
