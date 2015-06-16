@@ -190,8 +190,8 @@ EOT
   for curDevice in $(ls $dbDir/*.rrd)
   do
      
-     deviceId=$(basename $curDevice | cut -d. -f1-2)     
-     deviceMetric=$(basename $curDevice | cut -d. -f3)
+     deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)}')
+     deviceId=$(basename $curDevice .${deviceMetric}.rrd)     
 
      sqlite3 $appDbFile <<EOT
 insert into devicemetric (id, metric) values ("$deviceId","$deviceMetric");
@@ -204,3 +204,26 @@ EOT
   return 0
 
 }
+
+#========================================
+# from 20150508-001 to 20150509-001
+#========================================
+function piLogger_doUpgrade_20150508-001_to_20150509-001(){
+
+  #--- in version 20150509-001 we remove the unused AbioWire directory
+  #--- that gets installed during setup.sh
+  
+  echo "    - Starting upgrade"
+  echo "    - Checking pre requisites"
+  
+  
+  #--- doing the upgrade
+  echo "    - Upgrading"
+
+  echo "      - removing AbioWire directory if it exists"
+  [ -d $baseDir/AbioWire ] && rm -rf $baseDir/AbioWire
+
+  return 0
+
+}
+

@@ -31,20 +31,20 @@ Installation of the software
      - Upgrade the system `sudo apt-get -y dist-upgrade`
      - Reboot `sudo reboot`
 
-2.1 Optional environment config
+3. Optional environment config
 
-```
-  sudo update-alternatives --set editor /usr/bin/vim.tiny
-```
+    ```
+    sudo update-alternatives --set editor /usr/bin/vim.tiny
+    ```
 
-3. Fetch the piLogger software from GitHub
+4. Fetch the piLogger software from GitHub
 
     ```
     git clone https://github.com/maglub/piLogger
     cd piLogger
     ```
 
-4. Configure the installation
+5. Configure the installation
    ```
    ./configure
    ``` 
@@ -53,9 +53,9 @@ Installation of the software
    ./configure --withAbioWire --withLocale
    ```
 
-5. Run `./setup.sh` which will install necessary packages (this will take ca 5 - 10 minutes)
+6. Run `./setup.sh` which will install necessary packages (this will take ca 5 - 10 minutes)
 
-6. `sudo reboot` since the install of owfs will not work before
+7. `sudo reboot` since the install of owfs will not work before
 
 Configuration of your setup
 ---------------------------
@@ -77,7 +77,7 @@ Configuration of your setup
       - 24h
       - 168h
 
-Now you will have a setup that is ready to be used through the web gui. Note that you have not set up any aliases for your devices yet. See 3. below.
+   Now you will have a setup that is ready to be used through the web gui. Note that you have not set up any aliases for your devices yet. See 3. below.
 
 2. Scan for devices (into `~/piLogger/etc/devices.scanned`)
 
@@ -115,7 +115,7 @@ Now you will have a setup that is ready to be used through the web gui. Note tha
    Check the current aliases 
    ```
    ./dbTool -a
-   ````
+   ```
    If the aliases are the same as the device id's, you can set an alias by running the following command:
    ```
    ./dbTool --add -a --deviceId XXXX --deviceAlias your_alias
@@ -179,6 +179,20 @@ Now you will have a setup that is ready to be used through the web gui. Note tha
    
 9. Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
 
+Upgrade from previous version
+=====================================================
+
+If you upgrade from a previous version please follow the steps below:
+
+1. fetch the missing commits from the github repo:
+   ```
+   git pull
+   ```
+
+2. run the upgrade script:
+   ```
+   ~/piLogger/bin/upgrade.sh --doIt
+   ```
 
 
 Notes and references
@@ -207,15 +221,15 @@ Notes and references
    ~/piLogger/bin/dbTool --scan
    ```
 
-Copy and paste the output into the terminal window to add the new devices.
+   Copy and paste the output into the terminal window to add the new devices.
 
 * Backup / Recovery
 
-Backup to /var/lib/piLogger/backup
+   Backup to /var/lib/piLogger/backup
 
-```
-~/piLogger/bin/backup.sh
-```
+   ```
+   ~/piLogger/bin/backup.sh
+   ```
 
-For a recovery, do a fresh install on new SD card, then copy content of the backup.tgz file into /var/lib/piLogger/db.  Run ~/piLogger/bin/refreshCaches
+   For a recovery, do a fresh install on new SD card, then copy content of the backup.tgz file into /var/lib/piLogger/db.  Run ~/piLogger/bin/refreshCaches
 

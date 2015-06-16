@@ -185,7 +185,7 @@ parallelProcessing=$numCpu
 #-------------------------
 # for remote logging
 #-------------------------
-#--- remoteLoggin=true
+#--- remoteLogging=true
 remoteLogging=""
 remoteHost=""
 EOT
