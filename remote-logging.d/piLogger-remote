@@ -3,13 +3,15 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 
+cloudHost=ec2-52-17-39-163.eu-west-1.compute.amazonaws.com
+
 
 # PILOGGER_BASE_DIR=$baseDir
 # PILOGGER_AUTH_TOKEN=$authToken
 # PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
 # PILOGGER_DEVICE_NAME="$HOSTNAME"
 # PILOGGER_SENSOR="$sensor"
-# PILOGGER_METRIC_VALUE="$ltr_temperature"
+# PILOGGER_METRIC_VALUE="$temperature"
 # PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
 #----------------------------------------
@@ -51,9 +53,11 @@ EOT
 [ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
-. $PILOGGER_BASE_DIR/bin/functions
+#. $PILOGGER_BASE_DIR/bin/functions
 
 [ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+
+
 
 #===================================
 # MAIN

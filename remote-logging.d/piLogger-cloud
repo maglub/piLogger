@@ -23,20 +23,138 @@
 # variables
 #--------------------
 this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
 configDir=$this_dir/../etc
 
-#--------------------
-# MAIN
-#--------------------
+#============================
+# Available variables
+#============================
+# PILOGGER_BASE_DIR=$baseDir
+# PILOGGER_AUTH_TOKEN=$authToken
+# PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+# PILOGGER_DEVICE_NAME="$HOSTNAME"
+# PILOGGER_SENSOR="$sensor"
+# PILOGGER_METRIC_VALUE="$temperature"
+# PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
-# first parse the piLogger config file
-. $configDir/piLogger.conf
+
+#----------------------------------------
+# functions
+#----------------------------------------
+
+#----------------------------------
+# errorExit
+#----------------------------------
+function errorExit(){
+  echo "$*" 1>&2
+  usage
+  exit 1
+}
+
+#----------------------------------
+# Usage
+#----------------------------------
+function usage(){
+  cat<<EOT
+
+Usage:
+
+  $this_script [ --registerDevice ]
+
+The following environment variables have to be set to run this script:
+
+  * PILOGGER_BASE (i.e PILOGGER_BASE=/home/pi/piLogger)
+  * PILOGGER_DEVICE
+  * PILOGGER_SENSOR
+  * PILOGGER_METRIC_TIMESTAMP
+  * PILOGGER_METRIC_VALUE
+
+To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
+
+Example:
+
+To register your device and sensors:
+
+#--- if authToken and deviceIdentifier is set in etc/piLogger.conf
+PILOGGER_BASE_DIR=/home/pi/piLogger $this_dir/$this_script --registerDevice
+
+#--- if authToken and deviceIdentifier is not yet set in etc/piLogger.conf
+PILOGGER_BASE_DIR=/home/pi/piLogger authToken=<your token> deviceIdentifier=\$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) ./$this_script --registerDevice
+
+When sending data to piLogger-cloud, if debugging from the command line:
+
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) PILOGGER_SENSOR=test-device METRIC_TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S") PILOGGER_METRIC_VALUE=55.5 ./$this_script
+
+EOT
+}
+
+#----------------------------------
+# registerDevice()
+#----------------------------------
+function registerDevice(){
+
+  echo "#--- Registering device with cloud"
+
+  #===========================
+  #--- register this device
+  #===========================
+
+  echo "#--- register this device"
+  cat<<EOT
+curl -q -w "%{http_code}\n" -H 'Content-Type: application/json' -X POST -d "{\"deviceName\":\"$curHostname\",\"authToken\":\"$authToken\"}" http://$cloudHost/api/device/$deviceIdentifier
+EOT
+
+  #===========================
+  #--- register all sensors on this device
+  #===========================
+
+  echo
+  echo "#--- register sensors for this device"
+  for line in $($PILOGGER_BASE_DIR/bin/dbTool -l | awk 'NR>2 {OFS=";"; print $1,$3}')
+  do
+    sensorIdentifier=${line%%;*}  
+    sensorName=${line##*;}  
+
+    cat<<EOT
+curl -q -w "%{http_code}\n" -H 'Content-Type: application/json' -X POST -d "{\"deviceIdentifier\":\"$deviceIdentifier\",\"sensorName\":\"$sensorName\",\"sensorType\":\"temperature\",\"authToken\":\"$authToken\"}" http://$cloudHost/api/sensor/$sensorIdentifier
+EOT
+done
+
+  return 0
+}
+
+#===================================
+# Setup environment
+#===================================
+
+[ -z "$PILOGGER_BASE_DIR" ] && { errorExit "Error: PILOGGER_BASE_DIR not set" ; }
+[ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+
+. $PILOGGER_BASE_DIR/etc/piLogger.conf
+#. $PILOGGER_BASE_DIR/bin/functions
+
+#===========================
+# MAIN
+#===========================
+
+[[ -n "$1" && "$1" = "--registerDevice" ]] && {
+  registerDevice
+  exit 0
+}
+
+#--- for the cloud logging to work, we need some of the variables
+[ -z "$PILOGGER_DEVICE" ] && { errorExit "Error: PILOGGER_DEVICE not set" ; }
+[ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
+[ -z "$PILOGGER_METRIC_TIMESTAMP" ] && { errorExit "Error: PILOGGER_METRIC_TIMESTAMP not set" ; }
+[ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+
+[ -z "$cloudHost" ] && cloudHost=ec2-52-17-39-163.eu-west-1.compute.amazonaws.com
 
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
-                --write-out %{http_code} --silent --output /dev/null \
+                --write-out "%{http_code}" --silent --output /dev/null \
                 -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"authToken\": \"$authToken\"}" \
-                http://52.17.39.163/api/sensor/$PILOGGER_DEVICE )
+                http://$cloudHost/api/sensor/$PILOGGER_DEVICE )
 
 # check the HTTP response header code
 if [ "$response" -eq "200" ]; then
