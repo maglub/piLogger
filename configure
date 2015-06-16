@@ -150,6 +150,7 @@ sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the foll
 [ -z "$interface" ] && interface=default
 
 numCpu=$(cat /proc/cpuinfo | grep Processor | wc -l)
+deviceIdentifier=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1)
 
 cat>$configFile<<EOT
 #----------------------------
@@ -188,6 +189,13 @@ parallelProcessing=$numCpu
 #--- remoteLogging=true
 remoteLogging=""
 remoteHost=""
+
+#-------------------------
+# for piLogger Cloud
+#-------------------------
+deviceIdentifier=$deviceIdentifier
+authToken=""
+
 EOT
 
 [ -n "$minimizeInstall" ] && { echo "minimizeInstall=true" >> $configFile ; }

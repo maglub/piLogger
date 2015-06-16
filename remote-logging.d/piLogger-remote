@@ -3,12 +3,9 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 
-cloudHost=ec2-52-17-39-163.eu-west-1.compute.amazonaws.com
-
-
 # PILOGGER_BASE_DIR=$baseDir
 # PILOGGER_AUTH_TOKEN=$authToken
-# PILOGGER_DEVIE_IDENTIFIER=$deviceIdentifier
+# PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
 # PILOGGER_DEVICE_NAME="$HOSTNAME"
 # PILOGGER_SENSOR="$sensor"
 # PILOGGER_METRIC_VALUE="$temperature"
@@ -30,7 +27,7 @@ Usage:
 
 The following environment variables have to be set to run this script:
 
-  * PILOGGER_BASE (i.e PILOGGER_BASE=/home/pi/piLogger)
+  * PILOGGER_BASE_DIR (i.e PILOGGER_BASE_DIR=/home/pi/piLogger)
   * PILOGGER_SENSOR
   * PILOGGER_METRIC_VALUE
 
@@ -53,10 +50,10 @@ EOT
 [ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
-#. $PILOGGER_BASE_DIR/bin/functions
 
 [ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
-
+[ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+[ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 
 
 #===================================
