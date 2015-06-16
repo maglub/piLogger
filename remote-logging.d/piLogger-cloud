@@ -12,11 +12,14 @@
 #
 # 2. enable the piLogging Cloud Plugin by creating the following
 #    symlink: cd /var/lib/piLogger/remote-logging-enabled
-#             ln -s ~/piLogger/etc/piLogger-cloud.sh
+#             ln -s ~/piLogger/etc/remote-logging.d/piLogger-cloud
 #
 # 3. add the authToken of your user to the piLogger.conf
 #    this should then looks like below:
 #    authToken=e8c1458438ead3c34974bc0be3a03ed6
+# 
+# 4. make sure the deviceIdentifier is set in piLogger.conf
+#
 ########################################################
 
 #--------------------
@@ -25,6 +28,7 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
+cloudHost=ec2-52-17-39-163.eu-west-1.compute.amazonaws.com
 
 #============================
 # Available variables
@@ -36,11 +40,6 @@ configDir=$this_dir/../etc
 # PILOGGER_SENSOR="$sensor"
 # PILOGGER_METRIC_VALUE="$temperature"
 # PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-
-
-#----------------------------------------
-# functions
-#----------------------------------------
 
 #----------------------------------
 # errorExit
@@ -63,13 +62,13 @@ Usage:
 
 The following environment variables have to be set to run this script:
 
-  * PILOGGER_BASE (i.e PILOGGER_BASE=/home/pi/piLogger)
-  * PILOGGER_DEVICE
+  * PILOGGER_BASE_DIR (i.e PILOGGER_BASE_DIR=/home/pi/piLogger)
+  * PILOGGER_DEVICE_IDENTIFIER
   * PILOGGER_SENSOR
   * PILOGGER_METRIC_TIMESTAMP
   * PILOGGER_METRIC_VALUE
 
-To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
+To send data to a remote host, the variable "authToken" and "deviceIdentifier" has to be set in etc/piLogger.conf
 
 Example:
 
@@ -83,7 +82,7 @@ PILOGGER_BASE_DIR=/home/pi/piLogger authToken=<your token> deviceIdentifier=\$(c
 
 When sending data to piLogger-cloud, if debugging from the command line:
 
-PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) PILOGGER_SENSOR=test-device METRIC_TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S") PILOGGER_METRIC_VALUE=55.5 ./$this_script
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE_IDENTIFIER=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) PILOGGER_SENSOR=test-device PILOGGER_METRIC_TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S") PILOGGER_METRIC_VALUE=55.5 ./$this_script
 
 EOT
 }
@@ -131,7 +130,6 @@ done
 [ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
-#. $PILOGGER_BASE_DIR/bin/functions
 
 #===========================
 # MAIN
@@ -143,18 +141,16 @@ done
 }
 
 #--- for the cloud logging to work, we need some of the variables
-[ -z "$PILOGGER_DEVICE" ] && { errorExit "Error: PILOGGER_DEVICE not set" ; }
+[ -z "$PILOGGER_DEVICE_IDENTIFIER" ] && { errorExit "Error: PILOGGER_DEVICE_IDENTIFIER not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TIMESTAMP" ] && { errorExit "Error: PILOGGER_METRIC_TIMESTAMP not set" ; }
 [ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
-
-[ -z "$cloudHost" ] && cloudHost=ec2-52-17-39-163.eu-west-1.compute.amazonaws.com
 
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
                 --write-out "%{http_code}" --silent --output /dev/null \
                 -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"authToken\": \"$authToken\"}" \
-                http://$cloudHost/api/sensor/$PILOGGER_DEVICE )
+                http://$cloudHost/api/sensor/$PILOGGER_SENSOR )
 
 # check the HTTP response header code
 if [ "$response" -eq "200" ]; then
