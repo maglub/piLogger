@@ -51,6 +51,7 @@ EOT
 [ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
+. $PILOGGER_BASE_DIR/bin/functions
 
 [ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 
