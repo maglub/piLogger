@@ -304,7 +304,9 @@ callRemoteLoggingPlugins(){
    # lets get the activated plugins and iterate over them
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
    do
-      . $configDir/remote-logging.d/$activePlugin
+      #--- Sourcing the plugin is ugly. Only works for bash scripts
+      #. $configDir/remote-logging.d/$activePlugin
+      $activePlugin
    done
    
 }
