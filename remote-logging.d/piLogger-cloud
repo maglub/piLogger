@@ -111,7 +111,8 @@ EOT
   echo "#--- register sensors for this device"
   for line in $($PILOGGER_BASE_DIR/bin/dbTool -l | awk 'NR>2 {OFS=";"; print $1,$3}')
   do
-    sensorIdentifier=${line%%;*}  
+    sensorOriginalIdentifier=${line%%;*}  
+    sensorIdentifier=$( echo $deviceIdentifier+$sensorOriginalIdentifier | md5sum | cut -d" " -f1 )
     sensorName=${line##*;}  
 
     cat<<EOT
@@ -145,6 +146,9 @@ done
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TIMESTAMP" ] && { errorExit "Error: PILOGGER_METRIC_TIMESTAMP not set" ; }
 [ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+
+# calculate sensor id hash
+PILOGGER_SENSOR=$( echo $PILOGGER_DEVICE_IDENTIFIER+$PILOGGER_SENSOR | md5sum | cut -d" " -f1 )
 
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
