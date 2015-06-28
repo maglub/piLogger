@@ -28,7 +28,8 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
-cloudHost=picloudfrontendbalancer-1653774121.eu-west-1.elb.amazonaws.com
+spoolDir=/var/spool/piLogger
+cloudHost=piCloudAPILoadBalancer-1554030749.eu-west-1.elb.amazonaws.com
 
 #============================
 # Available variables
@@ -87,6 +88,44 @@ PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE_IDENTIFIER=$(cat /sys/class/
 EOT
 }
 
+
+#----------------------------------
+# processSpoolDir()
+#----------------------------------
+function processSpoolDir(){
+  
+  # check if we have internet connection
+  wget -q --spider http://google.com
+
+  if [ $? -ne 0 ]; then
+     echo "Error: Seems we dont have an internet connection"
+     exit 1
+  fi
+
+  for file in /var/spool/piLogger/${this_script}*
+  do
+     
+     # get the needed data from file
+     sensor=$( cat $file | cut -d"," -f 1)
+     time=$( cat $file | cut -d"," -f 2)
+     value=$( cat $file | cut -d"," -f 3) 
+
+     response=$(curl -H 'Content-Type: application/json' -X PUT \
+                --write-out "%{http_code}" --silent --output /dev/null \
+                -d "{\"probeTime\": \"$time\",\"probeValue\": \"$value\",\"authToken\": \"$authToken\"}" \
+                http://$cloudHost/api/sensor/$sensor )
+
+     # check the HTTP response header code
+     # if all good we delete the spool file
+     if [ "$response" -eq "200" ]; then
+        echo "data sent - deleting $file"
+        rm $file
+     fi
+
+  done 
+
+}
+
 #----------------------------------
 # registerDevice()
 #----------------------------------
@@ -141,6 +180,12 @@ done
   exit 0
 }
 
+[[ -n "$1" && "$1" = "--processSpoolDir" ]] && {
+  processSpoolDir
+  exit 0
+}
+
+
 #--- for the cloud logging to work, we need some of the variables
 [ -z "$PILOGGER_DEVICE_IDENTIFIER" ] && { errorExit "Error: PILOGGER_DEVICE_IDENTIFIER not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
@@ -161,4 +206,14 @@ if [ "$response" -eq "200" ]; then
    echo "successfully sent measurement to piLogger cloud"
 else
    echo "error: did get HTTP status code $response from REST api - something went wrong"
+
+   # writing data to spool directory for later processing
+   timenow=$(date +%s)
+   spoolFileName=${this_script}_$$_$timenow
+   spoolFileContent=${PILOGGER_SENSOR},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_METRIC_VALUE} 
+  
+   echo "writing measured data to $spoolDir/$spoolFileName for later processing"
+  
+   echo $spoolFileContent >> $spoolDir/$spoolFileName
+ 
 fi

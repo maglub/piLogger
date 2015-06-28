@@ -2,6 +2,7 @@
 
 this_dir=$(cd `dirname $0`; pwd)
 this_script=$(basename $0)
+spoolDir=/var/spool/piLogger
 
 . $this_dir/functions
 . $this_dir/functions-sqlite3
@@ -38,12 +39,19 @@ EOT
       ;;
   esac
 
-  #--- local devices
+
+
+  # if we have any files in the spool directory we have to call the corresponding function to clear it
+  [ "$(ls -A $spoolDir)" ] && echo "$spoolDir is not Empty"; callSpoolerFunctions || echo "$spoolDir is empty - no need to call corresponding functions"
+
+  # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   echo $aliases | xargs -n 1 -P${parallelProcessing}  $this_dir/logTemperature 
-
+  
+  # process all compositeDevices
   for compositeDevice in $compositeDevices
   do
     curTemp=$($this_dir/getComposite $compositeDevice)
     $this_dir/logTemperature $compositeDevice $curTemp
   done
+  
