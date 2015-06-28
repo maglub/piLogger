@@ -252,6 +252,7 @@ function piLogger_doUpgrade_20150615-001_to_20150628-001(){
   local spoolDir=/var/spool/piLogger
 
   [ ! -d $spoolDir ] && sudo mkdir $spoolDir
+  [ -d $spoolDir ] && sudo chmod 777 $spoolDir
 
   return 0
 
