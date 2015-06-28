@@ -242,3 +242,18 @@ function piLogger_doUpgrade_20150509-001_to_20150615-001(){
 
 }
 
+#========================================
+# from 20150615-001 to 20150628-001
+#========================================
+function piLogger_doUpgrade_20150615-001_to_20150628-001(){
+
+  echo "    - Starting upgrade"
+
+  local spoolDir=/var/spool/piLogger
+
+  [ ! -d $spoolDir ] && sudo mkdir $spoolDir
+
+  return 0
+
+}
+
