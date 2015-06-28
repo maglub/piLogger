@@ -12,6 +12,8 @@
 # 
 #============================================
 
+this_dir=$(cd `dirname $0`; pwd)
+
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
 . $PILOGGER_BASE_DIR/bin/functions
 
