@@ -28,6 +28,7 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
+spoolDir=/var/spool/piLogger
 cloudHost=piCloudAPILoadBalancer-1554030749.eu-west-1.elb.amazonaws.com
 
 #============================
@@ -161,4 +162,14 @@ if [ "$response" -eq "200" ]; then
    echo "successfully sent measurement to piLogger cloud"
 else
    echo "error: did get HTTP status code $response from REST api - something went wrong"
+
+   # writing data to spool directory for later processing
+   timenow=$(date +%s)
+   spoolFileName=${this_script}_$$_$timenow
+   spoolFileContent=${PILOGGER_SENSOR}---${PILOGGER_METRIC_TIMESTAMP}---${PILOGGER_METRIC_VALUE} 
+  
+   echo "writing measured data to $spoolDir/$spoolFileName for later processing"
+  
+   echo $spoolFileContent >> $spoolDir/$spoolFileName
+ 
 fi
