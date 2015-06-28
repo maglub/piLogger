@@ -28,7 +28,7 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
-cloudHost=picloudfrontendbalancer-1653774121.eu-west-1.elb.amazonaws.com
+cloudHost=piCloudAPILoadBalancer-1554030749.eu-west-1.elb.amazonaws.com
 
 #============================
 # Available variables
