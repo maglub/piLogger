@@ -1,6 +1,7 @@
 thisScript=$(basename $0)
 [ -z "$logDir" ] && logDir=/var/log/piLogger
 logFile=$logDir/$thisScript.log
+spoolDir=/var/spool/piLogger
 configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
 
@@ -310,4 +311,25 @@ callRemoteLoggingPlugins(){
       $baseDir/remote-logging.d/$activePlugin
    done
    
+}
+
+#---------------------------------
+# callSpoolerFunctions
+#---------------------------------
+callSpoolerFunctions(){
+
+   # loop over all active plugins
+   for activePlugin in $(ls $dataDir/remote-logging-enabled)
+   do
+       # check if there are spooler files for this plugin
+       if [ "$(ls -A $spoolDir/$activePlugin* 2> /dev/null )" ]; then
+          logIt "spooler files for plugin $activePlugin found - calling processSpoolDir option on this plugin"
+          export PILOGGER_BASE_DIR=$baseDir
+          $baseDir/remote-logging.d/$activePlugin --processSpoolDir
+       else
+          logIt "No spooler files for plugin $activePlugin found" 
+       fi
+
+   done
+
 }
