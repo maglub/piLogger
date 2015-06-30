@@ -119,7 +119,7 @@ function processSpoolDir(){
      # if all good we delete the spool file
      if [ "$response" -eq "200" ]; then
         echo "data sent - deleting $file"
-        rm $file
+        sudo rm $file
      fi
 
   done 
