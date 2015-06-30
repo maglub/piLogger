@@ -29,7 +29,7 @@ this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
 spoolDir=/var/spool/piLogger
-cloudHost=piCloudAPILoadBalancer-1554030749.eu-west-1.elb.amazonaws.com
+cloudHost=api.pilogger.net
 
 #============================
 # Available variables
