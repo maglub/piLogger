@@ -3,7 +3,7 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 
-$this_dir/../bin/functions
+. $this_dir/../bin/functions
 
 # PILOGGER_BASE_DIR=$baseDir
 # PILOGGER_AUTH_TOKEN=$authToken
