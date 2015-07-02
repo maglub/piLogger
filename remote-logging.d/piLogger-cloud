@@ -193,13 +193,13 @@ done
 [ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
 
 # calculate sensor id hash
-PILOGGER_SENSOR=$( echo $PILOGGER_DEVICE_IDENTIFIER+$PILOGGER_SENSOR | md5sum | cut -d" " -f1 )
+PILOGGER_SENSOR_HASH=$( echo $PILOGGER_DEVICE_IDENTIFIER+$PILOGGER_SENSOR | md5sum | cut -d" " -f1 )
 
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
                 --write-out "%{http_code}" --silent --output /dev/null \
                 -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"authToken\": \"$authToken\"}" \
-                http://$cloudHost/api/sensor/$PILOGGER_SENSOR )
+                http://$cloudHost/api/sensor/$PILOGGER_SENSOR_HASH )
 
 # check the HTTP response header code
 if [ "$response" -eq "200" ]; then
@@ -210,7 +210,7 @@ else
    # writing data to spool directory for later processing
    timenow=$(date +%s)
    spoolFileName=${this_script}_$$_$timenow
-   spoolFileContent=${PILOGGER_SENSOR},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_METRIC_VALUE} 
+   spoolFileContent="${PILOGGER_SENSOR_HASH},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_METRIC_VALUE},${PILOGGER_SENSOR}"
   
    echo "writing measured data to $spoolDir/$spoolFileName for later processing"
   
