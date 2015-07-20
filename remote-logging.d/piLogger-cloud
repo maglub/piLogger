@@ -59,7 +59,7 @@ function usage(){
 
 Usage:
 
-  $this_script [ --registerDevice ]
+  $this_script [ --registerDevice | --processSpoolDir ]
 
 The following environment variables have to be set to run this script:
 
@@ -102,6 +102,8 @@ function processSpoolDir(){
      exit 1
   fi
 
+  local tries=0
+
   for file in /var/spool/piLogger/${this_script}*
   do
      
@@ -120,7 +122,12 @@ function processSpoolDir(){
      if [ "$response" -eq "200" ]; then
         echo "data sent - deleting $file"
         sudo rm $file
+     else
+        echo "Error: could not connect to $cloudHost to send file $file"
+        (( tries = $tries + 1 ))
      fi
+
+     [ $tries -gt 1 ] && { echo "Error: Multiple connection errors when connecting to $cloudHost" ; exit 1 ; }
 
   done 
 
