@@ -14,7 +14,7 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
 
   #--- default
   logIt "  - Refreshing sensorData.json"
-  $htmlDir/api/sensorData --genCache  > $tmpFile
+  $baseDir/bin/exportJSON default  > $tmpFile
   mv $tmpFile $cacheDir/sensorData.json
   chmod 666 $cacheDir/sensorData.json 
 
@@ -40,14 +40,16 @@ case $1 in
     for plotGroup in $plotGroups
     do
       logIt "  - Refreshing sensorData.$plotGroup.${1}.cache"
-      $htmlDir/api/sensorData --genCache ${1} $plotGroup > $tmpFile
+	  $baseDir/bin/exportJSON $plotGroup $1 > $tmpFile
+#      $htmlDir/api/sensorData --genCache ${1} $plotGroup > $tmpFile
       mv $tmpFile $cacheDir/sensorData.$plotGroup.${1}.json
       chmod 666 $cacheDir/sensorData.$plotGroup.${1}.json 
     done
     ;;
   sensors)
     logIt "  - Refreshing sensorAllInfo.json"
-    $htmlDir/api/sensor all info > $tmpFile
+#    $htmlDir/api/sensor all info > $tmpFile
+	$baseDir/bin/listDevices --json --info > $tmpFile
     mv $tmpFile $cacheDir/sensorAllInfo.json
     chmod 666 $cacheDir/sensorAllInfo.json 
     ;;
