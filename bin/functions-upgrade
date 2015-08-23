@@ -261,7 +261,7 @@ function piLogger_doUpgrade_20150615-001_to_20150628-001(){
 #========================================
 # from 20150628-001 to 20150823-001
 #========================================
-function piloggerDoUpgrade_20150628-001_to_20150823-001(){
+function pilogger_doUpgrade_20150628-001_to_20150823-001(){
 
 cd $baseDir/include
 curl -s https://getcomposer.org/installer | php
