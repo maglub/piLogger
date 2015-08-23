@@ -243,6 +243,14 @@ sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:
 $this_dir/bin/upgrade.sh --doIt
 
 #================================
+# Run composer
+#================================
+cd $this_dir/include
+curl -s https://getcomposer.org/installer | php
+./composer.phar install
+cd -
+
+#================================
 # End
 #================================
 [ -n "$needReboot" ] && {
