@@ -62,6 +62,20 @@ function getSensorById($id){
     return $retArray;
 }
 
+function getSensorIdByAlias($alias){
+    global $db;
+    $sql = "select * from alias where alias = '{$alias}';";
+    $ret = $db->query($sql);
+    $row = $ret->fetchArray();
+	return $row['id'];
+}
+
+function getSensorByAlias($alias){
+	$curId = getSensorIdByAlias($alias);
+	$ret = getSensorById($curId);
+	return $ret;	
+}
+
 #-----------------------------------
 #
 #-----------------------------------

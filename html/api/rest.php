@@ -62,6 +62,12 @@
 	}//end of function
 	);
 
+	$app->get('/alias/:alias', function($alias) use ($app) {
+		$res=getSensorByAlias($alias);
+		$app->render(200,o2h($res));
+	}//end of function
+	);
+	
 
 
 	$app->get('/sensor/:id', function($id) use ($app) {
