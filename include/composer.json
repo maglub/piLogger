@@ -1,0 +1,17 @@
+{
+    "name": "nordiska/nordiska",
+    "description": "package for nordiska.ch",
+    "type": "library",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "maglub",
+            "email": "magnus.lubeck@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^2.6",
+        "dogancelik/slim-json": "dev-master"
+    },
+    "minimum-stability": "dev" 
+}

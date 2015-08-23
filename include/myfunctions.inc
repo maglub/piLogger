@@ -44,6 +44,24 @@ function getDevices(){
   return $retArray;
 }
 
+function getSensorById($id){
+	
+    global $db;
+
+    $sql = "select * from device where id = '{$id}';";
+
+    $n = 0;
+    $ret = $db->query($sql);
+
+    $row = $ret->fetchArray();
+	$retArray['id'] = $row['id'];
+	$retArray['type'] = $row['type'];
+	$retArray['path'] = $row['path'];	 
+	$retArray['alias'] = Array(getDeviceAliasById($row['id']));
+
+    return $retArray;
+}
+
 #-----------------------------------
 #
 #-----------------------------------
