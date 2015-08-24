@@ -63,7 +63,7 @@
 	$app->get('/sensor/:id/set/temperature/:temperature', function($id, $temperature) use ($app,$root) {
 		$resOs = shell_exec("${root}/../bin/logTemperature $id $temperature 2>&1");
 		//print "{\"result\":\"ok\", \"command\":\"${root}/../bin/logTemperature $id $temperature\",\"message\":\"{$resOs}\"}";
-		print "{\"result\":\"ok\", \"message\":\"{$resOs}\"}";
+		print "{\"result\":\"ok\"}";
 	}//end of function
 	);
 	
