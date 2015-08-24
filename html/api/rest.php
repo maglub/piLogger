@@ -53,6 +53,21 @@
 	}//end of function
 	);
 
+	$app->get('/sensor/:id', function($id) use ($app) {
+		$res=getSensorById($id);
+		$app->render(200,o2h($res));
+	}//end of function
+	);
+
+	#--- ugly workaround to break-fix remote logging (see #71)
+	$app->get('/sensor/:id/set/temperature/:temperature', function($id, $temperature) use ($app,$root) {
+		$resOs = shell_exec($root . "${root}/../bin/logTemperature $id $temperature");
+		//print "{\"result\":\"ok\", \"command\":\"${root}/../bin/logTemperature $id $temperature\",\"message\":\"{$resOs}\"}";
+		print "{\"result\":\"ok\", \"message\":\"{$resOs}\"}";
+	}//end of function
+	);
+	
+	
 	$app->get('/sensor/all/info', function() use ($app, $root) {
 		$resOs = shell_exec($root . "/../bin/listDevices --json --info");
 		// the output is already in json format
@@ -68,13 +83,22 @@
 	}//end of function
 	);
 	
-
-
-	$app->get('/sensor/:id', function($id) use ($app) {
-		$res=getSensorById($id);
+	$app->get('/plotgroup', function() use ($app) {
+		$res=getPlotgroups();
 		$app->render(200,o2h($res));
 	}//end of function
 	);
+
+	$app->get('/plotgroup/:groupName', function($groupName) use ($app) {
+		$res=getPlotgroupByGroupName($groupName);
+		$app->render(200,o2h($res));
+	}//end of function
+	);
+	
+
+
+
+	
 	
 	
 	$app->run();
