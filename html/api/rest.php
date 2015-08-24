@@ -61,7 +61,7 @@
 
 	#--- ugly workaround to break-fix remote logging (see #71)
 	$app->get('/sensor/:id/set/temperature/:temperature', function($id, $temperature) use ($app,$root) {
-		$resOs = shell_exec($root . "${root}/../bin/logTemperature $id $temperature");
+		$resOs = shell_exec("${root}/../bin/logTemperature $id $temperature 2>&1");
 		//print "{\"result\":\"ok\", \"command\":\"${root}/../bin/logTemperature $id $temperature\",\"message\":\"{$resOs}\"}";
 		print "{\"result\":\"ok\", \"message\":\"{$resOs}\"}";
 	}//end of function
