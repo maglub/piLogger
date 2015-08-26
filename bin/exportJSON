@@ -5,9 +5,6 @@ this_script=$(basename $0)
 . $this_dir/functions
 . $this_dir/functions-sqlite3
 
-exportTime=24h
-[ -n "$2" ] && exportTime=$2
-[ -n "$3" ] && groupName=$3
 
 #---------------------------------
 # printUsage()
@@ -23,23 +20,58 @@ $this_script all.graph.20h "20131224 00:30:00" "20131224 23:59:59"
 
 EOT
 }
+
+#---------------------------------
+# 
+#---------------------------------
+
 #=================================
 # MAIN
 #=================================
-graphName=$1
-[ -z "$graphName" ] && graphName=default
+
+#--- set default parameters
+exportTime=24h
+
+#--- if no parameters sent, print "Default graph"
+
+[ -z "$1" ] && { curAliases=$(dbGetAliasesFromPlotGroup default) ; graphName=default ; numSensors=2 ; }
+
+
+if [ -n "$1" ]
+then
+	case $1 in
+		--sensor=*)
+		curAliases=${1#*=}
+		graphName=$2
+		numSensors=1
+		;;
+	
+		*)
+		graphName=$1
+		curAliases=$(dbGetAliasesFromPlotGroup $graphName)
+		numSensors=2
+		;;
+		
+	esac
+fi
+
+#--- take care of the remaining parameters, if any
+[ -n "$2" ] && exportTime=$2
+[ -n "$3" ] && groupName=$3
+
 
 TS=$(date "$dateFormat")
 
 fromDateEpoc=$(date -d "$fromDate" "+%s")
 toDateEpoc=$(date -d "$toDate" "+%s")
 
-curAliases=$(dbGetAliasesFromPlotGroup $graphName)
 #--- XXX 2015-01-13 very bad construct
 #--- XXX we really don't want to get all devices in the filesystem if there is no aliases
 [ -z "$curAliases" ] && curAliases=$(getAllDeviceNames $oneWireDir | grep -v "81\.")
 
-printf "["
+#--- if multiple sensors, print an array
+[ $numSensors -gt 1 ] && printf "["
+
 curComma=" "
 for curAlias in $curAliases
 do
@@ -55,13 +87,11 @@ do
   curDbFile=$(dbGetDBFileByAlias $curAlias)
 
   logCommand rrdtool xport -s now-${exportTime} -e now --step 300  DEF:${curVName}=${curDbFile}:temperature:${curAggregateType}  XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000, $2*1; }'
-#  rrdtool xport -s now-${exportTime} -e now --step 300  DEF:${curVName}=${curDbFile}:temperature:${curAggregateType}  XPORT:${curVName}:$curVName  | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000, $2*1; }'
 
-#  rrdtool xport -s now-${exportTime} -e now --step 300  \
-#      DEF:${curVName}=${curDbFile}:temperature:${curAggregateType} \
-#      XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000, $2*1; }'
   curComma=","
   printf "]}"
 done
-printf "\n]"
+
+#--- end of array (if multiple sensors)
+[ $numSensors -gt 1 ] && printf "\n]" || printf "\n"
 

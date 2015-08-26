@@ -76,6 +76,10 @@ function getSensorByAlias($alias){
 	return $ret;	
 }
 
+function getSensorTemperatureDataRangeById($id, $range){
+	$ret = Array(12,15,24);
+	return $ret;
+}
 #-----------------------------------
 #
 #-----------------------------------
@@ -110,6 +114,43 @@ function getDeviceStores(){
 
   return $cur_dbFiles;
 }
+
+
+#===========================================================
+# Plot configurations
+#===========================================================
+
+function getPlotgroups(){
+    global $db;
+    $sql = "select * from plotgroup;";
+ 
+    $ret = $db->query($sql);
+	$n = 0;
+    while($row = $ret->fetchArray()){
+      $retArray[$n]['groupname'] = $row['groupname'] ; 
+      $retArray[$n]['device_id'] = $row['device_id'] ; 
+      $retArray[$n]['plot_type'] = $row['plot_type'] ; 
+      $n++;
+    }
+    return $retArray;	
+}
+
+function getPlotGroupByGroupName($groupName){
+    global $db;
+    $sql = "select * from plotgroup where groupname = '{$groupName}';";
+ 
+    $ret = $db->query($sql);
+	$n = 0;
+    while($row = $ret->fetchArray()){
+      $retArray[$n]['groupname'] = $row['groupname'] ; 
+      $retArray[$n]['device_id'] = $row['device_id'] ; 
+      $retArray[$n]['plot_type'] = $row['plot_type'] ; 
+      $n++;
+    }
+    return $retArray;	
+	
+}
+
 #-----------------------------------
 #
 #-----------------------------------
@@ -157,6 +198,6 @@ EOT;
 # 
 #-----------------------------------
 function printCenterPane(){
-  require($_SERVER['DOCUMENT_ROOT'] . '/center-pane.php');
+  require($_SERVER['DOCUMENT_ROOT'] . '/center-pane-default.php');
 }
 ?>

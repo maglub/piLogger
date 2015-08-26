@@ -67,6 +67,20 @@
 	}//end of function
 	);
 	
+	$app->get('/sensor/:id/temperature', function($id) use ($app,$root) {
+		$resOs = shell_exec("${root}/../bin/getTemperature -rrd $id");
+		//print "{\"result\":\"ok\", \"command\":\"${root}/../bin/logTemperature $id $temperature\",\"message\":\"{$resOs}\"}";
+		print "{\"temperature\":${resOs}}";
+	}//end of function
+	);
+	
+	$app->get('/sensor/:id/temperature/:range', function($id,$range = "") use ($app,$root) {
+//		$res = getSensorTemperatureDataRangeById($id,$range);
+		$resOs = shell_exec("${root}/../bin/exportJSON --sensor={$id} {$range} 2>&1");
+		print "${resOs}";
+	}//end of function
+	);
+	
 	
 	$app->get('/sensor/all/info', function() use ($app, $root) {
 		$resOs = shell_exec($root . "/../bin/listDevices --json --info");

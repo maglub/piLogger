@@ -8,6 +8,9 @@ html/cache
 html/graphs
 html/xml
 html/index.html
+include/composer.phar
+include/composer.lock
+include/vendor
 
 # ignore AbioWire files
 AbioWire
