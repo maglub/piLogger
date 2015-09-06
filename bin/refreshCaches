@@ -19,10 +19,6 @@ tmpFile=$(mktemp -u -t ${this_script}.XXXXXX)
   chmod 666 $cacheDir/sensorData.json 
 
   #--- recursively call this script again
-  #for time in 12h 24h 168h
-  #do
-  #   $this_dir/$this_script $time
-  #done
   [ -z "$parallelProcessing" ] && parallelProcessing=1
    echo 12h 24h 168h | xargs -n 1 -P${parallelProcessing}  $this_dir/$this_script $time
 
@@ -40,16 +36,14 @@ case $1 in
     for plotGroup in $plotGroups
     do
       logIt "  - Refreshing sensorData.$plotGroup.${1}.cache"
-	  $baseDir/bin/exportJSON $plotGroup $1 > $tmpFile
-#      $htmlDir/api/sensorData --genCache ${1} $plotGroup > $tmpFile
+	   $baseDir/bin/exportJSON $plotGroup $1 > $tmpFile
       mv $tmpFile $cacheDir/sensorData.$plotGroup.${1}.json
       chmod 666 $cacheDir/sensorData.$plotGroup.${1}.json 
     done
     ;;
   sensors)
     logIt "  - Refreshing sensorAllInfo.json"
-#    $htmlDir/api/sensor all info > $tmpFile
-	$baseDir/bin/listDevices --json --info > $tmpFile
+	 $baseDir/bin/listDevices --json --info > $tmpFile
     mv $tmpFile $cacheDir/sensorAllInfo.json
     chmod 666 $cacheDir/sensorAllInfo.json 
     ;;
