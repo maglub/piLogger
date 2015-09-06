@@ -59,9 +59,8 @@ errorExit(){
 }
 
 #================================
-# Update some system files
+# enable i2c kernel modules
 #================================
-
 
 #--- enable i2c_arm and i2c1 options
 echo "  - enabling i2c config in /boot/config.txt"
@@ -72,21 +71,19 @@ echo "  - adding i2c-dev to /etc/modules"
 [ -z "$(grep i2c-dev /etc/modules)" ] && { sudo sh -c "echo i2c-dev >> /etc/modules" ; needReboot=true ; }
 
 
+#================================
+# correctly configure locales
+#================================
+
 #--- setting up the locale
 [ -n "$piLoggerLocale" ] && {
   echo "  - setting up locale (if not already set up)"
   [[ -z "$(grep -v '^#' /etc/locale.gen | grep 'en_US.UTF-8')" ]] && {
     sudo sed -ie  's/^# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
     sudo locale-gen
-  }
-
-  [[ ! -f .bash_profile || -z "$(grep 'LANGUAGE=' ~/.bash_profile)" ]] && {
-    cat>>~/.bash_profile<<EOT
-export LANGUAGE=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-. ~/.bashrc
-EOT
+    sudo update-locale LANG=en_US.UTF-8
+    sudo update-locale LANGUAGE=en_US.UTF-8
+    sudo update-locale LC_ALL=en_US.UTF-8
   }
 }
 
