@@ -64,7 +64,7 @@ Configuration of your setup
 
    ```
    cd ~/piLogger/bin
-   ./dbSetup --setup
+   ./dbSetup.sh --setup
    ```
 
    This will: 
