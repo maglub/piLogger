@@ -88,7 +88,7 @@ function piLogger_doUpgrade_20150423-002_to_20150423-003(){
   echo "      - Gathering rrd file names"
 
   local dbDir=/var/lib/piLogger/db
-  for curDevice in $(ls $dbDir/*.rrd | grep -v "temperature.rrd$")
+  for curDevice in $(ls $dbDir/*.rrd 2>/dev/null | grep -v "temperature.rrd$")
   do
     if [ ! -h $curDevice ] 
     then
@@ -187,7 +187,7 @@ EOT
   echo "      - filling up newly created table with default temperature values"
 
   local dbDir=/var/lib/piLogger/db
-  for curDevice in $(ls $dbDir/*.rrd)
+  for curDevice in $(ls $dbDir/*.rrd 2>/dev/null )
   do
      
      deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)}')
