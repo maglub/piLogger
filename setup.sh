@@ -64,8 +64,8 @@ errorExit(){
 
 #--- enable i2c_arm and i2c1 options
 echo "  - enabling i2c config in /boot/config.txt"
-sudo sed -ie 's/^dtparam=i2c_arm=on/#dtparam=i2c_arm=on/' /boot/config.txt
-sudo sed -ie 's/^dtparam=i2c1=on/#dtparam=i2c1=on/' /boot/config.txt 
+sudo sed -ie 's/^#dtparam=i2c_arm=on/dtparam=i2c_arm=on/' /boot/config.txt
+sudo sed -ie 's/^#dtparam=i2c1=on/dtparam=i2c1=on/' /boot/config.txt 
 
 echo "  - adding i2c-dev to /etc/modules"
 [ -z "$(grep i2c-dev /etc/modules)" ] && { sudo sh -c "echo i2c-dev >> /etc/modules" ; needReboot=true ; }
