@@ -20,15 +20,6 @@ errorExit(){
 
 
 #================================
-# 
-#================================
-
-#--- fetch config file
-# Variables:
-#  - interface
-
-
-#================================
 # Check that required variables are set
 #================================
 
