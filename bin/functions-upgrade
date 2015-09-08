@@ -274,4 +274,7 @@ function piLogger_doUpgrade_20150628-001_to_20150823-001(){
   curl -s https://getcomposer.org/installer | php
   ./composer.phar install
 
+  # we will restart lighttpd just to be sure it picked up the correct config file
+  sudo /etc/init.d/lighttpd restart
+
 }
