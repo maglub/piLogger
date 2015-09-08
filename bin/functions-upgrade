@@ -263,8 +263,15 @@ function piLogger_doUpgrade_20150615-001_to_20150628-001(){
 #========================================
 function piLogger_doUpgrade_20150628-001_to_20150823-001(){
 
-cd $baseDir/include
-curl -s https://getcomposer.org/installer | php
-./composer.phar install
+  echo "    - Starting upgrade"
+
+  # installing php5-cli package if not already there
+  sudo dpkg -s php5-cli >/dev/null 2>&1 || { echo "    - Installing php5-cli" ; sudo apt-get -y -qq install php5-cli ; }
+
+  # now we can get composer and use php5-cli for it
+  echo "    - Installing composer"
+  cd $baseDir/include
+  curl -s https://getcomposer.org/installer | php
+  ./composer.phar install
 
 }
