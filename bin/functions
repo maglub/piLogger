@@ -323,9 +323,9 @@ callSpoolerFunctions(){
    do
        # check if there are spooler files for this plugin
        if [ "$(ls -A $spoolDir/$activePlugin* 2> /dev/null )" ]; then
-          logIt "spooler files for plugin $activePlugin found - calling processSpoolDir option on this plugin"
+          logIt "spooler files for plugin $activePlugin found - calling processSpoolDir option in the background on this plugin"
           export PILOGGER_BASE_DIR=$baseDir
-          $baseDir/remote-logging.d/$activePlugin --processSpoolDir
+          $baseDir/remote-logging.d/$activePlugin --processSpoolDir &
        else
           logIt "No spooler files for plugin $activePlugin found" 
        fi
