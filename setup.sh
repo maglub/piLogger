@@ -20,15 +20,6 @@ errorExit(){
 
 
 #================================
-# 
-#================================
-
-#--- fetch config file
-# Variables:
-#  - interface
-
-
-#================================
 # Check that required variables are set
 #================================
 
@@ -68,17 +59,21 @@ errorExit(){
 }
 
 #================================
-# Update some system files
+# enable i2c kernel modules
 #================================
 
-
-#--- comment out the blacklist of i2c
-echo "  - i2c config in /etc/modprobe.d/raspi-blacklist.conf"
-sudo sed -ie 's/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/' /etc/modprobe.d/raspi-blacklist.conf 
+#--- enable i2c_arm and i2c1 options
+echo "  - enabling i2c config in /boot/config.txt"
+sudo sed -ie 's/^#dtparam=i2c_arm=on/dtparam=i2c_arm=on/' /boot/config.txt
+sudo sed -ie 's/^#dtparam=i2c1=on/dtparam=i2c1=on/' /boot/config.txt
 
 echo "  - adding i2c-dev to /etc/modules"
 [ -z "$(grep i2c-dev /etc/modules)" ] && { sudo sh -c "echo i2c-dev >> /etc/modules" ; needReboot=true ; }
 
+
+#================================
+# correctly configure locales
+#================================
 
 #--- setting up the locale
 [ -n "$piLoggerLocale" ] && {
@@ -86,15 +81,9 @@ echo "  - adding i2c-dev to /etc/modules"
   [[ -z "$(grep -v '^#' /etc/locale.gen | grep 'en_US.UTF-8')" ]] && {
     sudo sed -ie  's/^# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
     sudo locale-gen
-  }
-
-  [[ ! -f .bash_profile || -z "$(grep 'LANGUAGE=' ~/.bash_profile)" ]] && {
-    cat>>~/.bash_profile<<EOT
-export LANGUAGE=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-. ~/.bashrc
-EOT
+    sudo update-locale LANG=en_US.UTF-8
+    sudo update-locale LANGUAGE=en_US.UTF-8
+    sudo update-locale LC_ALL=en_US.UTF-8
   }
 }
 
@@ -165,7 +154,6 @@ sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo a
 # Lighttpd
 #------------------
 sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -y install lighttpd ; }
-#[ ! -h /etc/lighttpd/conf-enabled/10-dir-listing.conf ] && sudo ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled
 
 [ -f /etc/lighttpd/lighttpd.conf ]  && { sudo mv /etc/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf.org ; sudo ln -s $configDir/lighttpd/lighttpd.conf /etc/lighttpd ; }
 [ ! -h /etc/lighttpd/conf-enabled/10-accesslog.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-accesslog.conf /etc/lighttpd/conf-enabled
@@ -188,7 +176,7 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 #----------------------
 # php5
 #----------------------
-sudo dpkg -s php5 >/dev/null 2>&1 || { echo "  - Installing php5" ; sudo apt-get -y install php5 php5-sqlite php5-cgi php5-rrd ; }
+sudo dpkg -s php5 >/dev/null 2>&1 || { echo "  - Installing php5" ; sudo apt-get -y install php5 php5-sqlite php5-cgi php5-cli php5-rrd ; }
 
 #================================
 # Setup index.html
