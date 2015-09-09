@@ -88,7 +88,7 @@ function piLogger_doUpgrade_20150423-002_to_20150423-003(){
   echo "      - Gathering rrd file names"
 
   local dbDir=/var/lib/piLogger/db
-  for curDevice in $(ls $dbDir/*.rrd | grep -v "temperature.rrd$")
+  for curDevice in $(ls $dbDir/*.rrd 2>/dev/null | grep -v "temperature.rrd$")
   do
     if [ ! -h $curDevice ] 
     then
@@ -187,7 +187,7 @@ EOT
   echo "      - filling up newly created table with default temperature values"
 
   local dbDir=/var/lib/piLogger/db
-  for curDevice in $(ls $dbDir/*.rrd)
+  for curDevice in $(ls $dbDir/*.rrd 2>/dev/null )
   do
      
      deviceMetric=$(echo $curDevice | awk -F"." '{print $(NF-1)}')
@@ -263,8 +263,18 @@ function piLogger_doUpgrade_20150615-001_to_20150628-001(){
 #========================================
 function piLogger_doUpgrade_20150628-001_to_20150823-001(){
 
-cd $baseDir/include
-curl -s https://getcomposer.org/installer | php
-./composer.phar install
+  echo "    - Starting upgrade"
+
+  # installing php5-cli package if not already there
+  sudo dpkg -s php5-cli >/dev/null 2>&1 || { echo "    - Installing php5-cli" ; sudo apt-get -y -qq install php5-cli ; }
+
+  # now we can get composer and use php5-cli for it
+  echo "    - Installing composer"
+  cd $baseDir/include
+  curl -s https://getcomposer.org/installer | php
+  ./composer.phar install
+
+  # we will restart lighttpd just to be sure it picked up the correct config file
+  sudo /etc/init.d/lighttpd restart
 
 }

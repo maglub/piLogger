@@ -24,7 +24,7 @@
 <?php
 
   #--- if /?debug=true -> print some useful info in the footer
-  if ( $vars['debug'] != "" ) {
+  if ( isset($vars['debug']) && $vars['debug'] != "" ) {
     print "<h2>Devices</h2>\n";
     print "<ul>\n";
     $myDevices=getDevices();
