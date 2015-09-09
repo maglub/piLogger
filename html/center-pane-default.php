@@ -12,6 +12,10 @@
     <?php  printDbPlotConfig(); ?>
     <!-- XXX -->
 
+    <div id="shiftr.io" class="large-12 small-12 columns">
+    <iframe src="https://shiftr.io/maglub/demo/embed?zoom=1" width="1200" height="400" frameborder="0"></iframe>
+    </div>
+
        <!-- XXX this should be made dynamic as well -->
        <div id="deviceGauges1" class="large-3 small-3 columns"></div>
        <div id="deviceGauges2" class="large-3 small-3 columns"></div>

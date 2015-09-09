@@ -200,4 +200,27 @@ EOT;
 function printCenterPane(){
   require($_SERVER['DOCUMENT_ROOT'] . '/center-pane-default.php');
 }
+
+#====================================================
+# RRD functions
+#====================================================
+function getRRDDataByDeviceId($curId, $timeframe="24h"){
+   $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".temperature.rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
+   return $curRes; 
+}
+
+function printSparklineByDeviceId($curId, $timeframe = "12h"){
+  $curRes = getRRDDataByDeviceId($curId, $timeframe);
+
+  $n = 0;
+  $ret="";
+  foreach($curRes['data']['temperature'] as $ts => $value){
+    if(!is_nan($value)){
+      $ret .= (($n > 0)?",".$value: $value);
+    }
+    $n+=1;
+  }
+
+  return $ret;
+}
 ?>
