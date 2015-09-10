@@ -7,6 +7,6 @@
     <div class="large-2 small-12 large-pull-10 columns">
       <ul class="side-nav">
          <li class="nav-header"><a href=/>Home</a></li>
-         <li class="nav-header"><a href=devices.php>Devices</a></li>
+         <li class="nav-header"><a href=sensors.php>Sensors</a></li>
       </ul>
     </div>
