@@ -96,25 +96,21 @@
 	);
 	
 	$app->get('/sensor/:id/temperature/:range', function($id,$range = "") use ($app,$root) {
-//		$res = getSensorTemperatureDataRangeById($id,$range);
+		$res = getTemperatureRangeBySensorId($id,$range);
+		$app->render(200,o2h($res));
+	}//end of function
+	);
+	
+        #--- deprecated, can be removed after proper testing of /sensor/:id/temperature:range
+	$app->get('/sensor/:id/temperature/:range/old', function($id,$range = "") use ($app,$root) {
 		$resOs = shell_exec("${root}/../bin/exportJSON --sensor={$id} {$range} 2>&1");
 		print "${resOs}";
 	}//end of function
 	);
 	
 	
-	$app->get('/sensor/all/oldInfo', function() use ($app, $root) {
-		$resOs = shell_exec($root . "/../bin/listDevices --json --info");
-		print $resOs;
-	}//end of function
-	);
-
 	$app->get('/sensor/all/info', function() use ($app, $root) {
 		$res = getSensorInfoAll();
-		#$resOs = shell_exec($root . "/../bin/listDevices --json --info");
-		// the output is already in json format
-		#print $resOs;
-//		$res=getSensors();
 		$app->render(200,o2h($res));
 	}//end of function
 	);

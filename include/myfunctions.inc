@@ -207,7 +207,7 @@ function printCenterPane(){
 #====================================================
 # RRD functions
 #====================================================
-function getRRDDataByDeviceId($curId, $timeframe="24h"){
+function getRRDDataBySensorId($curId, $timeframe="24h"){
    $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".temperature.rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
    return $curRes; 
 }
@@ -234,7 +234,7 @@ function getSensorInfoAll(){
 }
 
 function printSparklineByDeviceId($curId, $timeframe = "12h"){
-  $curRes = getRRDDataByDeviceId($curId, $timeframe);
+  $curRes = getRRDDataBySensorId($curId, $timeframe);
 
   $n = 0;
   $ret="";
@@ -246,5 +246,21 @@ function printSparklineByDeviceId($curId, $timeframe = "12h"){
   }
 
   return $ret;
+}
+
+function getTemperatureRangeBySensorId($curId, $timeframe = "12h"){
+  $curRes = getRRDDataBySensorId($curId, $timeframe);
+  $ret = array();
+
+  $ret['sensor'] = $curId;
+  $ret['temperature'] = array();
+
+  foreach($curRes['data']['temperature'] as $ts => $value){
+    if(!is_nan($value)){
+      $ret['temperature'][] = array( $ts *1000 ,(float)$value);
+    }
+  }
+
+  return $ret; 
 }
 ?>
