@@ -29,17 +29,20 @@ function getDeviceGroups(){
 #-----------------------------------
 # getDevices()
 #-----------------------------------
+#--- getDevices is deprecated
 function getDevices(){
+  return getSensors();
+}
 
+function getSensors(){
   global $db;
   $sql = "select * from device;";
 
   $n = 0;
   $ret = $db->query($sql);
+  $retArray = [];
   while($row = $ret->fetchArray()){
-    $retArray[$n]['id'] = $row['id'] ; 
-    $retArray[$n]['alias'] = getDeviceAliasById($row['id']);
-    $n++;
+    $retArray[] = Array('id' => $row['id'], 'alias' => getDeviceAliasById($row['id']),'type' => $row['type']);
   }
   return $retArray;
 }
@@ -207,6 +210,27 @@ function printCenterPane(){
 function getRRDDataByDeviceId($curId, $timeframe="24h"){
    $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".temperature.rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
    return $curRes; 
+}
+
+function getLastRRDDataBySensorId($curId){
+   $curRes = rrd_lastupdate("/var/lib/piLogger/db/" . $curId . ".temperature.rrd");
+   return $curRes; 
+}
+
+function getLastTemperatureBySensorId($curId){
+  $res = getLastRRDDataBySensorId($curId);
+  return (float)$res['data'][0];
+}
+
+function getSensorInfoAll(){
+  $res = getSensors();
+  foreach ($res as &$curRes) {
+    $curRes['temperature'] = getLastTemperatureBySensorId($curRes['id']);
+    $curRes['devicePath'] = $curRes['id'];
+    $curRes['sensorName'] = $curRes['id'];
+    $curRes['aliases'] = array($curRes['alias']);
+  }
+  return $res;
 }
 
 function printSparklineByDeviceId($curId, $timeframe = "12h"){
