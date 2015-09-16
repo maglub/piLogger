@@ -278,3 +278,15 @@ function piLogger_doUpgrade_20150628-001_to_20150823-001(){
   sudo /etc/init.d/lighttpd restart
 
 }
+
+#========================================
+# from 20150823-001 to 20150916-001
+#========================================
+function piLogger_doUpgrade_20150823-001_to_20150916-001(){
+
+  echo "    - Starting upgrade"
+
+  # installing php5-rrd package if not already there
+  sudo dpkg -s php5-rrd >/dev/null 2>&1 || { echo "    - Installing php5-rrd" ; sudo apt-get -y -qq install php5-rrd ; }
+
+}
