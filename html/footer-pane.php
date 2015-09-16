@@ -27,9 +27,9 @@
   if ( isset($vars['debug']) && $vars['debug'] != "" ) {
     print "<h2>Devices</h2>\n";
     print "<ul>\n";
-    $myDevices=getDevices();
-    foreach ($myDevices as $device) {
-      print "<li> {$device['id']} - {$device['alias']} <br>\n";
+    $mySensors=getSensors();
+    foreach ($mySensors as $curSensor) {
+      print "<li> {$curSensor['id']} - {$curSensor['alias']} <br>\n";
     }
     print "</ul>\n";
   
@@ -37,8 +37,8 @@
     print "<ul>\n";
     $myDbFiles = getDeviceStores();
     foreach ($myDbFiles as $dbFile) {
-      preg_match('/^(.*)(\.rrd)/i', $dbFile, $cur_id);
-      print "<li> {$dbFile} - Device: {$cur_id[1]} Alias: " . getDeviceAliasById($cur_id[1]) . "<br>\n";
+      preg_match('/^(.*)(\..*)(\.rrd)/i', $dbFile, $cur_id);
+      print "<li> {$dbFile} - Device: {$cur_id[1]} Alias: " . getSensorAliasById($cur_id[1]) . "<br>\n";
     }
     print "</ul>\n";
   }

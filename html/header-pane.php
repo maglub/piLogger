@@ -14,9 +14,9 @@
 
          <ul id="left-pane-devices" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
            <?php
-              $myDevices=getDevices();
-              foreach ($myDevices as $device) {
-                print "<li>{$device['alias']} <br>\n";
+              $mySensors=getSensors();
+              foreach ($mySensors as $sensor) {
+                print "<li>{$sensor['alias']} <br>\n";
               }
             ?>
          </ul>
@@ -25,9 +25,9 @@
 
          <ul id="left-pane-devicegroups" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
            <?php
-              $myDeviceGroups=getDeviceGroups();
-              foreach ($myDeviceGroups as $deviceGroup) {
-                print "<li>{$deviceGroup['name']} <br>\n";
+              $mySensorGroups=getSensorGroups();
+              foreach ($mySensorGroups as $sensorGroup) {
+                print "<li>{$sensorGroup['name']} <br>\n";
               }
            ?>
          </ul>

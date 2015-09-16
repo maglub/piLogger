@@ -38,10 +38,40 @@
 <ul>
 <?php
 
-  foreach (getDevices() as $curDevice){
-    print "<li><span class=\"inlinesparkline\">" . printSparklineByDeviceId($curDevice['id']) . "</span> - {$curDevice['alias']} - {$curDevice['id']}\n";
+  foreach (getSensors() as $curSensor){
+    print "<li><span class=\"inlinesparkline\">" . printSparklineByDeviceId($curSensor['id']) . "</span> - {$curSensor['alias']} - {$curSensor['id']}\n";
   }
+
+
 ?>
 </ul>
+<?php
 
+  print "Registered sensors:\n";
+  print "<ul>";
+
+  $newSensors = [];
+
+  foreach (getSensorIdFromFilesyste( array(forceScan=>true) ) as $curSensorFile){
+    $curSensor = getSensorById($curSensorFile['id']);
+
+    if ($curSensor){
+      print "<li>{$curSensor['id']} - Alias: {$curSensor['alias'][0]}\n";
+    } else {
+      $newSensors[] = $curSensorFile;
+    }
+
+  }
+  print "</ul>\n";
+
+  print  "New sensors:\n";
+  print "<ul>\n";
+  foreach ($newSensors as $newSensor){
+    print "<li>{$newSensor['id']}\n";
+  }
+
+  print "</ul>\n";
+
+?>
+    
     </div>

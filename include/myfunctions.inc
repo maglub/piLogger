@@ -9,9 +9,9 @@
   db_connect();
 
 #-----------------------------------
-# getDeviceGroups()
+# getSensorGroups()
 #-----------------------------------
-function getDeviceGroups(){
+function getSensorGroups(){
 
   global $db;
   $retArray = array();
@@ -27,12 +27,8 @@ function getDeviceGroups(){
 }
 
 #-----------------------------------
-# getDevices()
+# getSensors()
 #-----------------------------------
-#--- getDevices is deprecated
-function getDevices(){
-  return getSensors();
-}
 
 function getSensors(){
   global $db;
@@ -42,7 +38,7 @@ function getSensors(){
   $ret = $db->query($sql);
   $retArray = [];
   while($row = $ret->fetchArray()){
-    $retArray[] = Array('id' => $row['id'], 'alias' => getDeviceAliasById($row['id']),'type' => $row['type']);
+    $retArray[] = Array('id' => $row['id'], 'alias' => getSensorAliasById($row['id']),'type' => $row['type']);
   }
   return $retArray;
 }
@@ -51,16 +47,19 @@ function getSensorById($id){
 	
     global $db;
 
-    $sql = "select * from device where id = '{$id}';";
+
+    $sql = "select * from device where id = '{$id}' limit 1;";
 
     $n = 0;
     $ret = $db->query($sql);
 
-    $row = $ret->fetchArray();
+    $retArray = null;
+    while ($row = $ret->fetchArray()) {
 	$retArray['id'] = $row['id'];
 	$retArray['type'] = $row['type'];
 	$retArray['path'] = $row['path'];	 
-	$retArray['alias'] = Array(getDeviceAliasById($row['id']));
+	$retArray['alias'] = Array(getSensorAliasById($row['id']));
+    } 
 
     return $retArray;
 }
@@ -83,10 +82,12 @@ function getSensorTemperatureDataRangeById($id, $range){
 	$ret = Array(12,15,24);
 	return $ret;
 }
+
 #-----------------------------------
 #
 #-----------------------------------
-function getDeviceAliasById($curId){
+
+function getSensorAliasById($curId){
   global $db;
   $sql = "select alias from alias where id = '{$curId}';";
  
@@ -202,6 +203,30 @@ EOT;
 #-----------------------------------
 function printCenterPane(){
   require($_SERVER['DOCUMENT_ROOT'] . '/center-pane-default.php');
+}
+
+#====================================================
+# Filesystem functions
+#====================================================
+function getSensorIdFromFilesyste($options = array() ){
+
+  if (isset($options['forceScan'])&& $options['forceScan']){
+    $sensorDir = "/mnt/1wire/uncached";
+  } else {
+    $sensorDir = "/mnt/1wire";
+  }
+
+  $curRes = scandir($sensorDir);
+
+  $curRet = [] ;
+  foreach ($curRes as $curFile) {
+    if (is_dir($sensorDir . "/" . $curFile) && preg_match('/^-?[0-9]+$/', $curFile[0]) ) {
+      $curRet[] = array("id"=>$curFile);
+    }
+
+  }
+
+  return $curRet;
 }
 
 #====================================================
