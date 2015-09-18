@@ -6,7 +6,7 @@
 	{% for curPlotConfig in plotConfig %}
 	<div class="col-lg-{{ curPlotConfig['size'] }}">
 		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}</div>
-				<div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size']}} small-{{ curPlotConfig['size']}} columns"></div>
+				<div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
 		</div>
 	</div>
 	{% endfor %}

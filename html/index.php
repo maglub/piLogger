@@ -70,6 +70,10 @@ $app->get('/sensors', function () use ($app) {
     $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors]);
 });
 
+$app->get('/config', function () use ($app) {
+    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll()]);
+});
+
   $app->run();
 
 ?>

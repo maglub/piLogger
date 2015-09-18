@@ -17,12 +17,36 @@ function getSensorGroups(){
   $retArray = array();
   $sql = "select distinct groupname from devicegroup;";
 
-  $n = 0;
   $ret = $db->query($sql);
   while($row = $ret->fetchArray()){
-    $retArray[$n]['name'] = $row['groupname'] ; 
-    $n++;
+    $retArray[] = Array ('name' => $row['groupname']); 
   }
+  return $retArray;
+}
+
+function getSensorGroupMembers($sensorGroup){
+
+    global $db;
+    $retArray = array();
+    $sql = "select device_id from devicegroup where groupname = '{$sensorGroup}';";
+
+    $ret = $db->query($sql);
+    while($row = $ret->fetchArray()){
+      $retArray[] = Array('device_id' => $row['device_id']) ; 
+    }
+    return $retArray;
+	
+}
+
+function getSensorGroupsAll(){
+    global $db;
+
+	$retArray = getSensorGroups();
+
+	foreach($retArray as &$curSensorGroup){
+	    $curSensorGroup['members'] = getSensorGroupMembers($curSensorGroup['name']);	
+	}
+
   return $retArray;
 }
 
@@ -194,17 +218,10 @@ function getDbPlotConfig(){
     $sql = "select * from plotconfig where visible='true' order by prio;";
  
     $res = $db->query($sql);
-
 	$curRet = Array();
 	
     while ($row = $res->fetchArray() ) {
-		
 		$curRet[] = Array("name"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
- #     $curName = $row['name'];
- #     $curPlotgroup = $row['plotgroup'];
- #     $curTimespan = $row['timespan'];
- #     $curSize = $row['size'];
- #     $curPrio = $row['prio'];
     }
   
 	return $curRet;
@@ -212,6 +229,7 @@ function getDbPlotConfig(){
 
 function printDbPlotConfig(){
 
+	# XXX obsolete, can be removed soon (2015-09-18)
   global $db;
   $sql = "select * from plotconfig where visible='true' order by prio;";
  

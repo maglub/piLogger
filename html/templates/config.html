@@ -1,0 +1,103 @@
+{% extends "_layout.html" %}
+
+{% block div %}
+
+   <div class="col-lg-12">
+      <h1 class="page-header">Configuration</h1>
+   </div>
+
+   <div class="col-lg-12">
+      <h2 class="page-header">Graphs</h1>
+   </div>
+
+
+<div class="row"><!-- List plot configurations in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">Plot config - The plots are shown in the following order.</div>
+			<div class="panel-body">
+				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+					<thead>
+						<tr>
+							<th>Config name</th>
+							<th>Sensor group</th>
+							<th>Timespan</th>
+							<th>Size</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for curPlotConfig in plotConfig %}
+						<tr>
+							<td> {{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}						</td>
+							<td> {{ curPlotConfig['name']}} 													</td>
+							<td> {{ curPlotConfig['timespan']}}													</td>
+							<td> {{ curPlotConfig['size']}}														</td>
+							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>	</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+   <div class="col-lg-12">
+      <h2 class="page-header">Sensor groups</h1>
+   </div>
+
+<div class="row"><!-- List of sensor groups in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">Sensor groups:</div>
+			<div class="panel-body">
+						{% for sensorGroup in sensorGroups %}
+   <div class="col-lg-12">
+      <h3 class="page-header">{{ sensorGroup['name']}}</h3>
+   </div>
+				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+					<thead>
+						<tr>
+							<th>Sensor name</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr>
+							<td> {% for sensorGroupMember in sensorGroup['members'] %} {{ sensorGroupMember['device_id'] }}<br> {% endfor %} 													</td>
+						</tr>
+					</tbody>
+				</table>
+						{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+ 
+{% endblock %}
+
+{% block myjavascript %}
+   <script type="text/javascript">
+    //# Example from: http://omnipotent.net/jquery.sparkline/#s-docs
+    $(document).ready(function() {
+		log.log("Rendering sparklines");
+        /** This code runs when everything has been loaded on the page */
+        /* Inline sparklines take their values from the contents of the tag */
+        $('.inlinesparkline').sparkline(); 
+
+        /* Sparklines can also take their values from the first argument 
+        passed to the sparkline() function */
+        var myvalues = [10,8,5,7,4,4,1];
+        $('.dynamicsparkline').sparkline(myvalues);
+
+        /* The second argument gives options such as chart type */
+        $('.dynamicbar').sparkline(myvalues, {type: 'bar', barColor: 'green'} );
+
+        /* Use 'html' instead of an array of values to pass options 
+        to a sparkline with data in the tag */
+        $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'red'} );
+		log.log("Done rendering sparklines");
+    });
+    </script>
+{% endblock %}
