@@ -14,23 +14,23 @@
 	////////////////////////////////////////////////////////////
 
 
-
 //Now figure out where our libs are
+
+static $root = "";
+static $logroot = "";
+
 switch ($_SERVER['HTTP_HOST']){
-		case "127.0.0.1":
-		case "192.168.2.61":
-		case "pilogger.smalometern.com":
 		case "cron":	
                         error_log("Server: " . $_SERVER['HTTP_HOST']);
-			static $root = "/home/pi/piLogger/include/";
-			static $logroot = "/home/pi/piLogger/log/";
+			$root = "/home/pi/piLogger/include/";
+			$logroot = "/home/pi/piLogger/log/";
 			define("GOOGLE_ANALYTICS", 0);
 			break;
 
 		default:
                         error_log("Server: " . $_SERVER['HTTP_HOST']);
-			$root = "/home/pi/piLogger/include/";
-			$logroot = "/home/pi/piLogger/log/";
+                        $root =  $_SERVER['DOCUMENT_ROOT'] . "/../include/";
+                        $logroot =  $_SERVER['DOCUMENT_ROOT'] . "/../log/";
 			define("GOOGLE_ANALYTICS", 0);
 			break;
 
