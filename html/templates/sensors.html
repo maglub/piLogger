@@ -1,0 +1,39 @@
+{% extends "_layout.html" %}
+
+{% block div %}
+
+
+<ul>
+
+                  {% for sensor in sensors %}
+				  	<li><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> {{ sensor['id'] }}</li>
+	{% endfor %}
+</ul>
+
+ 
+{% endblock %}
+
+{% block myjavascript %}
+   <script type="text/javascript">
+    //# Example from: http://omnipotent.net/jquery.sparkline/#s-docs
+    $(document).ready(function() {
+		log.log("Rendering sparklines");
+        /** This code runs when everything has been loaded on the page */
+        /* Inline sparklines take their values from the contents of the tag */
+        $('.inlinesparkline').sparkline(); 
+
+        /* Sparklines can also take their values from the first argument 
+        passed to the sparkline() function */
+        var myvalues = [10,8,5,7,4,4,1];
+        $('.dynamicsparkline').sparkline(myvalues);
+
+        /* The second argument gives options such as chart type */
+        $('.dynamicbar').sparkline(myvalues, {type: 'bar', barColor: 'green'} );
+
+        /* Use 'html' instead of an array of values to pass options 
+        to a sparkline with data in the tag */
+        $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'red'} );
+		log.log("Done rendering sparklines");
+    });
+    </script>
+{% endblock %}
