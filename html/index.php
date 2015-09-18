@@ -55,7 +55,6 @@ $app->get('/sensors', function () use ($app) {
 
 	foreach ($curSensors as $curSensor){
 		$curSparklines[$curSensor['id']] = printSparklineByDeviceId($curSensor['id']);
-		print "Cur: {$curSensor['id']} Sparkline: {$curSparklines[$curSensor['id']]}<br>\n";
 	}
 	
     $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines ]);
