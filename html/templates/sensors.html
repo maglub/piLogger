@@ -3,10 +3,10 @@
 {% block div %}
 
 
+<h1>Sensors</h1>
 <ul>
-
-                  {% for sensor in sensors %}
-				  	<li><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> {{ sensor['id'] }}</li>
+	{% for sensor in sensors %}
+		<li><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> {{ sensor['id'] }}</li>
 	{% endfor %}
 </ul>
 
