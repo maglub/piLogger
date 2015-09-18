@@ -1,64 +1,52 @@
-<!DOCTYPE HTML>
 <?php
-  require_once($_SERVER['DOCUMENT_ROOT']."/stub.inc");
-  require_once($root . "myfunctions.inc");
+
+	require_once("./stub.php");
+
+        //set up environment for cli
+        if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
+                $_SERVER['HTTP_HOST'] = "cron";
+                // add ".." to the directory name to point to "./html"
+                $_SERVER['DOCUMENT_ROOT'] = __DIR__ . "/..";
+                $argv = $GLOBALS['argv'];
+                array_shift($GLOBALS['argv']);
+                #$pathInfo = implode('/', $argv);
+                $pathInfo = $argv[0];
+        }
+
+        require_once($root."/vendor/autoload.php");
+
+        #--- instantiate Slim and SlimJson
+        $app = new \Slim\Slim(array(
+             'templates.path' => 'templates')
+          );
+
+        //if run from the command-line
+        if ($_SERVER['HTTP_HOST'] === "cron"){
+                // Set up the environment so that Slim can route
+                $app->environment = Slim\Environment::mock([
+                    'PATH_INFO'   => $pathInfo
+                ]);
+        }
+
+
+// define the engine used for the view
+$app->view(new \Slim\Views\Twig());
+
+// configure Twig template engine
+$app->view->parserOptions = array(
+   'charset' => 'utf-8',
+   'cache' => realpath('templates/cache'),
+   'auto_reload' => true,
+   'strict_variables' => false,
+   'autoescape' => true
+);
+
+$app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
+
+$app->get('/', function () use ($app) {
+    $app->render('index.html');
+});
+
+  $app->run();
 
 ?>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>piLogger</title>
-
-    <link rel="shortcut icon" href="/favicon.ico" >
-    <link rel="icon" href="/favicon.ico" >
-
-    <link rel="stylesheet" type="text/css" href="css/normalize.css">
-    <link rel="stylesheet" type="text/css" href="css/foundation.css">
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Corben:bold">
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Nobile" >
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-
-    <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/highcharts-more.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script>
-	<script type="text/javascript" src="js/log.js"></script>
-    <script type="text/javascript" src="js/myfunctions.js"></script>
-    <script type="text/javascript" src="js/foundation.js"></script>
-    <script type="text/javascript" src="js/foundation.dropdown.js"></script>
-    
-  </head>
-  <body>
-
-    <!-- ============================================================ -->
-    <!-- Header and Nav                                               -->
-    <!-- ============================================================ -->
-    <?php require('header-pane.php'); ?>
-
-    <!-- ============================================================ -->
-    <!-- Main row (contains center/graphs, and side navigation        -->
-    <!-- ============================================================ -->
-    <div class="row">
-    <!-- ============================================================ -->
-    <!-- Center / Graphs                                              -->
-    <!-- ============================================================ -->
-    <?php  printCenterPane(); ?>
-
-    <!-- ============================================================ -->
-    <!-- Side Navigation bar                                          -->
-    <!-- ============================================================ -->
-    <!-- This is source ordered to be pulled to the left on larger screens -->
-    <?php  require('sidenav-pane.php'); ?>
-
-    </div>
-  <!-- end of main row -->
-
-    <!-- ============================================================ -->
-    <!-- Footer pane                                                  -->
-    <!-- ============================================================ -->
-    <?php require('footer-pane.php') ?>
-
-  <script>$(document).foundation();</script>
-  </body>
-</html>
