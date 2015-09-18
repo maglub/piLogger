@@ -23,7 +23,7 @@
 
 	if(isset($ENV['debug'])) { print "apa\n"; };
 
-	require_once($_SERVER['DOCUMENT_ROOT']."/stub.inc");
+	require_once($_SERVER['DOCUMENT_ROOT']."/stub.php");
 	require_once($root."/vendor/autoload.php");
 
 	require_once($root . "myfunctions.inc");
