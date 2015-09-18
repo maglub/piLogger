@@ -1,6 +1,7 @@
 <?php
 
 	require_once("./stub.php");
+    require_once($root . "myfunctions.inc");
 
         //set up environment for cli
         if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
@@ -45,6 +46,19 @@ $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
 $app->get('/', function () use ($app) {
     $app->render('index.html');
+});
+
+$app->get('/sensors', function () use ($app) {
+
+	$curSensors = getSensors();
+	$curSparklines = Array();
+
+	foreach ($curSensors as $curSensor){
+		$curSparklines[$curSensor['id']] = printSparklineByDeviceId($curSensor['id']);
+		print "Cur: {$curSensor['id']} Sparkline: {$curSparklines[$curSensor['id']]}<br>\n";
+	}
+	
+    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines ]);
 });
 
   $app->run();

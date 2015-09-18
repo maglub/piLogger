@@ -280,8 +280,8 @@ function printSparklineByDeviceId($curId, $timeframe = "12h"){
   foreach($curRes['data']['temperature'] as $ts => $value){
     if(!is_nan($value)){
       $ret .= (($n > 0)?",".$value: $value);
+      $n+=1;
     }
-    $n+=1;
   }
 
   return $ret;

@@ -11,7 +11,9 @@
     ],
     "require": {
         "slim/slim": "^2.6",
-        "dogancelik/slim-json": "dev-master"
+		"dogancelik/slim-json": "dev-master",
+		"twig/twig": "1.*",
+		"slim/views": "dev-master"
     },
     "minimum-stability": "dev" 
 }
