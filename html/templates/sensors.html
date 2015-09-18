@@ -2,14 +2,41 @@
 
 {% block div %}
 
+   <div class="col-lg-12">
+      <h1 class="page-header">Sensors</h1>
+   </div>
 
-<h1>Sensors</h1>
-<ul>
+<div class="row">
+   <div class="col-lg-8">
+      <div class="panel panel-default">
+         <div class="panel-heading"> List of all Sensors that sending data to the piLogger Cloud</div>
+
+         <div class="panel-body">
+
+
+            <table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+               <thead>
+                  <tr>
+                     <th>Identifier</th>
+                     <th>Type</th>
+                     <th>Sparkline</th>
+                  </tr>
+               </thead>
+               <tbody>
+
 	{% for sensor in sensors %}
-		<li><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> {{ sensor['id'] }}</li>
+		<tr>
+			<td>{{ sensor['id'] }}
+			<td>{{ sensor['type']}}
+			<td><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>
+		</tr>
 	{% endfor %}
-</ul>
-
+</tbody>
+</table>
+		</div>
+	</div>
+</div>
+</div>
  
 {% endblock %}
 
