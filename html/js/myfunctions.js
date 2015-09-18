@@ -3,9 +3,11 @@
 //----------------------------------------------------------
 
 log.log("XXX Here it starts");
+log.log("XXX Here it ends");
 
-$(function(){
+function oldStuff(){
 	
+	//--- this is what ran on the first page in the old version, every time this js script was included.
    //========================================
    // Devices
    //========================================
@@ -42,9 +44,8 @@ $(function(){
    });
 
   log.log("XXX End of jquery block");
-});
+};
 
-log.log("XXX Here it ends");
 
 //----------------------------------------------------------
 // spinnerOpts()

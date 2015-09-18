@@ -6,36 +6,62 @@
       <h1 class="page-header">Sensors</h1>
    </div>
 
-<div class="row">
-   <div class="col-lg-8">
-      <div class="panel panel-default">
-         <div class="panel-heading"> List of all Sensors</div>
-
-         <div class="panel-body">
-
-
-            <table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
-               <thead>
-                  <tr>
-                     <th>Identifier</th>
-                     <th>Type</th>
-                     <th>Sparkline</th>
-                  </tr>
-               </thead>
-               <tbody>
-
-	{% for sensor in sensors %}
-		<tr>
-			<td>{{ sensor['id'] }}
-			<td>{{ sensor['type']}}
-			<td><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>
-		</tr>
-	{% endfor %}
-</tbody>
-</table>
+<div class="row"><!-- List of registered sensors in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading"> List of all Sensors in the database</div>
+			<div class="panel-body">
+				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+					<thead>
+						<tr>
+							<th>Identifier</th>
+							<th>Alias</th>
+							<th>Type</th>
+							<th>Sparkline</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for sensor in sensors %}
+						<tr>
+							<td> {{ sensor['id'] }} 													</td>
+							<td> {{ sensor['alias'] }}													</td>
+							<td> {{ sensor['type']}} 													</td>
+							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>	</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
+
+<div class="row"><!-- List of one-wire files not in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading"> List of all Sensors in /mnt/1wire not yet in the database</div>
+			<div class="panel-body">
+				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+					<thead>
+						<tr>
+							<th>Identifier</th>
+							<th>Alias</th>
+							<th>Type</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for file in nonRegisteredFiles %}
+						<tr>
+							<td> {{ file['id'] }} 		</td>
+							<td> {{ file['alias'] }}	</td>
+							<td> {{ file['type']}} 		</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
  
 {% endblock %}

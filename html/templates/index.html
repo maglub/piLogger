@@ -2,9 +2,31 @@
 
 {% block div %}
 
+<div class="row">
+	{% for curPlotConfig in plotConfig %}
+	<div class="col-lg-{{ curPlotConfig['size'] }}">
+		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}</div>
+				<div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size']}} small-{{ curPlotConfig['size']}} columns"></div>
+		</div>
+	</div>
+	{% endfor %}
+
 
     <div id="shiftr.io" class="large-12 small-12 columns">
     <iframe src="https://shiftr.io/maglub/demo/embed?zoom=1" width="1200" height="400" frameborder="0"></iframe>
     </div>
+</div>
+
+{% endblock %}
+
+{% block myjavascript %}
+
+<script type="text/javascript">
+ $(document).ready(function(){
+ 	{% for curPlotConfig in plotConfig %}
+	   var nothing = printGroupGraph('{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['name']}}', '{{ curPlotConfig['timespan']}}');
+   	{% endfor %}
+ });
+</script>
 
 {% endblock %}

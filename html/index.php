@@ -45,7 +45,7 @@ $app->view->parserOptions = array(
 $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
 $app->get('/', function () use ($app) {
-    $app->render('index.html');
+    $app->render('index.html', ['plotConfig' => getDbPlotConfig()]);
 });
 
 $app->get('/sensors', function () use ($app) {
@@ -57,7 +57,17 @@ $app->get('/sensors', function () use ($app) {
 		$curSparklines[$curSensor['id']] = printSparklineByDeviceId($curSensor['id']);
 	}
 	
-    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines ]);
+    $newSensors = [];
+
+	foreach (getSensorIdFromFilesystem( array('forceScan'=>true) ) as $curSensorFile){
+		$curSensor = getSensorById($curSensorFile['id']);
+
+		if (!$curSensor){
+			$newSensors[] = $curSensorFile;
+		}
+	}
+	
+    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors]);
 });
 
   $app->run();

@@ -187,6 +187,29 @@ function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
 #-----------------------------------
 #
 #-----------------------------------
+
+function getDbPlotConfig(){
+
+    global $db;
+    $sql = "select * from plotconfig where visible='true' order by prio;";
+ 
+    $res = $db->query($sql);
+
+	$curRet = Array();
+	
+    while ($row = $res->fetchArray() ) {
+		
+		$curRet[] = Array("name"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
+ #     $curName = $row['name'];
+ #     $curPlotgroup = $row['plotgroup'];
+ #     $curTimespan = $row['timespan'];
+ #     $curSize = $row['size'];
+ #     $curPrio = $row['prio'];
+    }
+  
+	return $curRet;
+}
+
 function printDbPlotConfig(){
 
   global $db;
@@ -222,7 +245,7 @@ function printCenterPane(){
 #====================================================
 # Filesystem functions
 #====================================================
-function getSensorIdFromFilesyste($options = array() ){
+function getSensorIdFromFilesystem($options = array() ){
 
   if (isset($options['forceScan'])&& $options['forceScan']){
     $sensorDir = "/mnt/1wire/uncached";
@@ -230,6 +253,7 @@ function getSensorIdFromFilesyste($options = array() ){
     $sensorDir = "/mnt/1wire";
   }
 
+  print "apa";
   $curRes = scandir($sensorDir);
 
   $curRet = [] ;
