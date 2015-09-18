@@ -10,7 +10,7 @@
     </div>
     <div class="large-10 small-10 columns">
       <ul class="inline-list right">
-         <li><a href="#" data-dropdown="left-pane-devices" aria-controls="left-pane-devices" aria-expanded="false">Devices</a>
+         <li><a href="#" data-dropdown="left-pane-devices" aria-controls="left-pane-devices" aria-expanded="false">Sensors</a>
 
          <ul id="left-pane-devices" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
            <?php
@@ -22,12 +22,21 @@
          </ul>
 
          <li><a href="#" data-dropdown="left-pane-devicegroups" aria-controls="left-pane-devicegroups" aria-expanded="false">Groups</a>
-
          <ul id="left-pane-devicegroups" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
            <?php
               $mySensorGroups=getSensorGroups();
               foreach ($mySensorGroups as $sensorGroup) {
                 print "<li>{$sensorGroup['name']} <br>\n";
+              }
+           ?>
+         </ul>
+
+         <li><a href="#" data-dropdown="left-pane-plotgroups" aria-controls="left-pane-plotgroups" aria-expanded="false">PlotGroups</a>
+         <ul id="left-pane-plotgroups" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+           <?php
+              $myPlotGroups=getPlotGroups();
+              foreach ($myPlotGroups as $plotGroup) {
+                print "<li>{$plotGroup['groupname']} <br>\n";
               }
            ?>
          </ul>

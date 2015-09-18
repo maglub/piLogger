@@ -84,8 +84,21 @@ function getSensorTemperatureDataRangeById($id, $range){
 }
 
 #-----------------------------------
-#
+# Aliases
 #-----------------------------------
+
+function getAliases(){
+    global $db;
+    $sql = "select alias, id from alias;";
+    $ret = $db->query($sql);
+
+       $retArray = [];
+    while($row = $ret->fetchArray()){
+      $retArray[] = Array($row['alias'] => $row['id']) ; 
+    }
+       return $retArray;
+}
+
 
 function getSensorAliasById($curId){
   global $db;
@@ -126,33 +139,34 @@ function getDeviceStores(){
 
 function getPlotgroups(){
     global $db;
-    $sql = "select * from plotgroup;";
+    $sql = "select distinct(groupname) from plotgroup;";
  
     $ret = $db->query($sql);
 	$n = 0;
     while($row = $ret->fetchArray()){
-      $retArray[$n]['groupname'] = $row['groupname'] ; 
-      $retArray[$n]['device_id'] = $row['device_id'] ; 
-      $retArray[$n]['plot_type'] = $row['plot_type'] ; 
+      $retArray[] = getPlotGroupByGroupName($row['groupname']);
+
       $n++;
     }
     return $retArray;	
 }
 
+
 function getPlotGroupByGroupName($groupName){
     global $db;
     $sql = "select * from plotgroup where groupname = '{$groupName}';";
- 
+
     $ret = $db->query($sql);
-	$n = 0;
+        $retArray = [];
+        $retArray['groupname'] = $groupName;
+
     while($row = $ret->fetchArray()){
-      $retArray[$n]['groupname'] = $row['groupname'] ; 
-      $retArray[$n]['device_id'] = $row['device_id'] ; 
-      $retArray[$n]['plot_type'] = $row['plot_type'] ; 
-      $n++;
+                $retMembers = Array('sensor_id' => $row['device_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
     }
-    return $retArray;	
-	
+
+        $retArray['members'] = $retMembers;
+    return $retArray;
+
 }
 
 #-----------------------------------

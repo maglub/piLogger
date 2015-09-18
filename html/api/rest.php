@@ -115,12 +115,25 @@
 	}//end of function
 	);
 
+       $app->get('/alias', function() use ($app) {
+               $res=getAliases();
+               $app->render(200,o2h($res));
+        }//end of function
+       );
+
+
 	$app->get('/alias/:alias', function($alias) use ($app) {
 		$res=getSensorByAlias($alias);
 		$app->render(200,o2h($res));
 	}//end of function
 	);
 	
+       $app->get('/alias/:alias/temperature/:range', function($alias,$range = "") use ($app,$root) {
+                       $res = getRRDRangeByIdType(getSensorIdByAlias($alias), "temperature", $range);
+                       $app->render(200,o2h($res));
+               }//end of function
+       );
+
 	$app->get('/plotgroup', function() use ($app) {
 		$res=getPlotgroups();
 		$app->render(200,o2h($res));
