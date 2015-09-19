@@ -20,7 +20,7 @@
 					<thead>
 						<tr>
 							<th>Config name</th>
-							<th>Sensor group</th>
+							<th>Plot group</th>
 							<th>Timespan</th>
 							<th>Size</th>
 						</tr>
@@ -43,6 +43,37 @@
 </div>
 
    <div class="col-lg-12">
+      <h2 class="page-header">Plot groups</h1>
+   </div>
+
+<div class="row"><!-- List of sensor groups in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">Plot groups:</div>
+			<div class="panel-body">
+				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+					<thead>
+						<tr>
+							<th>Sensor group name</th>
+							<th>Sensor id</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for plotGroup in plotGroups %}
+						
+						<tr>
+							<td> {{ plotGroup['name']}} 													</td>
+							<td> {% for plotGroupMember in plotGroup['members'] %} {{ plotGroupMember['device_id'] }}<br> {% endfor %}													</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+   <div class="col-lg-12">
       <h2 class="page-header">Sensor groups</h1>
    </div>
 
@@ -51,24 +82,23 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Sensor groups:</div>
 			<div class="panel-body">
-						{% for sensorGroup in sensorGroups %}
-   <div class="col-lg-12">
-      <h3 class="page-header">{{ sensorGroup['name']}}</h3>
-   </div>
 				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
 					<thead>
 						<tr>
-							<th>Sensor name</th>
+							<th>Sensor group name</th>
+							<th>Sensor id</th>
 						</tr>
 					</thead>
 					<tbody>
+					{% for sensorGroup in sensorGroups %}
 						
 						<tr>
-							<td> {% for sensorGroupMember in sensorGroup['members'] %} {{ sensorGroupMember['device_id'] }}<br> {% endfor %} 													</td>
+							<td> {{ sensorGroup['name']}} 													</td>
+							<td> {% for sensorGroupMember in sensorGroup['members'] %} {{ sensorGroupMember['device_id'] }}<br> {% endfor %}													</td>
 						</tr>
+						{% endfor %}
 					</tbody>
 				</table>
-						{% endfor %}
 			</div>
 		</div>
 	</div>

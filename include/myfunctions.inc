@@ -271,7 +271,6 @@ function getSensorIdFromFilesystem($options = array() ){
     $sensorDir = "/mnt/1wire";
   }
 
-  print "apa";
   $curRes = scandir($sensorDir);
 
   $curRet = [] ;
