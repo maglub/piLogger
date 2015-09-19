@@ -233,3 +233,5 @@ Notes and references
 
    For a recovery, do a fresh install on new SD card, then copy content of the backup.tgz file into /var/lib/piLogger/db.  Run ~/piLogger/bin/refreshCaches
 
+* We use SB-Admin 2 as base for the GUI: http://startbootstrap.com/template-overviews/sb-admin-2/
+
