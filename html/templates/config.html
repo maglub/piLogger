@@ -18,7 +18,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Plot config - The plots are shown in the following order.</div>
 			<div class="panel-body">
-				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+                          <div class="table-responsive">
+				<table id="table-content" class="table table-condensed table-hover" cellspacing="0" width="100%"> 
 					<thead>
 						<tr>
 							<th>Config name</th>
@@ -34,11 +35,11 @@
 							<td> {{ curPlotConfig['name']}} 													</td>
 							<td> {{ curPlotConfig['timespan']}}													</td>
 							<td> {{ curPlotConfig['size']}}														</td>
-							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>	</td>
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
+                          </div>
 			</div>
 		</div>
 	</div>
@@ -55,7 +56,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Plot groups:</div>
 			<div class="panel-body">
-				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+                          <div class="table-responsive">
+				<table id="table-content" class="table table-condensed table-hover" cellspacing="0" width="100%"> 
 					<thead>
 						<tr>
 							<th>Sensor group name</th>
@@ -72,6 +74,7 @@
 						{% endfor %}
 					</tbody>
 				</table>
+                          </div>
 			</div>
 		</div>
 	</div>
@@ -88,7 +91,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Sensor groups:</div>
 			<div class="panel-body">
-				<table id="table-content" class="display compact table-hover" cellspacing="0" width="100%"> 
+                          <div class="table-responsive">
+				<table id="table-content" class="table table-condensed table-hover" cellspacing="0" width="100%"> 
 					<thead>
 						<tr>
 							<th>Sensor group name</th>
@@ -105,6 +109,7 @@
 						{% endfor %}
 					</tbody>
 				</table>
+                          </div>
 			</div>
 		</div>
 	</div>
