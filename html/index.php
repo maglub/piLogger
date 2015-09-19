@@ -44,6 +44,10 @@ $app->view->parserOptions = array(
 
 $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
+$twig = $app->view()->getEnvironment();
+$twig->addGlobal('devicename', gethostname());
+
+
 $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig()]);
 });
