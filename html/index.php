@@ -71,7 +71,7 @@ $app->get('/sensors', function () use ($app) {
 });
 
 $app->get('/config', function () use ($app) {
-    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll()]);
+    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups()]);
 });
 
   $app->run();

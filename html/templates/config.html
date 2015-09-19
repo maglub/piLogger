@@ -62,8 +62,8 @@
 					{% for plotGroup in plotGroups %}
 						
 						<tr>
-							<td> {{ plotGroup['name']}} 													</td>
-							<td> {% for plotGroupMember in plotGroup['members'] %} {{ plotGroupMember['device_id'] }}<br> {% endfor %}													</td>
+							<td> {{ plotGroup['groupname']}} 													</td>
+							<td> {% for plotGroupMember in plotGroup['members'] %} {{ plotGroupMember['sensor_id'] }}<br> {% endfor %}													</td>
 						</tr>
 						{% endfor %}
 					</tbody>

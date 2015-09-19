@@ -183,9 +183,9 @@ function getPlotGroupByGroupName($groupName){
     $ret = $db->query($sql);
         $retArray = [];
         $retArray['groupname'] = $groupName;
-
+		$retMembers = Array();
     while($row = $ret->fetchArray()){
-                $retMembers = Array('sensor_id' => $row['device_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
+                $retMembers[] = Array('sensor_id' => $row['device_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
     }
 
         $retArray['members'] = $retMembers;
