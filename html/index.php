@@ -50,7 +50,7 @@ $twig->addGlobal('devicename', gethostname());
 
 $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig()]);
-});
+})->conditions(array("route" => "(|home)"));
 
 $app->get('/sensors', function () use ($app) {
 
