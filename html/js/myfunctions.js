@@ -18,7 +18,7 @@ function oldStuff(){
    var spinner2 = new Spinner(getSpinnerOptsSmall()).spin(target);
 
    // print the devices into the devicesContainer
-   var url="api/sensor/all/info";
+   var url="/api/sensor/all/info";
    log.log("XXX url: " + url);
 
    $.ajax({
@@ -298,7 +298,7 @@ function printGraph(curPane, curHours){
     // print the graph
 
     //var url="api/sensorData";
-    var url="cache/sensorData." + curHours.toString() + ".json";
+    var url="/cache/sensorData." + curHours.toString() + ".json";
 
    log.log("XXX graph data url: " + url);
     $.ajax({
@@ -332,7 +332,7 @@ function printGroupGraph(curPane, groupName, curHours){
     // print the graph
 
     //var url="api/sensorData";
-    var url="cache/sensorData." + groupName + "."  + curHours.toString() + ".json";
+    var url="/cache/sensorData." + groupName + "."  + curHours.toString() + ".json";
 
    log.log("XXX graph data url: " + url);
     $.ajax({
