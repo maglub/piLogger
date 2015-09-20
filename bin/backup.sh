@@ -83,6 +83,7 @@ function bareMetal(){
 
   echo
   echo "  - Removing $tmpDir"
+  echo "* Resulting output file: $outputFile"
   rm -rf $tmpDir
 
 }
