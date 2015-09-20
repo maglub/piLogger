@@ -53,7 +53,7 @@ $app->get('/:route', function () use ($app) {
 })->conditions(array("route" => "(|home)"));
 
 $app->get('/graph/:graph_name', function ($graph_name) use ($app) {
-    $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"stg3", "timespan"=>"12h", "size"=>"6"))]);
+    $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"default", "timespan"=>"12h", "size"=>"12"))]);
 });
 
 
