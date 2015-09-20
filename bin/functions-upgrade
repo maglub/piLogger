@@ -275,7 +275,9 @@ function piLogger_doUpgrade_20150628-001_to_20150823-001(){
   ./composer.phar install
 
   # we will restart lighttpd just to be sure it picked up the correct config file
-  sudo /etc/init.d/lighttpd restart
+  sudo dpkg -s lighttpd >/dev/null 2>&1  && { sudo /etc/init.d/lighttpd restart ; }
+
+  return 0
 
 }
 
@@ -304,6 +306,27 @@ function piLogger_doUpgrade_20150916-001_to_20150918-001(){
   cd $baseDir/include
   ./composer.phar update
   cd -
-  sudo service lighttpd restart
+  sudo dpkg -s lighttpd >/dev/null 2>&1 && { sudo service lighttpd restart ; }
 
+  return 0 
+
+}
+
+#========================================
+# from 20150918-001 to 20150920-001
+#========================================
+function piLogger_doUpgrade_20150918-001_to_20150920-001(){
+
+  echo "    - Starting upgrade"
+
+  # installing php5-rrd package if not already there
+
+  echo "    - Renaming tables"
+  sqlite3 $appDbFile "alter table device rename to sensor;"
+  sqlite3 $appDbFile "alter table devicegroup rename to sensorgroup;"
+  sqlite3 $appDbFile "alter table devicemetric rename to sensormetric;"
+  echo "    - Adding views"
+  sqlite3 $appDbFile "create view device as select * from sensor;"
+  sqlite3 $appDbFile "create view devicegroup as select * from sensorgroup;"
+  sqlite3 $appDbFile "create view devicemetric as select * from sensormetric;"
 }
