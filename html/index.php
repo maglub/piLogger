@@ -61,8 +61,13 @@ $app->get('/sensors', function () use ($app) {
 
 	$curSensors = getSensors();
 	
-	foreach ($curSensors as &$curSensor){
-		$curSensor['last'] = getLastTemperatureBySensorId($curSensor['id']);
+#	foreach ($curSensors as &$curSensor){
+#		$curSensor['last'] = getLastTemperatureBySensorId($curSensor['id']);
+#	}
+
+	$curLastTemperature = Array();
+	foreach ($curSensors as $curSensor){
+	        $curLastTemperature[$curSensor['id']] = getLastTemperatureBySensorId($curSensor['id']);
 	}
 	
 	$curSparklines = Array();
@@ -82,7 +87,7 @@ $app->get('/sensors', function () use ($app) {
 		}
 	}
 	
-    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors]);
+    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors, 'lastTemperature' => $curLastTemperature]);
 });
 
 
