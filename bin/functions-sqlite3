@@ -461,7 +461,7 @@ EOT
 # dbSetupDatabase()
 #---------------------------------
 function dbSetupDatabase(){
-  local tables="device alias devicegroup plotgroup plotconfig"
+  local tables="alias sensor sensorgroup sensormetric plotgroup plotconfig"
   local table=""
 
   for table in $tables
