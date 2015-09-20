@@ -17,9 +17,9 @@ Uage:
 
 Options:
 
-  -a|--aliases     - Show aliases for devices
+  -a|--aliases     - Show aliases for sensors
   -af|--aliasFile  - generate a dummy alias file output
-  --scan           - Scan for devices into etc/devices.scanned
+  --scan           - Scan for sensors into etc/devices.scanned
 
 EOT
 }
@@ -27,9 +27,9 @@ EOT
 # printNormal
 #--------------------------------
 printNormal(){
-  for device in  $all_devices
+  for sensor in  $all_devices
   do
-    echo "$device"
+    echo "$sensor"
   done
 }
 
@@ -37,11 +37,11 @@ printNormal(){
 # printWithAliases
 #--------------------------------
 printWithAliases(){
-  for device in $all_devices
+  for sensor in $all_devices
   do
-    deviceType=$(getDeviceTypeByDevicePath $device)
-    deviceAliases="$(getDeviceAliasesByDevicePath `basename $device`)"
-    echo "Device: $device Type: $deviceType Device Aliases: $deviceAliases"
+    deviceType=$(getDeviceTypeByDevicePath $sensor)
+    deviceAliases="$(getDeviceAliasesByDevicePath `basename $sensor`)"
+    echo "Device: $sensor Type: $deviceType Device Aliases: $deviceAliases"
   done
 }
 
@@ -88,12 +88,12 @@ printAliasesJSON(){
 printPathJSON(){
   printf '['
   local prependComma=""
-  for device in $all_devices
+  for sensor in $all_devices
   do
-    pj_deviceName=$(basename $device)
-    pj_deviceAliases=$(getDeviceAliasesByDevicePath $device | sed -e 's/ $//' -e 's/ /","/g')
+    pj_deviceName=$(basename $sensor)
+    pj_deviceAliases=$(getDeviceAliasesByDevicePath $sensor | sed -e 's/ $//' -e 's/ /","/g')
     printf "%s" "$prependComma"
-    printf '\n{ "sensorName":"%s", "devicePath":"%s" }' ${pj_deviceName} ${device} 
+    printf '\n{ "sensorName":"%s", "devicePath":"%s" }' ${pj_deviceName} ${sensor} 
     prependComma=","
   done
   printf '\n]\n'
@@ -139,7 +139,7 @@ done
 
 [[ -n "$scanDevices" ]] && { 
   all_devices=$(getAllDevices $oneWireDir -f)
-  logIt "  - Scanning for devices into $configDir/devices.scanned" 
+  logIt "  - Scanning for sensors into $configDir/devices.scanned" 
   printNormal > $configDir/devices.scanned.new
   cat $configDir/devices.scanned.new 
   mv $configDir/devices.scanned.new $configDir/devices.scanned

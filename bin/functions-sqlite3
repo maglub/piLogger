@@ -4,7 +4,7 @@
 
 function dbGetAllDevices(){
   sqlite3 $appDbFile<<EOT
-  select id from device;
+  select id from sensor;
 EOT
 }
 
@@ -223,7 +223,7 @@ EOT
 # dbAddDevice()
 #---------------------------------
 dbAddDevice(){
-  echo "  - Adding device: $1 type: $2 path: $3"
+  echo "  - Adding sensor: $1 type: $2 path: $3"
   sqlite3 $appDbFile<<EOT
   insert into sensor (id, type, path) values ('$1', '$2', '$3');
 EOT
@@ -233,7 +233,7 @@ EOT
 # dbRemoveDevice()
 #---------------------------------
 dbRemoveDevice(){
-  echo "  - Removing device: $1"
+  echo "  - Removing sensor: $1"
   sqlite3 $appDbFile<<EOT
   delete from sensor where id = '$1';
 EOT
@@ -248,7 +248,7 @@ dbAddDeviceAlias(){
     dbRemoveDeviceAliasByDeviceId "$1"
   fi
 
-  echo "  - Adding device alias: $1 -> $2"
+  echo "  - Adding sensor alias: $1 -> $2"
   sqlite3 $appDbFile<<EOT
   insert into alias (id, alias) values ('$1', '$2');
 EOT
@@ -260,7 +260,7 @@ EOT
 function dbRemoveDeviceAlias(){
   local id="$1"
   local alias="$2"
-  echo "  - Removing device alias: $id $alias"
+  echo "  - Removing sensor alias: $id $alias"
   sqlite3 $appDbFile<<EOT
   delete from alias where alias = '$alias';
 EOT
@@ -317,7 +317,7 @@ function dbPrintPlotGroups(){
 # dbAddDeviceIdToPlotGroup()
 #---------------------------------
 dbAddDeviceIdToPlotGroup(){
-  echo "  - Adding device id to plotgroup: $1 -> $2"
+  echo "  - Adding sensor id to plotgroup: $1 -> $2"
   sqlite3 $appDbFile<<EOT
   insert into plotgroup (groupname, sensor_id) values ('$1', '$2');
 EOT
@@ -327,7 +327,7 @@ EOT
 # dbAddDeviceAliasToPlotGroup()
 #---------------------------------
 function dbAddDeviceAliasToPlotGroup(){
-  echo "  - Adding device alias: $1 -> $2"
+  echo "  - Adding sensor alias: $1 -> $2"
   dbAddDeviceIdToPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
 }
 
@@ -335,7 +335,7 @@ function dbAddDeviceAliasToPlotGroup(){
 # dbRemoveDeviceIdFromPlotGroup()
 #---------------------------------
 dbRemoveDeviceIdFromPlotGroup(){
-  echo "  - Removing device id from plotgroup: $1 -> $2"
+  echo "  - Removing sensor id from plotgroup: $1 -> $2"
   sqlite3 $appDbFile<<EOT
   delete from plotgroup where groupname = '$1' and sensor_id = '$2';
 EOT
@@ -345,7 +345,7 @@ EOT
 # dbRemoveDeviceAliasFromPlotGroup()
 #---------------------------------
 dbRemoveDeviceAliasFromPlotGroup(){
-  echo "  - Removing device alias from plotgroup: $1 -> $2"
+  echo "  - Removing sensor alias from plotgroup: $1 -> $2"
   dbRemoveDeviceIdFromPlotGroup $1 $(dbGetDeviceIdByDeviceAlias $2)
 }
 
@@ -504,10 +504,10 @@ EOT
 #---------------------------------
 function dbCheckDeviceExistById(){
 
-  local deviceId="$1"
+  local sensorId="$1"
   local res=$(
   sqlite3 $appDbFile<<EOT
-      select count(id) from device where id = '$deviceId';
+      select count(id) from sensor where id = '$sensorId';
 EOT
 )
 
