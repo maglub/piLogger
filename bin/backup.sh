@@ -49,7 +49,7 @@ function normalBackup(){
 
 function bareMetal(){
   TS=$(date "+%Y%m%d_%H%M%S")
-  tmpDir=$(mktemp -d $backupDir/rrdDump.XXXXXX)
+  tmpDir=$(mktemp -d $backupDir/rrdDump.tmpDir.XXXXXX)
   outputFile="$backupDir/rrdDump.$TS.tgz"
  
   [ -n "$1" ] && { usage ; exit 0 ; }
@@ -59,7 +59,8 @@ function bareMetal(){
 
   echo "* Exporting application data"
   echo "  - all rrd-files in $dbDir into temporary directory $tmpDir, final tar-file: $outputFile"
-
+  echo
+  
   #--- rrdtool dump
   ls -1 $dbDir/*.rrd | xargs -L1 basename | xargs -P4 -L1 -IXXXX sh -c "echo exporting XXXX ; rrdtool dump $dbDir/XXXX | gzip > $tmpDir/XXXX.xml.gz"
 
