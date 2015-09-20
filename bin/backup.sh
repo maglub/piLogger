@@ -50,7 +50,7 @@ function normalBackup(){
 function bareMetal(){
   TS=$(date "+%Y%m%d_%H%M%S")
   tmpDir=$(mktemp -d $backupDir/rrdDump.tmpDir.XXXXXX)
-  outputFile="$backupDir/rrdDump.$TS.tar"
+  outputFile="$backupDir/rrdDump.$HOSTNAME.$TS.tar"
  
   [ -n "$1" ] && { usage ; exit 0 ; }
 
