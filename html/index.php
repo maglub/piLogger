@@ -52,8 +52,12 @@ $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig()]);
 })->conditions(array("route" => "(|home)"));
 
-$app->get('/graph/:graph_name', function ($graph_name) use ($app) {
+$app->get('/graph/:config_name', function ($config_name) use ($app) {
     $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"default", "timespan"=>"12h", "size"=>"12"))]);
+});
+
+$app->get('/graph/:plotgroup/:timespan', function ($plotgroup, $timespan, $size = 12) use ($app) {
+   $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"{$plotgroup}", "timespan"=>"{$timespan}", "size"=> $size))]);
 });
 
 
