@@ -84,6 +84,8 @@ function bareMetal(){
   echo
   echo "  - Removing $tmpDir"
   echo "* Resulting output file: $outputFile"
+  echo "  - Copy this file to your development box this way:"
+  echo "# scp pi@$HOSTNAME:$outputFile ."
   rm -rf $tmpDir
 
 }
