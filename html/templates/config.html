@@ -86,7 +86,7 @@
 						
 						<tr>
 							<td> {{ sensorGroup['name']}} 													</td>
-							<td> {% for sensorGroupMember in sensorGroup['members'] %} {{ sensorGroupMember['device_id'] }}<br> {% endfor %}													</td>
+							<td> {% for sensorGroupMember in sensorGroup['members'] %} {{ sensorGroupMember['sensor_id'] }}<br> {% endfor %}													</td>
 						</tr>
 						{% endfor %}
 					</tbody>

@@ -330,3 +330,30 @@ function piLogger_doUpgrade_20150918-001_to_20150920-001(){
   sqlite3 $appDbFile "create view devicegroup as select * from sensorgroup;"
   sqlite3 $appDbFile "create view devicemetric as select * from sensormetric;"
 }
+
+#========================================
+# from 20150920-001 to 20150920-002
+#========================================
+function piLogger_doUpgrade_20150920-001_to_20150920-002(){
+
+  echo "    - Starting upgrade"
+
+  # installing php5-rrd package if not already there
+
+  echo "    - Backing up the database"
+
+  curTS=$(date "+%Y%m%d_%H%M%S")
+  cp $appDbFile $backupDir/$(basename $appDbFile).$curTS
+  gzip $backupDir/$(basename $appDbFile).$curTS
+
+  echo "    - Renaming columns"
+  sqlite3 $appDbFile "alter table sensorgroup rename to sensorgroup_tmp;"
+  sqlite3 $appDbFile "create table sensorgroup as select groupname, device_id as sensor_id, plot_type  from sensorgroup_tmp;"
+  sqlite3 $appDbFile "drop table sensorgroup_tmp;"
+
+  sqlite3 $appDbFile "alter table plotgroup rename to plotgroup_tmp;"
+  sqlite3 $appDbFile "create table plotgroup as select groupname, device_id as sensor_id, plot_type  from plotgroup_tmp;"
+  sqlite3 $appDbFile "drop table plotgroup_tmp;"
+
+}
+

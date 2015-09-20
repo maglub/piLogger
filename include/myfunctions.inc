@@ -15,7 +15,7 @@ function getSensorGroups(){
 
   global $db;
   $retArray = array();
-  $sql = "select distinct groupname from devicegroup;";
+  $sql = "select distinct groupname from sensorgroup;";
 
   $ret = $db->query($sql);
   while($row = $ret->fetchArray()){
@@ -28,11 +28,11 @@ function getSensorGroupMembers($sensorGroup){
 
     global $db;
     $retArray = array();
-    $sql = "select device_id from devicegroup where groupname = '{$sensorGroup}';";
+    $sql = "select sensor_id from sensorgroup where groupname = '{$sensorGroup}';";
 
     $ret = $db->query($sql);
     while($row = $ret->fetchArray()){
-      $retArray[] = Array('device_id' => $row['device_id']) ; 
+      $retArray[] = Array('sensor_id' => $row['sensor_id']) ; 
     }
     return $retArray;
 	
@@ -56,7 +56,7 @@ function getSensorGroupsAll(){
 
 function getSensors(){
   global $db;
-  $sql = "select * from device;";
+  $sql = "select * from sensor;";
 
   $n = 0;
   $ret = $db->query($sql);
@@ -72,7 +72,7 @@ function getSensorById($id){
     global $db;
 
 
-    $sql = "select * from device where id = '{$id}' limit 1;";
+    $sql = "select * from sensor where id = '{$id}' limit 1;";
 
     $n = 0;
     $ret = $db->query($sql);
@@ -185,7 +185,7 @@ function getPlotGroupByGroupName($groupName){
         $retArray['groupname'] = $groupName;
 		$retMembers = Array();
     while($row = $ret->fetchArray()){
-                $retMembers[] = Array('sensor_id' => $row['device_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
+                $retMembers[] = Array('sensor_id' => $row['sensor_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
     }
 
         $retArray['members'] = $retMembers;
@@ -198,7 +198,7 @@ function getPlotGroupByGroupName($groupName){
 #-----------------------------------
 function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
   global $db;
-  $sql = "select plot_type from plotgroup where groupname = '{$curPlotType} and device_id = '{$curId}';";
+  $sql = "select plot_type from plotgroup where groupname = '{$curPlotType} and sensor_id = '{$curId}';";
  
   $ret = $db->query($sql);
   if ($row = $ret->fetchArray() ) {
