@@ -16,7 +16,7 @@
 				<table class="table table-condensed table-hover"> 
 					<thead>
 						<tr>
-							<th>Config name</th>
+							<th>Graph name</th>
 							<th>Plot group</th>
 							<th>Timespan</th>
 							<th>Size</th>
@@ -26,7 +26,7 @@
 						{% for curPlotConfig in plotConfig %}
 						<tr>
 							<td> <a href="/graph/{{ curPlotConfig['name']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}</a>						</td>
-							<td> {{ curPlotConfig['name']}} 													</td>
+							<td> <a href="/graph/{{ curPlotConfig['name']}}">{{ curPlotConfig['name']}}</a> 													</td>
 							<td> {{ curPlotConfig['timespan']}}													</td>
 							<td> {{ curPlotConfig['size']}}														</td>
 						</tr>
@@ -56,7 +56,7 @@
 					{% for plotGroup in plotGroups %}
 						
 						<tr>
-							<td> {{ plotGroup['groupname']}} 													</td>
+							<td> <a href="/graph/{{ plotGroup['groupname']}}">{{ plotGroup['groupname']}}</a> 													</td>
 							<td> {% for plotGroupMember in plotGroup['members'] %} {{ plotGroupMember['sensor_id'] }}<br> {% endfor %}													</td>
 						</tr>
 						{% endfor %}

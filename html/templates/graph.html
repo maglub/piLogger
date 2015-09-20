@@ -7,6 +7,38 @@
    </div>
 </div>
 
+<div class="row"><!-- List plot configurations in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">Plot config</div>
+			<div class="panel-body">
+                          <div class="table-responsive">
+				<table class="table table-condensed table-hover"> 
+					<thead>
+						<tr>
+							<th>Graph name</th>
+							<th>Plot group</th>
+							<th>Timespan</th>
+							<th>Size</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for curPlotConfig in plotConfig %}
+						<tr>
+							<td> <a href="/graph/{{ curPlotConfig['name']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}</a>						</td>
+							<td> <a href="/graph/{{ curPlotConfig['name']}}">{{ curPlotConfig['name']}}</a> 													</td>
+							<td> {{ curPlotConfig['timespan']}}													</td>
+							<td> {{ curPlotConfig['size']}}														</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+                          </div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="row">
 	{% for curPlotConfig in plotConfig %}
 	<div class="col-lg-{{ curPlotConfig['size'] }}">

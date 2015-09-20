@@ -53,7 +53,7 @@ $app->get('/:route', function () use ($app) {
 })->conditions(array("route" => "(|home)"));
 
 $app->get('/graph/:config_name', function ($config_name) use ($app) {
-    $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"default", "timespan"=>"12h", "size"=>"12"))]);
+    $app->render('graph.html', ['plotConfig' => getDbPlotConfig($config_name)]);
 });
 
 $app->get('/graph/:plotgroup/:timespan', function ($plotgroup, $timespan, $size = 12) use ($app) {
@@ -64,7 +64,8 @@ $app->get('/graph/:plotgroup/:timespan', function ($plotgroup, $timespan, $size 
 $app->get('/sensors', function () use ($app) {
 
 	$curSensors = getSensors();
-	
+
+# XXX Annoying that this construct works on x86 ubuntu, but not on RPI
 #	foreach ($curSensors as &$curSensor){
 #		$curSensor['last'] = getLastTemperatureBySensorId($curSensor['id']);
 #	}
