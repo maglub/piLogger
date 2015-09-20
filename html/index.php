@@ -52,14 +52,25 @@ $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig()]);
 })->conditions(array("route" => "(|home)"));
 
+$app->get('/graph/:graph_name', function ($graph_name) use ($app) {
+    $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"stg3", "timespan"=>"12h", "size"=>"6"))]);
+});
+
+
 $app->get('/sensors', function () use ($app) {
 
 	$curSensors = getSensors();
+	
+	foreach ($curSensors as &$curSensor){
+		$curSensor['last'] = getLastTemperatureBySensorId($curSensor['id']);
+	}
+	
 	$curSparklines = Array();
 
 	foreach ($curSensors as $curSensor){
 		$curSparklines[$curSensor['id']] = printSparklineByDeviceId($curSensor['id']);
 	}
+	
 	
     $newSensors = [];
 
@@ -73,6 +84,7 @@ $app->get('/sensors', function () use ($app) {
 	
     $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors]);
 });
+
 
 $app->get('/config', function () use ($app) {
     $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups()]);

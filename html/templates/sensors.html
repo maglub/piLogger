@@ -20,6 +20,7 @@
 							<th>Alias</th>
 							<th>Type</th>
 							<th>Sparkline</th>
+							<th>Last Reading</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -29,6 +30,7 @@
 							<td> {{ sensor['alias'] }}													</td>
 							<td> {{ sensor['type']}} 													</td>
 							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>	</td>
+							<td> {{ sensor['last']}} 													</td>
 						</tr>
 						{% endfor %}
 					</tbody>

@@ -25,7 +25,7 @@
 					<tbody>
 						{% for curPlotConfig in plotConfig %}
 						<tr>
-							<td> {{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}						</td>
+							<td> <a href="/graph/{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}">{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}</a>						</td>
 							<td> {{ curPlotConfig['name']}} 													</td>
 							<td> {{ curPlotConfig['timespan']}}													</td>
 							<td> {{ curPlotConfig['size']}}														</td>
