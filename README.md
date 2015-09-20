@@ -65,6 +65,8 @@ Configuration of your setup
    ```
    cd ~/piLogger/bin
    ./dbSetup.sh --setup
+
+   (crontab -l 2>/dev/null ;cat ~/piLogger/etc/cron/crontab.txt ) | crontab -
    ```
 
    This will: 
@@ -76,6 +78,7 @@ Configuration of your setup
       - 12h
       - 24h
       - 168h
+   * Setup your crontab
 
    Now you will have a setup that is ready to be used through the web gui. Note that you have not set up any aliases for your devices yet. See 3. below.
 
