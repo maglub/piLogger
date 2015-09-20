@@ -7,6 +7,7 @@ configDir=$this_dir/etc
 
 [ ! -f $configDir/piLogger.conf ] && errorExit "No config file $configDir/piLogger.conf, please run $this_dir/configure"
 . $configDir/piLogger.conf
+. $baseDir/bin/functions-upgrade
 
 needReboot=""
 
@@ -170,6 +171,9 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 [ ! -f $appDbFile ] && {
   echo "  - Setting upp $appDbFile database" 
   $binDir/dbTool --setup --db 
+  currentVersion=$(cat $baseDir/currentVersion | grep -vE "#|^$")
+  echo "  - Setting the installed version to $currentVersion" 
+  piLogger_setInstalledVersion $currentVersion 
 }
 
 
