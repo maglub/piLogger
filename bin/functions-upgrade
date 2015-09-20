@@ -342,13 +342,14 @@ function piLogger_doUpgrade_20150920-001_to_20150920-002(){
 
   echo "    - Backing up the database"
 
+  [ ! -d $backupDir ] && mkdir -p $backupDir
   curTS=$(date "+%Y%m%d_%H%M%S")
   cp $appDbFile $backupDir/$(basename $appDbFile).$curTS
   gzip $backupDir/$(basename $appDbFile).$curTS
 
   echo "    - Renaming columns"
   sqlite3 $appDbFile "alter table sensorgroup rename to sensorgroup_tmp;"
-  sqlite3 $appDbFile "create table sensorgroup as select groupname, device_id as sensor_id, plot_type  from sensorgroup_tmp;"
+  sqlite3 $appDbFile "create table sensorgroup as select groupname, device_id as sensor_id from sensorgroup_tmp;"
   sqlite3 $appDbFile "drop table sensorgroup_tmp;"
 
   sqlite3 $appDbFile "alter table plotgroup rename to plotgroup_tmp;"
