@@ -50,7 +50,7 @@ function normalBackup(){
 function bareMetal(){
   TS=$(date "+%Y%m%d_%H%M%S")
   tmpDir=$(mktemp -d $backupDir/rrdDump.tmpDir.XXXXXX)
-  outputFile="$backupDir/rrdDump.$TS.tgz"
+  outputFile="$backupDir/rrdDump.$TS.tar"
  
   [ -n "$1" ] && { usage ; exit 0 ; }
 
@@ -78,7 +78,7 @@ function bareMetal(){
   echo "  - Tar/gz of $tmpDir, final tar-file: $outputFile"
   echo
   cd $tmpDir
-  tar cvzf $outputFile *
+  tar cvf $outputFile *
   cd -
 
   echo
