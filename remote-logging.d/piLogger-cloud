@@ -31,6 +31,10 @@ configDir=$this_dir/../etc
 spoolDir=/var/spool/piLogger
 cloudHost=api.pilogger.net
 
+. $PILOGGER_BASE_DIR/etc/piLogger.conf
+. $PILOGGER_BASE_DIR/bin/functions
+
+
 #============================
 # Available variables
 #============================
@@ -98,7 +102,7 @@ function processSpoolDir(){
   wget -q --spider http://google.com
 
   if [ $? -ne 0 ]; then
-     echo "Error: Seems we dont have an internet connection"
+     logIt "Error: Seems we dont have an internet connection"
      exit 1
   fi
 
@@ -120,14 +124,14 @@ function processSpoolDir(){
      # check the HTTP response header code
      # if all good we delete the spool file
      if [ "$response" -eq "200" ]; then
-        echo "data sent - deleting $file"
+        logIt "data sent - deleting $file"
         sudo rm $file
      else
-        echo "Error: could not connect to $cloudHost to send file $file"
+        logIt "Error: could not connect to $cloudHost to send file $file"
         (( tries = $tries + 1 ))
      fi
 
-     [ $tries -gt 1 ] && { echo "Error: Multiple connection errors when connecting to $cloudHost" ; exit 1 ; }
+     [ $tries -gt 1 ] && { logIt "Error: Multiple connection errors when connecting to $cloudHost" ; exit 1 ; }
 
   done 
 
@@ -154,13 +158,14 @@ EOT
   #===========================
 
   echo
-  echo "#--- register sensors for this device"
+  logIt "#--- register sensors for this device"
   for line in $($PILOGGER_BASE_DIR/bin/dbTool -l | awk 'NR>2 {OFS=";"; print $1,$3}')
   do
     sensorOriginalIdentifier=${line%%;*}  
     sensorIdentifier=$( echo $deviceIdentifier+$sensorOriginalIdentifier | md5sum | cut -d" " -f1 )
     sensorName=${line##*;}  
 
+    logIt "Registering sensor: $sensorName/$sensorIdentifier/$sensorOriginalIdentifier"
     cat<<EOT
 curl -q -w "%{http_code}\n" -H 'Content-Type: application/json' -X POST -d "{\"deviceIdentifier\":\"$deviceIdentifier\",\"sensorName\":\"$sensorName\",\"sensorType\":\"temperature\",\"authToken\":\"$authToken\"}" http://$cloudHost/api/sensor/$sensorIdentifier
 EOT
@@ -210,16 +215,16 @@ response=$(curl -H 'Content-Type: application/json' -X PUT \
 
 # check the HTTP response header code
 if [ "$response" -eq "200" ]; then
-   echo "successfully sent measurement to piLogger cloud"
+   logIt "successfully sent measurement to piLogger cloud"
 else
-   echo "error: did get HTTP status code $response from REST api - something went wrong"
+   logIt "error: did get HTTP status code $response from REST api - something went wrong"
 
    # writing data to spool directory for later processing
    timenow=$(date +%s)
    spoolFileName=${this_script}_$$_$timenow
    spoolFileContent="${PILOGGER_SENSOR_HASH},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_METRIC_VALUE},${PILOGGER_SENSOR}"
   
-   echo "writing measured data to $spoolDir/$spoolFileName for later processing"
+   logIt "writing measured data to $spoolDir/$spoolFileName for later processing"
   
    echo $spoolFileContent >> $spoolDir/$spoolFileName
  
