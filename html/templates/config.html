@@ -97,30 +97,34 @@
 	</div>
 </div>
 
+<div class="row"><!-- List of Plugins -->
+        <div class="col-lg-8">
+                <div class="panel panel-default">
+                        <div class="panel-heading">Plugins</div>
+                        <div class="panel-body">
+                          <div class="table-responsive">
+                                <table class="table table-condensed table-hover">
+                                        <thead>
+                                                <tr>
+                                                        <th>Plugin name</th>
+                                                        <th>Plugin activated</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for plugin in installedPlugins %}
+
+                                                <tr>
+                                                        <td> {{ plugin }}                                                                                                   </td>
+                                                        <td> {% if plugin in activePlugins %}  YES  {% else %} NO {% endif %}                                           </td>
+                                                </tr>
+                                                {% endfor %}
+                                        </tbody>
+                                </table>
+                          </div>
+                        </div>
+                </div>
+        </div>
+</div>
+
  
-{% endblock %}
-
-{% block myjavascript %}
-   <script type="text/javascript">
-    //# Example from: http://omnipotent.net/jquery.sparkline/#s-docs
-    $(document).ready(function() {
-		log.log("Rendering sparklines");
-        /** This code runs when everything has been loaded on the page */
-        /* Inline sparklines take their values from the contents of the tag */
-        $('.inlinesparkline').sparkline(); 
-
-        /* Sparklines can also take their values from the first argument 
-        passed to the sparkline() function */
-        var myvalues = [10,8,5,7,4,4,1];
-        $('.dynamicsparkline').sparkline(myvalues);
-
-        /* The second argument gives options such as chart type */
-        $('.dynamicbar').sparkline(myvalues, {type: 'bar', barColor: 'green'} );
-
-        /* Use 'html' instead of an array of values to pass options 
-        to a sparkline with data in the tag */
-        $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'red'} );
-		log.log("Done rendering sparklines");
-    });
-    </script>
 {% endblock %}

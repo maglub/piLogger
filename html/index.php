@@ -1,7 +1,7 @@
 <?php
 
 	require_once("./stub.php");
-    require_once($root . "myfunctions.inc");
+        require_once($root . "myfunctions.inc");
 
         //set up environment for cli
         if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
@@ -97,7 +97,7 @@ $app->get('/sensors', function () use ($app) {
 
 
 $app->get('/config', function () use ($app) {
-    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups()]);
+    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins() ]);
 });
 
   $app->run();
