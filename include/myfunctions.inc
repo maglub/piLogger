@@ -24,6 +24,9 @@ function getSensorGroups(){
   return $retArray;
 }
 
+#-----------------------------------
+# getSensorGroupMembers() 
+#-----------------------------------
 function getSensorGroupMembers($sensorGroup){
 
     global $db;
@@ -38,6 +41,9 @@ function getSensorGroupMembers($sensorGroup){
 	
 }
 
+#-----------------------------------
+# getSensorGroupsAll()
+#-----------------------------------
 function getSensorGroupsAll(){
     global $db;
 
@@ -53,7 +59,6 @@ function getSensorGroupsAll(){
 #-----------------------------------
 # getSensors()
 #-----------------------------------
-
 function getSensors(){
   global $db;
   $sql = "select * from sensor;";
@@ -67,6 +72,9 @@ function getSensors(){
   return $retArray;
 }
 
+#-----------------------------------
+# getSensorById()
+#-----------------------------------
 function getSensorById($id){
 	
     global $db;
@@ -88,6 +96,9 @@ function getSensorById($id){
     return $retArray;
 }
 
+#-----------------------------------
+# getSensorIdByAlias()
+#-----------------------------------
 function getSensorIdByAlias($alias){
     global $db;
     $sql = "select * from alias where alias = '{$alias}';";
@@ -96,21 +107,26 @@ function getSensorIdByAlias($alias){
 	return $row['id'];
 }
 
+#-----------------------------------
+# getSensorByAlias()
+#-----------------------------------
 function getSensorByAlias($alias){
 	$curId = getSensorIdByAlias($alias);
 	$ret = getSensorById($curId);
 	return $ret;	
 }
 
+#-----------------------------------
+# getSensorTemperatureDataRangeById()
+#-----------------------------------
 function getSensorTemperatureDataRangeById($id, $range){
 	$ret = Array(12,15,24);
 	return $ret;
 }
 
 #-----------------------------------
-# Aliases
+# getAliases()
 #-----------------------------------
-
 function getAliases(){
     global $db;
     $sql = "select alias, id from alias;";
@@ -123,7 +139,9 @@ function getAliases(){
        return $retArray;
 }
 
-
+#-----------------------------------
+# getSensorAliasById()
+#-----------------------------------
 function getSensorAliasById($curId){
   global $db;
   $sql = "select alias from alias where id = '{$curId}';";
@@ -137,7 +155,7 @@ function getSensorAliasById($curId){
 }
 
 #-----------------------------------
-#
+# getDeviceStores()
 #-----------------------------------
 function getDeviceStores(){
   global $db_dir;
@@ -156,11 +174,9 @@ function getDeviceStores(){
   return $cur_dbFiles;
 }
 
-
-#===========================================================
-# Plot configurations
-#===========================================================
-
+#-----------------------------------
+# getPlotgroups()
+#-----------------------------------
 function getPlotgroups(){
     global $db;
     $sql = "select distinct(groupname) from plotgroup;";
@@ -175,7 +191,9 @@ function getPlotgroups(){
     return $retArray;	
 }
 
-
+#-----------------------------------
+# getPlotGroupByGroupName()
+#-----------------------------------
 function getPlotGroupByGroupName($groupName){
     global $db;
     $sql = "select * from plotgroup where groupname = '{$groupName}';";
@@ -194,7 +212,7 @@ function getPlotGroupByGroupName($groupName){
 }
 
 #-----------------------------------
-#
+# getAggregateTypeByPlotDeviceId()
 #-----------------------------------
 function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
   global $db;
@@ -208,10 +226,10 @@ function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
   }
   return $retArray;
 }
-#-----------------------------------
-#
-#-----------------------------------
 
+#-----------------------------------
+# getDbPlotConfig()
+#-----------------------------------
 function getDbPlotConfig($plotGroup = "%"){
 
     global $db;
@@ -227,42 +245,9 @@ function getDbPlotConfig($plotGroup = "%"){
 	return $curRet;
 }
 
-function printDbPlotConfig(){
-
-	# XXX obsolete, can be removed soon (2015-09-18)
-  global $db;
-  $sql = "select * from plotconfig where visible='true' order by prio;";
- 
-  $ret = $db->query($sql);
-  while ($row = $ret->fetchArray() ) {
-    $curName = $row['name'];
-    $curPlotgroup = $row['plotgroup'];
-    $curTimespan = $row['timespan'];
-    $curSize = $row['size'];
-    $curPrio = $row['prio'];
-
-    print<<<EOT
-       <div id="{$curName}-{$curTimespan}" style="margin: 0 auto" class="large-{$curSize} small-{$curSize} columns"></div>
-<script type="text/javascript">
- $(function(){
-   var nothing = printGroupGraph('{$curName}-{$curTimespan}', '{$curName}', '{$curTimespan}');
- })
-</script>
-EOT;
-  } 
-
-  return 0;
-}
 #-----------------------------------
-# 
+# getSensorIdFromFilesystem()
 #-----------------------------------
-function printCenterPane(){
-  require($_SERVER['DOCUMENT_ROOT'] . '/center-pane-default.php');
-}
-
-#====================================================
-# Filesystem functions
-#====================================================
 function getSensorIdFromFilesystem($options = array() ){
 
   if (isset($options['forceScan'])&& $options['forceScan']){
@@ -284,24 +269,33 @@ function getSensorIdFromFilesystem($options = array() ){
   return $curRet;
 }
 
-#====================================================
-# RRD functions
-#====================================================
+#-----------------------------------
+# getRRDDataBySensorId()
+#-----------------------------------
 function getRRDDataBySensorId($curId, $timeframe="24h"){
    $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".temperature.rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
    return $curRes; 
 }
 
+#-----------------------------------
+# getLastRRDDataBySensorId()
+#-----------------------------------
 function getLastRRDDataBySensorId($curId){
    $curRes = rrd_lastupdate("/var/lib/piLogger/db/" . $curId . ".temperature.rrd");
    return $curRes; 
 }
 
+#-----------------------------------
+# getLastTemperatureBySensorId()
+#-----------------------------------
 function getLastTemperatureBySensorId($curId){
   $res = getLastRRDDataBySensorId($curId);
   return (float)$res['data'][0];
 }
 
+#-----------------------------------
+# getSensorInfoAll()
+#-----------------------------------
 function getSensorInfoAll(){
   $res = getSensors();
   foreach ($res as &$curRes) {
@@ -313,6 +307,9 @@ function getSensorInfoAll(){
   return $res;
 }
 
+#-----------------------------------
+# printSparklineByDeviceId()
+#-----------------------------------
 function printSparklineByDeviceId($curId, $timeframe = "12h"){
   $curRes = getRRDDataBySensorId($curId, $timeframe);
 
@@ -328,6 +325,9 @@ function printSparklineByDeviceId($curId, $timeframe = "12h"){
   return $ret;
 }
 
+#-----------------------------------
+# getTemperatureRangeBySensorId()
+#-----------------------------------
 function getTemperatureRangeBySensorId($curId, $timeframe = "12h"){
   $curRes = getRRDDataBySensorId($curId, $timeframe);
   $ret = array();
