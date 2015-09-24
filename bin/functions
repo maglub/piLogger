@@ -322,8 +322,9 @@ callSpoolerFunctions(){
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
    do
        # check if there are spooler files for this plugin
-       if [ "$(ls -A $spoolDir/$activePlugin* 2> /dev/null )" ]; then
-          logIt "spooler files for plugin $activePlugin found" 
+	local numSpoolFiles="$(find $spoolDir -type f -name "${activePlugin}*" 2>/dev/null | wc -l)"
+       if [ "$numSpoolFiles" -gt 0 ]; then
+          logIt "spooler files for plugin $activePlugin found ($numSpoolFiles)" 
 
           if [ $(ps -ef | grep "$activePlugin \-\-processSpool" | grep -v grep | wc -l) -gt 0 ]; then
              logIt "not calling processSpoolDir option on $activePlugin as there is already 1 process running"

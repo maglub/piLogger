@@ -42,7 +42,7 @@ EOT
 
 
   # if we have any files in the spool directory we have to call the corresponding function to clear it
-  [ $(ls -A $spoolDir | wc -l) -gt 0 ] && { echo "$spoolDir is not Empty"; callSpoolerFunctions; } || echo "$spoolDir is empty - no need to call corresponding functions"
+  [ $(find $spoolDir -type f | wc -l) -gt 0 ] && { logIt "$spoolDir is not Empty"; callSpoolerFunctions; } || logIt "$spoolDir is empty - no need to call corresponding functions"
 
   # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1

@@ -36,10 +36,24 @@
 {% block myjavascript %}
 
 <script type="text/javascript">
- $(document).ready(function(){
+
+var firstTime = true;
+
+function drawGraphs(){
  	{% for curPlotConfig in plotConfig %}
-	   var nothing = printGroupGraph('{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['name']}}', '{{ curPlotConfig['timespan']}}');
-   	{% endfor %}
+	log.log("Drawing graph: {{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}");
+    var nothing = printGroupGraph('{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['name']}}', '{{ curPlotConfig['timespan']}}', ! firstTime);
+   	{% endfor %}	
+
+	firstTime=false;
+	//#--- reload the cache data after 60 seconds
+	log.log("Sleeping 60 seconds");
+    setTimeout('drawGraphs()', 60000);
+}
+
+ $(document).ready(function(){
+
+	 drawGraphs();
  });
 </script>
 

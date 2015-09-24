@@ -324,11 +324,16 @@ function printGraph(curPane, curHours){
 //----------------------------------------------------------
 // printGroupGraph(nameOfPane, groupName, numberOfHours)
 //----------------------------------------------------------
-function printGroupGraph(curPane, groupName, curHours){
+function printGroupGraph(curPane, groupName, curHours, dontSpinIt){
 
+	dontSpinIt = dontSpinIt || false;
+	
     var target = document.getElementById(curPane);
-    var spinner = new Spinner(getSpinnerOpts()).spin(target);
-
+	
+	if (! dontSpinIt) {
+  	  var spinner = new Spinner(getSpinnerOpts()).spin(target);
+	}
+	
     // print the graph
 
     //var url="api/sensorData";
@@ -341,8 +346,10 @@ function printGroupGraph(curPane, groupName, curHours){
       dataType: "json",
       success: function(data) {
         draw_chart(curPane, data);
+  		if (! dontSpinIt) {
           log.log("XXX Stopping spinner");
-          spinner.stop();
+       	  spinner.stop();
+		  }
       },
       error: function(data) {
           spinner.stop();
