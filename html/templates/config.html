@@ -97,5 +97,34 @@
 	</div>
 </div>
 
+<div class="row"><!-- List of Plugins -->
+        <div class="col-lg-8">
+                <div class="panel panel-default">
+                        <div class="panel-heading">Plugins</div>
+                        <div class="panel-body">
+                          <div class="table-responsive">
+                                <table class="table table-condensed table-hover">
+                                        <thead>
+                                                <tr>
+                                                        <th>Plugin name</th>
+                                                        <th>Plugin activated</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for plugin in installedPlugins %}
+
+                                                <tr>
+                                                        <td> {{ plugin }}                                                                                                   </td>
+                                                        <td> {% if plugin in activePlugins %}  YES  {% else %} NO {% endif %}                                           </td>
+                                                </tr>
+                                                {% endfor %}
+                                        </tbody>
+                                </table>
+                          </div>
+                        </div>
+                </div>
+        </div>
+</div>
+
  
 {% endblock %}

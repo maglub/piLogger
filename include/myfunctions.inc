@@ -343,4 +343,23 @@ function getTemperatureRangeBySensorId($curId, $timeframe = "12h"){
 
   return $ret; 
 }
+
+#-----------------------------------
+# getListOfInstalledPlugins()
+#-----------------------------------
+function getListOfInstalledPlugins(){
+  
+  return array_diff(scandir('/home/pi/piLogger/remote-logging.d'), array('..', '.'));   
+
+}
+
+
+#-----------------------------------
+# getListOfActivePlugins()
+#-----------------------------------
+function getListOfActivePlugins(){
+
+  return array_diff(scandir('/var/lib/piLogger/remote-logging-enabled/'), array('..', '.')); 
+
+}
 ?>
