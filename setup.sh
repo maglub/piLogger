@@ -98,6 +98,7 @@ echo "  - adding i2c-dev to /etc/modules"
 [ ! -d "$cacheDir" ]   && { echo "Creating cacheDir: $cacheDir"     ; sudo mkdir -p "$cacheDir"   ; }
 [ ! -d "$oneWireDir" ] && { echo "Creating oneWireDir: $oneWireDir" ; sudo mkdir -p "$oneWireDir" ; }
 [ ! -d "$backupDir" ]  && { echo "Creating backupDir: $backupDir"   ; sudo mkdir -p "$backupDir"  ; }
+[ ! -d "$dataDir/remote-logging-enabled" ]  && { echo "Creating remote-logging-enabled: $dataDir/remote-logging-enabled"   ; sudo mkdir -p "$dataDir"/remote-logging-enabled  ; }
 
 myUser=$(id -u)
 myGroup=$(id -g)
