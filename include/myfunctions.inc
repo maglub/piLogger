@@ -270,6 +270,38 @@ function getSensorIdFromFilesystem($options = array() ){
 }
 
 #-----------------------------------
+# createRRDDataBySensorId()
+#-----------------------------------
+function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
+	global $root;
+	$resOs = shell_exec("${root}/../bin/createRRD $curId $metricType 2>&1");
+	
+	return 0;
+}
+
+#-----------------------------------
+# setRRDDataBySensorId()
+#-----------------------------------
+function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature"){
+	if (!file_exists("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd")){
+		createRRDDatabaseBySensorId($curId, $metricType);
+	}
+	
+   $curRes = rrd_update("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd", array( "N:" . $metricValue ) );
+
+   if($curRes == 0 ) {
+	   $err = rrd_error();
+	   $curRes = "Error: {$err}\n";
+   } else {
+	   $curRes = "OK!";
+   }
+
+   return $curRes; 
+
+}
+
+
+#-----------------------------------
 # getRRDDataBySensorId()
 #-----------------------------------
 function getRRDDataBySensorId($curId, $timeframe="24h"){

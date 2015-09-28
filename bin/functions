@@ -225,9 +225,9 @@ function logTemperature(){
 
   [ ! -f $lt_dbFile ] && sudo -u $applicationUser $this_dir/createRRD $curDevice
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
-  rrdtool update $lt_dbFile N:${curTemperature}
+  rrdtool update $lt_dbFile NF:${curTemperature}
 
-  [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature
+  [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature $curDeviceType
 
 }
 
@@ -237,7 +237,10 @@ function logTemperature(){
 function logTemperatureRemote(){
   local sensor=$1
   local temperature=$2
-
+  local metricType=$3
+  
+  [ -z "$metricType" ] && metricType=temperature
+  
   # export the time, device and the value for remote-logging-plugins to use
   export PILOGGER_BASE_DIR=$baseDir
   export PILOGGER_AUTH_TOKEN=$authToken
@@ -245,6 +248,7 @@ function logTemperatureRemote(){
   export PILOGGER_DEVICE_NAME="$HOSTNAME"
   export PILOGGER_SENSOR="$sensor"
   export PILOGGER_METRIC_VALUE="$temperature"
+  export PILOGGER_METRIC_TYPE="$metricType"
   export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
   
   # now call all the activated remote logging plugins

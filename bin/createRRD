@@ -24,7 +24,7 @@ logIt "  - Creating new RRD $dbFile start: $startDate "
 rrdtool create $dbFile \
   --start $startDateEpoc \
   --step 10 \
-  DS:temperature:GAUGE:259200:U:U \
+  DS:${sensorType}:GAUGE:259200:U:U \
   RRA:AVERAGE:0.5:1:259200 \
   RRA:AVERAGE:0.5:6:86400 \
   RRA:AVERAGE:0.5:60:86400 \

@@ -1,0 +1,61 @@
+{% extends "_layout.html" %}
+
+{% block div %}
+<div class="row">
+   <div class="col-lg-12">
+      <h1 class="page-header">Sensor {{ sensor['id']}} : {{ sensor['temperature'] }}</h1>
+   </div>
+</div>
+
+<div class="row"><!-- List of registered sensors in the database -->
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading"> Sensor information</div>
+			<div class="panel-body">
+                          <div class="table-responsive">
+				<table class="table table-condensed table-hover"> 
+					<thead>
+						<tr>
+							<th>Identifier</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td> Id					</td><td> {{ sensor['id'] }} 																				</td>
+						</tr>           		                                                                                  									
+						<tr>            		                                                                                  									
+							<td> Alias				</td><td> {{ sensor['alias'][0] }} 																			</td>
+						</tr>           		                                                                                  									
+						<tr>            		                                                                                  									
+							<td> Type				</td><td> {{ sensor['type'] }} 																				</td>
+						</tr>
+						<tr>
+							<td> Temperature		</td><td> {{ sensor['temperature'] }} <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> 		</td>
+						</tr>
+					</tbody>
+				</table>
+                          </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+ 
+{% endblock %}
+
+{% block myjavascript %}
+   <script type="text/javascript">
+    //# Example from: http://omnipotent.net/jquery.sparkline/#s-docs
+    $(document).ready(function() {
+
+	log.log("Rendering sparklines");
+       
+	/** This code runs when everything has been loaded on the page */
+        /* Inline sparklines take their values from the contents of the tag */
+        $('.inlinesparkline').sparkline(); 
+
+	log.log("Done rendering sparklines");
+    });
+    </script>
+{% endblock %}

@@ -26,7 +26,7 @@
 					<tbody>
 						{% for sensor in sensors %}
 						<tr>
-							<td> {{ sensor['id'] }} 													</td>
+							<td> <a href=/sensor/{{ sensor['id'] }}>{{ sensor['id'] }}</a>				</td>
 							<td> {{ sensor['alias'] }}													</td>
 							<td> {{ sensor['type']}} 													</td>
 							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span>	</td>
