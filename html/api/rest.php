@@ -89,6 +89,34 @@
 	}//end of function
 	);
 	
+	#--- new, proper REST for remote logging
+
+	$app->put('/sensor/:id', function($id) use ($app){
+		
+		$json = $app->request()->getBody();
+		$data = json_decode($json, true);
+
+		$res = Array("ok" => false, "msg"=>"");
+		
+		if (isset($data['probeValue']) && isset($data['metricType'])) {
+			$ret = setRRDDataBySensorId($id,$data['probeValue'], $data['metricType']);
+			$res = Array("sensorId"=>$id,"temperature"=>$data['probeValue']);
+			$res['ok'] = true;
+#			$res['msg'] = "Added temperature to the database. Return message: ";
+			$res['msg'] = "Added temperature to the database. Return message: " . $ret;
+		} else {
+			$res['ok'] = false;
+			$res['msg'] = "Error: ";
+			if(!isset($data['sensorId'])) { $res .= "sensorId missing "; };
+			if(!isset($data['probeValue'])) { $res .= "probeValue missing "; };
+			if(!isset($data['metricType'])) { $res .= "metricType missing "; };
+		}
+
+		$app->render(200,$res);
+
+	});
+
+	
 	$app->get('/sensor/:id/temperature', function($id) use ($app,$root) {
 		$res =  Array( "id" => $id, "temperature" => getLastTemperatureBySensorId($id));
 		$app->render(200,o2h($res));
