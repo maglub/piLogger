@@ -102,17 +102,17 @@
 			$ret = setRRDDataBySensorId($id,$data['probeValue'], $data['metricType']);
 			$res = Array("sensorId"=>$id,"temperature"=>$data['probeValue']);
 			$res['ok'] = true;
-#			$res['msg'] = "Added temperature to the database. Return message: ";
 			$res['msg'] = "Added temperature to the database. Return message: " . $ret;
+			$retValue = 200;
 		} else {
 			$res['ok'] = false;
 			$res['msg'] = "Error: ";
-			if(!isset($data['sensorId'])) { $res .= "sensorId missing "; };
 			if(!isset($data['probeValue'])) { $res .= "probeValue missing "; };
 			if(!isset($data['metricType'])) { $res .= "metricType missing "; };
+			$retValue = 500;
 		}
 
-		$app->render(200,$res);
+		$app->render($retValue,$res);
 
 	});
 
