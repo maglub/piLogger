@@ -225,7 +225,7 @@ function logTemperature(){
 
   [ ! -f $lt_dbFile ] && sudo -u $applicationUser $this_dir/createRRD $curDevice
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
-  rrdtool update $lt_dbFile NF:${curTemperature}
+  rrdtool update $lt_dbFile N:${curTemperature}
 
   [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature $curDeviceType
 
