@@ -8,6 +8,7 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 . $configDir/piLogger.conf
 [ -z "$dbDir" ] && dbDir=$dataDir/db
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
+[ -z "$applicationUser" ] && applicationUser=pi
 
 #------------------------------------
 # Variables (normally set in piLogger.conf)
@@ -222,7 +223,7 @@ function logTemperature(){
 
   local lt_dbFile=$dbDir/${curDevice}.${curDeviceType}.rrd
 
-  [ ! -f $lt_dbFile ] && sudo -u pi $this_dir/createRRD $curDevice
+  [ ! -f $lt_dbFile ] && sudo -u $applicationUser $this_dir/createRRD $curDevice
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
   rrdtool update $lt_dbFile N:${curTemperature}
 
