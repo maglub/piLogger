@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#==================================
+# Nagios compatible check script
+# for /var/spool/piLogger
+#==================================
+
+spoolDir=/var/spool/piLogger
+thresholdWarning=1
+thresholdCritical=100
+
+numFiles=$(find $spoolDir -type f | wc -l)
+
+retCode=0 ; retMessage="OK"
+[ $numFiles -ge $thresholdWarning ] && { retCode=1 ; }
+[ $numFiles -ge $thresholdCritical ] && { retCode=2 ; }
+
+echo "$retMessage - Number of files in $spoolDir = $numFiles"
+echo "|numFiles=$numFiles"
+
+exit $retCode

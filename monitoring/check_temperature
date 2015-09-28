@@ -1,0 +1,17 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+
+[ -z "$1" ] && { echo "Error: no device on the command line" 1>&2 ; exit 1 ; }
+
+myDevice="$1"
+curTemperature=$($this_dir/../bin/getTemperature -rrd $myDevice)
+
+retMsg="OK"
+cat<<EOT
+$retMsg - Device: $myDevice Temperature: $curTemperature C
+Device:      $myDevice
+Temperature: $curTemperature C
+| temperature=$curTemperature
+EOT
