@@ -32,6 +32,7 @@ The following environment variables have to be set to run this script:
   * PILOGGER_BASE_DIR (i.e PILOGGER_BASE_DIR=/home/pi/piLogger)
   * PILOGGER_SENSOR
   * PILOGGER_METRIC_VALUE
+  * PILOGGER_METRIC_TYPE
 
 To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
 
@@ -56,12 +57,19 @@ EOT
 [ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 [ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
-
+[ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
 
 #===================================
 # MAIN
 #===================================
 
 logIt "Logging $PILOGGER_SENSOR:$PILOGGER_METRIC_VALUE to $remoteHost"
-wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}/set/temperature/${PILOGGER_METRIC_VALUE}"
+#wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}/set/temperature/${PILOGGER_METRIC_VALUE}"
+
+curl $curlOpts  -w "%{http_code}\n" \
+		-H 'Content-Type: application/json' \
+        -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
+		-X PUT \
+		"http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
+
 

@@ -284,7 +284,6 @@ function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
 #-----------------------------------
 function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature"){
 	if (!file_exists("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd")){
-		print "oops, no db file";
 		createRRDDatabaseBySensorId($curId, $metricType);
 	}
 	
