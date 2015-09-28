@@ -95,6 +95,14 @@ $app->get('/sensors', function () use ($app) {
     $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors, 'lastTemperature' => $curLastTemperature]);
 });
 
+$app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
+	$curSensor = getSensorById($sensorId);
+	$curSensor['temperature'] = getLastTemperatureBySensorId($sensorId);
+	$curSensor['sparkline'] = printSparklineByDeviceId($sensorId);
+	
+   $app->render('sensor.html', [ 'sensor' => $curSensor ]);
+});
+
 
 $app->get('/config', function () use ($app) {
     $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins() ]);
