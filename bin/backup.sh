@@ -45,7 +45,7 @@ function normalBackup(){
 
   backupFile=backup.${HOSTNAME}.${TS}.tgz
   cd /
-  tar cvzf $backupDir/$backupFile $dbDir
+  tar cvzf $backupDir/$backupFile $baseDir/etc/piLogger.conf $dbDir
   echo "Backup filename: $backupDir/$backupFile"
 }
 
