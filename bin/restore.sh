@@ -20,7 +20,7 @@ cat<<EOT
 
 Usage:
 
-  $this_script [ -l | --list | -h | --bare ]
+  $this_script [ -l | --list | -h | --bare ] FILENAME.tgz
 
 Examples:
 
@@ -29,6 +29,7 @@ Examples:
   $this_script --bare /path/to/file       # restore bare metal dump (rrdtool restore, app.sqlite3), normally used to
                               # set up a new development environment
   $this_script --list                     # list files in $backupDir
+  $this_script /path/to/file              # normal restore, including crontab and remote-logging-enabled links
 
 Description:
 
@@ -44,6 +45,60 @@ function listFiles(){
 	
 	ls -lA $backupDir
 }
+
+
+function restoreCrontab(){
+  local crontabFile="$1"
+  [ ! -f "$crontabFile" ] && { echo "Error: no crontab file found: $crontabFile" ; return 1 ; }
+
+  cat $crontabFile | crontab -
+  return 0
+
+}
+
+function restoreRemoteLoggingScripts(){
+  local linkFile="$1"
+
+  [ ! -f "$linkFile" ] && { echo "Error: no link file found: $linkFile" ; return 1 ; }
+
+  OLD_IFS=$IFS
+  IFS='
+'
+  for line in $(cat $linkFile)
+  do
+    IFS=$OLD_IFS
+    fileName=$(echo $line | awk -F" -> " '{print $1}')
+    linkDestination=$(echo $line | awk -F" -> " '{print $2}')
+
+    echo "    - Creating link: $fileName -> $linkDestination"
+    ln -s $linkDestination $dataDir/remote-logging-enabled/$fileName
+  done
+
+  
+}
+
+
+function normalRestore(){
+  local backupFile="$1"
+  [ ! -f "$backupFile" ] && { echo "Error: no backup file: $backupFile" ; exit 1 ; }
+
+  echo "  - Restoring files from: $backupFile"
+  echo
+  cd /
+  tar xvzf "$backupFile"
+
+  echo
+  echo "  - Restoring crontab from $dbDir/crontab.latest"
+  echo
+  restoreCrontab $dbDir/crontab.latest
+
+  echo "  - Restoring symlinks in remote-logging-enabled from $dbDir/remote-logging-enabled.links.latest"
+  echo
+  restoreRemoteLoggingScripts $dbDir/remote-logging-enabled.links.latest
+  
+  return 0
+}
+
 
 
 function restoreBareMetal(){
@@ -95,6 +150,10 @@ function restoreBareMetal(){
 while [ -n "$1" ]
 do
   case $1 in
+    -h|--help)
+      usage
+      exit 0
+      ;;
     --bare*)
       restoreBareMetal "$2"
       exit 0
@@ -104,7 +163,7 @@ do
 	  exit 0
 	  ;;
     *)
-      usage
+      normalRestore "$1"
       exit
       ;;
   esac
