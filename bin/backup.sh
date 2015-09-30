@@ -41,10 +41,41 @@ EOT
 
 }
 
+function backupRemotePlugins(){
+
+  linkDir=$dataDir/remote-logging-enabled
+  linkFile=$dbDir/remote-logging-enabled.links.latest
+
+  [ ! -d $linkDir ] && { echo "Warning: There is no directory $linkDir" 1>&2 ; return 0 ; }
+
+  echo "  - Content of $linkDir (stored in $linkFile)"
+  echo
+
+  cd $dataDir/remote-logging-enabled
+
+  (for link in *
+  do
+    linkTo=$(ls -la $link | awk -F"-> " '{print $2}')
+    echo "$link ->  $linkTo"
+  done) | tee $linkFile
+
+  cd - > /dev/null 2>&1
+  echo
+}
+
+function backupCrontab(){
+  crontabFile=$dbDir/crontab.latest
+  echo "  - Backing up crontab into $crontabFile"
+  crontab -l > $crontabFile
+  echo
+}
+
 function normalBackup(){
 
+  backupRemotePlugins
   backupFile=backup.${HOSTNAME}.${TS}.tgz
   cd /
+  backupCrontab
   tar cvzf $backupDir/$backupFile $baseDir/etc/piLogger.conf $dbDir
   echo "Backup filename: $backupDir/$backupFile"
 }
@@ -96,7 +127,11 @@ function bareMetal(){
 # MAIN
 #=====================================================
 
-[ -z "$1" ] && { normalBackup ; exit 0 ; }
+[ -z "$1" ] && {
+  echo "* Backing up piLogger on ${HOSTNAME}"
+  echo
+  normalBackup ; exit 0 ;
+}
 
 while [ -n "$1" ]
 do
