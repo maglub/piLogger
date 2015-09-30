@@ -99,6 +99,7 @@ echo "  - adding i2c-dev to /etc/modules"
 [ ! -d "$oneWireDir" ] && { echo "Creating oneWireDir: $oneWireDir" ; sudo mkdir -p "$oneWireDir" ; }
 [ ! -d "$backupDir" ]  && { echo "Creating backupDir: $backupDir"   ; sudo mkdir -p "$backupDir"  ; }
 [ ! -d "$dataDir/remote-logging-enabled" ]  && { echo "Creating remote-logging-enabled: $dataDir/remote-logging-enabled"   ; sudo mkdir -p "$dataDir"/remote-logging-enabled  ; }
+[ ! -d "$spoolDir" ]  && { echo "Creating spoolDir: $spoolDir"   ; sudo mkdir -p "$spoolDir"  ; }
 
 myUser=$(id -u)
 myGroup=$(id -g)
@@ -109,6 +110,8 @@ sudo chown ${myUser}:${myGroup} "$dbDir"
 sudo chown ${myUser}:${myGroup} "$graphDir"
 sudo chown ${myUser}:${myGroup} "$cacheDir"
 sudo chown ${myUser}:${myGroup} "$backupDir"
+sudo chown ${myUser}:${myGroup} "$spoolDir"
+sudo chmod 777 $spoolDir
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
