@@ -6,7 +6,6 @@ this_dir=$(cd `dirname $0`;pwd)
 . $this_dir/functions
 
 TS=$(date "+%Y%m%d_%H%M%S")
-backupFile=${TS}.tgz
 
 [ -z "$backupDir" ] && { logIt "Error: backupDir is not set in $this_dir/../etc/piLogger.conf, exiting." ; exit 1 ; }
 [ ! -d $backupDir ] && mkdir -p $backupDir
@@ -43,8 +42,11 @@ EOT
 }
 
 function normalBackup(){
+
+  backupFile=backup.${HOSTNAME}.${TS}.tgz
   cd /
   tar cvzf $backupDir/$backupFile $dbDir
+  echo "Backup filename: $backupDir/$backupFile"
 }
 
 function bareMetal(){
