@@ -186,11 +186,6 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 sudo dpkg -s php5 >/dev/null 2>&1 || { echo "  - Installing php5" ; sudo apt-get -y install php5 php5-sqlite php5-cgi php5-cli php5-rrd ; }
 
 #================================
-# Setup index.html
-#================================
-[ ! -f $this_dir/html/index.html ] && ln -s index.html.template $this_dir/html/index.html
-
-#================================
 # alias.conf file template
 #================================
 [ ! -f $configDir/aliases.conf ] && {
