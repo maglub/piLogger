@@ -109,6 +109,7 @@ sudo chown ${myUser}:${myGroup} "$dbDir"
 sudo chown ${myUser}:${myGroup} "$graphDir"
 sudo chown ${myUser}:${myGroup} "$cacheDir"
 sudo chown ${myUser}:${myGroup} "$backupDir"
+sudo chown ${myUser}:${myGroup} "$dataDir/remote-logging-enabled"
 sudo chown ${myUser}:${myGroup} "$spoolDir"
 sudo chmod 777 $spoolDir
 
