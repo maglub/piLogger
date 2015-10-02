@@ -28,7 +28,6 @@
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/../etc
-spoolDir=/var/spool/piLogger
 cloudHost=api.pilogger.net
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
