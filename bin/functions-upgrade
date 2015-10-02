@@ -358,3 +358,20 @@ function piLogger_doUpgrade_20150920-001_to_20150920-002(){
 
 }
 
+#========================================
+# from 20150920-002 to 20151002-001
+#========================================
+function piLogger_doUpgrade_20150920-002_to_20151020-001(){
+
+   spoolDir=/var/spool/piLogger
+
+   # add new variable config to piLogger.conf
+   if grep -q "spoolDir" ~/piLogger/etc/piLogger.conf; then
+      # nothing to do as there is already a spoolDir config set 
+      return 0;
+   else
+      # add spoolDir config
+      sed -i 's/.*oneWireDir.*/&\nspoolDir=\/var\/spool\/piLogger/' ~/piLogger/etc/piLogger.conf
+      return $?;
+   fi 
+}
