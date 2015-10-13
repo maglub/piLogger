@@ -322,7 +322,7 @@ function getLastRRDDataBySensorId($curId){
 #-----------------------------------
 function getLastTemperatureBySensorId($curId){
   $res = getLastRRDDataBySensorId($curId);
-  return (float)$res['data'][0];
+  return Array("timestamp" => $res['last_update'], "temperature" => (float)$res['data'][0]);
 }
 
 #-----------------------------------

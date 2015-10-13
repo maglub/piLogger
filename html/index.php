@@ -65,14 +65,10 @@ $app->get('/sensors', function () use ($app) {
 
 	$curSensors = getSensors();
 
-# XXX Annoying that this construct works on x86 ubuntu, but not on RPI
-#	foreach ($curSensors as &$curSensor){
-#		$curSensor['last'] = getLastTemperatureBySensorId($curSensor['id']);
-#	}
-
 	$curLastTemperature = Array();
 	foreach ($curSensors as $curSensor){
 	        $curLastTemperature[$curSensor['id']] = getLastTemperatureBySensorId($curSensor['id']);
+	        $curLastTemperature[$curSensor['id']]['datestamp'] = date('Y-m-d G:i:s T',$curLastTemperature[$curSensor['id']]['timestamp']);
 	}
 	
 	$curSparklines = Array();
@@ -97,7 +93,8 @@ $app->get('/sensors', function () use ($app) {
 
 $app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
 	$curSensor = getSensorById($sensorId);
-	$curSensor['temperature'] = getLastTemperatureBySensorId($sensorId);
+	$curSensor += getLastTemperatureBySensorId($sensorId);
+        $curSensor['datestamp'] = date('Y-m-d G:i:s T',$curSensor['timestamp']);
 	$curSensor['sparkline'] = printSparklineByDeviceId($sensorId);
 	
    $app->render('sensor.html', [ 'sensor' => $curSensor ]);

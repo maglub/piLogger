@@ -101,7 +101,7 @@
 
 	
 	$app->get('/sensor/:id/temperature', function($id) use ($app,$root) {
-		$res =  Array( "id" => $id, "temperature" => getLastTemperatureBySensorId($id));
+                $res  = ["id" => $id] + getLastTemperatureBySensorId($id);
 		$app->render(200,o2h($res));
 	}//end of function
 	);

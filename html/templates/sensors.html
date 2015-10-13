@@ -30,7 +30,7 @@
 							<td> {{ sensor['alias'] }} </td>
 							<td> {{ sensor['type']}} </td>
 							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </td>
-							<td> {{ lastTemperature[sensor['id']] }} </td>
+							<td> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C ({{ lastTemperature[sensor['id']]['datestamp'] }}) </td>
 						</tr>
 						{% endfor %}
 					</tbody>
