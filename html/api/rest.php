@@ -28,15 +28,6 @@
 
 	require_once($root . "myfunctions.inc");
 
-
- 
-    //db_connect();
-	
-	#--- this is a workaround, so that json_encode in SlimJson works
-	#--- since our database is iso-latin-1
-	#--- we can remove this as soon as we have migrated our database
-	//mysql_set_charset("utf8");
-	
 	#--- instantiate Slim and SlimJson
 	$app = new \Slim\Slim();
 
@@ -48,7 +39,7 @@
 		]);
 	}
 
-    $app->add(new \SlimJson\Middleware());
+	$app->add(new \SlimJson\Middleware());
 	
 
 	#======== helper functions
@@ -81,16 +72,8 @@
 	}//end of function
 	);
 
-	#--- ugly workaround to break-fix remote logging (see #71)
-	$app->get('/sensor/:id/set/temperature/:temperature', function($id, $temperature) use ($app,$root) {
-		$resOs = shell_exec("${root}/../bin/logTemperature $id $temperature 2>&1");
-		//print "{\"result\":\"ok\", \"command\":\"${root}/../bin/logTemperature $id $temperature\",\"message\":\"{$resOs}\"}";
-		print "{\"result\":\"ok\"}";
-	}//end of function
-	);
 	
 	#--- new, proper REST for remote logging
-
 	$app->put('/sensor/:id', function($id) use ($app){
 		
 		$json = $app->request()->getBody();
