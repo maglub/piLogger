@@ -1,4 +1,5 @@
 {% extends "_layout.html" %}
+{% from 'macros.html' import graphBox %}
 
 {% block div %}
 <div class="row">
@@ -41,11 +42,14 @@
 
 <div class="row">
 	{% for curPlotConfig in plotConfig %}
-	<div class="col-lg-{{ curPlotConfig['size'] }}">
+          {{ graphBox(curPlotConfig) }}
+
+<!--	<div class="col-lg-{{ curPlotConfig['size'] }}">
 		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}</div>
 				<div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
 		</div>
 	</div>
+-->
 	{% endfor %}
 </div>
 
