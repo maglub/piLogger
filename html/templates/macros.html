@@ -1,0 +1,25 @@
+{% macro graphBox(curPlotConfig) %}
+        <div class="col-lg-{{ curPlotConfig['size'] }}">
+                <div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}
+                           <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Actions
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="/graph/{{curPlotConfig['name']}}">Show {{curPlotConfig['name']}} graphs</a> </li>
+                                        <li><a href="/graph/{{curPlotConfig['name']}}/{{curPlotConfig['timespan']}}">Show {{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} graph</a> </li>
+                                        <li><a href="/cache/sensorData.{{curPlotConfig['name']}}.{{curPlotConfig['timespan']}}.json">Show JSON data source</a> </li>
+                                        <li class="divider"></li>
+                                        <li><a href="#">Edit this graph</a> </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                </div>
+                <div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
+                </div>
+        </div>
+{% endmacro %}
+
