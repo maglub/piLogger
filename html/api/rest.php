@@ -1,13 +1,4 @@
 <?php
-	#--- go to xyz/includes (which has composer.phar and composer.json)
-	#--- run ./composer.phar install
-	#
-	#--- the .htaccess file in the ./api directory can look like this:
-	#
-	#--- maglub@ubuntu-14:~/dev/web/public_html/api$ cat .htaccess 
-	#--- RewriteEngine on
-	#--- RewriteCond %{REQUEST_FILENAME} !-f
-	#--- RewriteRule ^ /api/rest.php [QSA,L]
 	
 	//set up environment for cli
 	if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
@@ -24,8 +15,7 @@
 	if(isset($ENV['debug'])) { print "apa\n"; };
 
 	require_once($_SERVER['DOCUMENT_ROOT']."/stub.php");
-	require_once($root."/vendor/autoload.php");
-
+	require_once($root."/../vendor/autoload.php");
 	require_once($root . "myfunctions.inc");
 
 	#--- instantiate Slim and SlimJson

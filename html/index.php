@@ -2,6 +2,7 @@
 
 	require_once("./stub.php");
         require_once($root . "myfunctions.inc");
+        require_once($root."/../vendor/autoload.php");
 
         //set up environment for cli
         if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
@@ -10,16 +11,13 @@
                 $_SERVER['DOCUMENT_ROOT'] = __DIR__ . "/..";
                 $argv = $GLOBALS['argv'];
                 array_shift($GLOBALS['argv']);
-                #$pathInfo = implode('/', $argv);
                 $pathInfo = $argv[0];
         }
-
-        require_once($root."/vendor/autoload.php");
 
         #--- instantiate Slim and SlimJson
         $app = new \Slim\Slim(array(
              'templates.path' => 'templates')
-          );
+        );
 
         //if run from the command-line
         if ($_SERVER['HTTP_HOST'] === "cron"){

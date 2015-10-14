@@ -239,9 +239,9 @@ $this_dir/bin/upgrade.sh --doIt
 #================================
 # Run composer
 #================================
-cd $this_dir/include
-curl -s https://getcomposer.org/installer | php
-./composer.phar install
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+cd $this_dir
+composer install
 cd -
 
 #================================

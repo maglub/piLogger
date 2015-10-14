@@ -270,9 +270,9 @@ function piLogger_doUpgrade_20150628-001_to_20150823-001(){
 
   # now we can get composer and use php5-cli for it
   echo "    - Installing composer"
-  cd $baseDir/include
-  curl -s https://getcomposer.org/installer | php
-  ./composer.phar install
+  cd $baseDir
+  curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+  composer install
 
   # we will restart lighttpd just to be sure it picked up the correct config file
   sudo dpkg -s lighttpd >/dev/null 2>&1  && { sudo /etc/init.d/lighttpd restart ; }
@@ -374,4 +374,22 @@ function piLogger_doUpgrade_20150920-002_to_20151020-001(){
       sed -i 's/.*oneWireDir.*/&\nspoolDir=\/var\/spool\/piLogger/' ~/piLogger/etc/piLogger.conf
       return $?;
    fi 
+}
+
+#========================================
+# from 20151020-001 to 20151014-001
+#========================================
+function piLogger_doUpgrade_20151020-001_to_20151014-001(){
+
+  echo "    - moving composer files from previous installations if necessary"
+  [ -d $baseDir/include/vendor ] && mv $baseDir/include/vendor $baseDir/vendor
+  [ -f $baseDir/include/composer.lock ] && mv $baseDir/include/composer.lock $baseDir/composer.lock
+  
+  echo "    - check if composer files are at the correct place now"
+  if [ -d $baseDir/vendor ] && [ -f $baseDir/composer.lock ]; then
+     return 0;
+  else
+     return -1;
+  fi
+
 }
