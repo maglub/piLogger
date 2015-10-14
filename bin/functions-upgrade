@@ -270,9 +270,9 @@ function piLogger_doUpgrade_20150628-001_to_20150823-001(){
 
   # now we can get composer and use php5-cli for it
   echo "    - Installing composer"
-  cd $baseDir/include
-  curl -s https://getcomposer.org/installer | php
-  ./composer.phar install
+  cd $baseDir
+  curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+  composer install
 
   # we will restart lighttpd just to be sure it picked up the correct config file
   sudo dpkg -s lighttpd >/dev/null 2>&1  && { sudo /etc/init.d/lighttpd restart ; }
