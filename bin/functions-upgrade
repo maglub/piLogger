@@ -375,3 +375,21 @@ function piLogger_doUpgrade_20150920-002_to_20151020-001(){
       return $?;
    fi 
 }
+
+#========================================
+# from 20151020-001 to 20151014-001
+#========================================
+function piLogger_doUpgrade_20151020-001_to_20151014-001(){
+
+  echo "    - moving composer files from previous installations if necessary"
+  [ -d $baseDir/include/vendor ] && mv $baseDir/include/vendor $baseDir/vendor
+  [ -f $baseDir/include/composer.lock ] && mv $baseDir/include/composer.lock $baseDir/composer.lock
+  
+  echo "    - check if composer files are at the correct place now"
+  if [ -d $baseDir/vendor ] && [ -f $baseDir/composer.lock ]; then
+     return 0;
+  else
+     return -1;
+  fi
+
+}
