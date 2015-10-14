@@ -303,8 +303,8 @@ function piLogger_doUpgrade_20150916-001_to_20150918-001(){
   # installing php5-rrd package if not already there
 
   echo "    - Updating composer"
-  cd $baseDir/include
-  ./composer.phar update
+  cd $baseDir
+  composer update
   cd -
   sudo dpkg -s lighttpd >/dev/null 2>&1 && { sudo service lighttpd restart ; }
 
@@ -384,9 +384,15 @@ function piLogger_doUpgrade_20151020-001_to_20151014-001(){
   echo "    - moving composer files from previous installations if necessary"
   [ -d $baseDir/include/vendor ] && mv $baseDir/include/vendor $baseDir/vendor
   [ -f $baseDir/include/composer.lock ] && mv $baseDir/include/composer.lock $baseDir/composer.lock
+
+  echo "    - removing old composer.phar"
+  [ -f $baseDir/include/composer.phar ] && rm $baseDir/include/composer.phar
+
+  echo "    - installing composer globally if still needed"
+  [ ! -f /usr/local/bin/composer ] && curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer  
   
   echo "    - check if composer files are at the correct place now"
-  if [ -d $baseDir/vendor ] && [ -f $baseDir/composer.lock ]; then
+  if [ -d $baseDir/vendor ] && [ -f $baseDir/composer.lock ] && [ ! -f $baseDir/include/composer.phar ]; then
      return 0;
   else
      return -1;
