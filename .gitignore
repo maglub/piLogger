@@ -4,9 +4,10 @@ etc/*.conf
 html/cache
 html/graphs
 html/xml
-include/composer.phar
-include/composer.lock
-include/vendor
+
+# composer files
+composer.lock
+vendor
 
 # ignore temporary, hidden system files
 *.swp
