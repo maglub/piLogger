@@ -303,8 +303,8 @@ function piLogger_doUpgrade_20150916-001_to_20150918-001(){
   # installing php5-rrd package if not already there
 
   echo "    - Updating composer"
-  cd $baseDir/include
-  ./composer.phar update
+  cd $baseDir
+  composer update
   cd -
   sudo dpkg -s lighttpd >/dev/null 2>&1 && { sudo service lighttpd restart ; }
 
