@@ -103,7 +103,9 @@ function normalRestore(){
 
 function restoreBareMetal(){
 
-	restoreFile="$1"
+    restoreDir=$(cd `dirname "$1"`;pwd)
+	restoreFileName=$(basename "$1")
+	restoreFile="${restoreDir}/${restoreFileName}"
     tmpDir=$(mktemp -d $backupDir/rrdDump.tmpDir.XXXXXX)
 
 	echo "* Restoring from bare metal backup file: $restoreFile"

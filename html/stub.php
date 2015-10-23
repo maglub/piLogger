@@ -21,7 +21,7 @@ static $logroot = "";
 
 switch ($_SERVER['HTTP_HOST']){
 		case "cron":	
-                        error_log("Server: " . $_SERVER['HTTP_HOST']);
+			error_log("Server: " . $_SERVER['HTTP_HOST']);
 			$root = "/home/pi/piLogger/include/";
 			$logroot = "/home/pi/piLogger/log/";
 			define("GOOGLE_ANALYTICS", 0);
