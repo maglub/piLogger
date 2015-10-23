@@ -2,7 +2,7 @@
 
 	require_once("./stub.php");
 
-        require_once($root . "myfunctions.inc");
+        require_once($root . "myfunctions.inc.php");
         require_once($root."/../vendor/autoload.php");
 	$config = getAppConfig($root . "/../etc/piLogger.conf");
 
