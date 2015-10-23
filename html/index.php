@@ -1,7 +1,8 @@
 <?php
 
 	require_once("./stub.php");
-        require_once($root . "myfunctions.inc");
+        require_once($root . "myfunctions.inc.php");
+		$config = getAppConfig($root . "/../etc/piLogger.conf");
 
         //set up environment for cli
         if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
@@ -46,7 +47,8 @@ $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
 $twig = $app->view()->getEnvironment();
 $twig->addGlobal('devicename', gethostname());
-
+$twig->addGlobal('isOffline', (isset($config['isOffline']) && $config['isOffline'] == "true")?true:false);
+$twig->addGlobal('config', $config);
 
 $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig(),'activePlugins' => getListOfActivePlugins()]);

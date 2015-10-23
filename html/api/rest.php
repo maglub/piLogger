@@ -26,7 +26,9 @@
 	require_once($_SERVER['DOCUMENT_ROOT']."/stub.php");
 	require_once($root."/vendor/autoload.php");
 
-	require_once($root . "myfunctions.inc");
+	require_once($root . "myfunctions.inc.php");
+	$config = getAppConfig($root . "/../etc/piLogger.conf");
+	
 
 	#--- instantiate Slim and SlimJson
 	$app = new \Slim\Slim();
