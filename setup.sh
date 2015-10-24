@@ -37,14 +37,15 @@ errorExit(){
   sudo apt-get -y autoremove lxde-icon-theme
   sudo apt-get -y autoremove omxplayer
   sudo apt-get -y autoremove wolfram-engine  
-  sudo apt-get -y autoremove -y scratch
-  sudo apt-get -y autoremove -y dillo
-  sudo apt-get -y autoremove -y galculator
-  sudo apt-get -y autoremove -y netsurf-common
-  sudo apt-get -y autoremove -y netsurf-gtk
-  sudo apt-get -y autoremove -y lxde-common
-  sudo apt-get -y autoremove -y lxdeterminal
-  sudo apt-get -y autoremove -y hicolor-icon-theme 
+  sudo apt-get -y autoremove scratch
+  sudo apt-get -y autoremove dillo
+  sudo apt-get -y autoremove galculator
+  sudo apt-get -y autoremove netsurf-common
+  sudo apt-get -y autoremove netsurf-gtk
+  sudo apt-get -y autoremove lxde-common
+  sudo apt-get -y autoremove lxdeterminal
+  sudo apt-get -y autoremove hicolor-icon-theme 
+  sudo apt-get -y autoremove libreoffice
   sudo apt-get -y autoremove
   sudo apt-get -y clean
   sudo rm -rf /usr/share/icons/*
@@ -53,6 +54,16 @@ errorExit(){
   sudo rm -rf /usr/share/wallpapers
   sudo rm -rf /usr/share/themes
   sudo rm -rf /usr/share/kde4
+
+  # remove some folders from a clean debian jessie installation
+  sudo rm -rf /home/pi/Music
+  sudo rm -rf /home/pi/Pictures
+  sudo rm -rf /home/pi/Desktop
+  sudo rm -rf /home/pi/Documents
+  sudo rm -rf /home/pi/Downloads
+  sudo rm -rf /home/pi/Public
+  sudo rm -rf /home/pi/Templates
+  sudo rm -rf /home/pi/Videos
 
   echo "sudo find / -name *.wav -exec rm {} \\; " ; # 29.80MB
   echo "sudo find / -name *.mp3 -exec rm {} \\; " ; # 1.94MB
