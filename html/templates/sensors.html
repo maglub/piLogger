@@ -20,7 +20,7 @@
 							<th>Alias</th>
 							<th>Type</th>
 							<th>Sparkline</th>
-							<th>Last Reading</th>
+							<th colspan=2>Last Reading</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -30,7 +30,7 @@
 							<td> {{ sensor['alias'] }} </td>
 							<td> {{ sensor['type']}} </td>
 							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </td>
-							<td> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C ({{ lastTemperature[sensor['id']]['datestamp'] }}) </td>
+							<td> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C </td><td> ({{ lastTemperature[sensor['id']]['datestamp'] }}) </td>
 						</tr>
 						{% endfor %}
 					</tbody>
