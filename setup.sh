@@ -241,6 +241,12 @@ sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:
 #================================
   echo "* If your timezone is not set, you can do so by running:"
   echo "sudo cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime"
+
+#================================
+# Setup admin password (setting the default password to "admin")
+#================================
+$this_dir/bin/resetPassword admin
+
 #================================
 # Run the upgrade script
 #================================
