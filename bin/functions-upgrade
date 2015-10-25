@@ -356,6 +356,7 @@ function piLogger_doUpgrade_20150920-001_to_20150920-002(){
   sqlite3 $appDbFile "create table plotgroup as select groupname, device_id as sensor_id, plot_type  from plotgroup_tmp;"
   sqlite3 $appDbFile "drop table plotgroup_tmp;"
 
+  return 0
 }
 
 #========================================
@@ -366,7 +367,7 @@ function piLogger_doUpgrade_20150920-002_to_20151020-001(){
    spoolDir=/var/spool/piLogger
 
    # add new variable config to piLogger.conf
-   if grep -q "spoolDir" ~/piLogger/etc/piLogger.conf; then
+   if grep -q "spoolDir" $this_dir/../etc/piLogger.conf; then
       # nothing to do as there is already a spoolDir config set 
       return 0;
    else
@@ -399,3 +400,15 @@ function piLogger_doUpgrade_20151020-001_to_20151014-001(){
   fi
 
 }
+
+#========================================
+# from 20151014-001 to 20151025-001
+#========================================
+function piLogger_doUpgrade_20151014-001_to_20151025-001(){
+  echo "  - setting admin password"
+  $baseDir/bin/resetPassword
+  res=$?
+
+  return $res
+}
+

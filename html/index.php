@@ -1,9 +1,10 @@
 <?php
+	session_start();
 
 	require_once("./stub.php");
 
-        require_once($root . "myfunctions.inc.php");
-        require_once($root."/../vendor/autoload.php");
+	require_once($root . "myfunctions.inc.php");
+	require_once($root."/../vendor/autoload.php");
 	$config = getAppConfig($root . "/../etc/piLogger.conf");
 
         //set up environment for cli
@@ -18,7 +19,7 @@
 
         #--- instantiate Slim and SlimJson
         $app = new \Slim\Slim(array(
-             'templates.path' => 'templates')
+             'templates.path' => '../include/templates')
         );
 
         //if run from the command-line
@@ -48,6 +49,11 @@ $twig = $app->view()->getEnvironment();
 $twig->addGlobal('devicename', gethostname());
 $twig->addGlobal('isOffline', (isset($config['isOffline']) && $config['isOffline'] == "true")?true:false);
 $twig->addGlobal('config', $config);
+$twig->addGlobal('isAuthenticated', isAuthenticated());
+
+#===================================================
+# Main
+#===================================================
 
 $app->get('/:route', function () use ($app) {
     $app->render('index.html', ['plotConfig' => getDbPlotConfig(),'activePlugins' => getListOfActivePlugins()]);
@@ -104,6 +110,37 @@ $app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
 
 $app->get('/config', function () use ($app) {
     $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins() ]);
+});
+
+$app->map('/login', function () use ($app) {
+
+    $username = null;
+
+    if ($app->request()->isPost()) {
+        $username = "admin";
+        $password = $app->request->post('password');
+
+		$result = authenticate($username, $password);
+        #$result = $app->authenticator->authenticate($username, $password);
+
+        if ($result) {
+			$_SESSION["username"] = "admin";
+			$_SESSION["role"] = "admin";
+            $app->redirect('/');
+        } else {
+            $messages = "Wrong password";
+            $app->flashNow('error', $messages);
+        }
+    }
+
+    $app->render('login.html', []);
+})->via('GET', 'POST')->name('login');
+
+$app->get('/logout', function() use ($app){
+	$_SESSION = array();
+	session_destroy();
+    $app->redirect('/');
+	
 });
 
   $app->run();

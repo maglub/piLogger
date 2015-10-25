@@ -47,7 +47,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">piLogger @ {{ devicename }} {% if isOffline %} - (offline modus){% endif %}</a>
+                <a class="navbar-brand" href="/">piLogger @ {{ devicename }} {% if isAuthenticated %} - Logged in as Admin{% endif %}{% if isOffline %} - (offline modus){% endif %}</a>
             </div>
             <!-- /.navbar-header -->
            <!-- sidebar menu -->
@@ -66,6 +66,14 @@
 
                      <li>
                         <a href="/config"><i class="fa fa-wrench fa-fw"></i> Config</a>
+                     </li>
+
+                     <li>
+						{% if(isAuthenticated) %}
+                        <a href="/logout"><i class="fa fa-user fa-fw"></i></i> Log out</a>
+						{% else %}
+                        <a href="/login"><i class="fa fa-user fa-fw"></i></i> Login</a>
+						{% endif %}
                      </li>
                                        
                   </ul>

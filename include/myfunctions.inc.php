@@ -11,6 +11,100 @@
 #-----------------------------------
 # getAppConfig()
 #-----------------------------------
+function authenticate($username, $password){
+	if (genPasswordHash($password) == getAdminPassword()){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function isAuthenticated(){
+	if (isset($_SESSION['username']) && $_SESSION['username'] == "admin"){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+#-----------------------------------
+# getSensorGroups()
+#-----------------------------------
+function getAdminPassword(){
+  global $db;
+
+  $sql = "select password from passwd where username = 'admin'";
+  $stmt = $db->prepare($sql);
+
+  $ret = $stmt->execute();
+
+  if($row = $ret->fetchArray()){
+    $password = $row['password']; 
+  }
+  
+  return $password;
+}
+
+function setPassword($username, $password){
+	global $db;
+	
+	$hash = genPasswordHash($password);
+	$sql = "update passwd set password = '{$hash}' where username = '{$username}'";
+    $stmt = $db->prepare($sql);
+    $ret = $stmt->execute();
+
+	return 0;
+}
+
+function addUser($uid,$username){
+	global $db;
+	
+	$sql = "insert into passwd values ({$uid},'{$username}','')";
+    $stmt = $db->prepare($sql);
+    $ret = $stmt->execute();
+
+	return 0;
+}
+
+function deleteUser($username){
+	global $db;
+	
+	$sql = "delete from passwd where username = '{$username}'";
+    $stmt = $db->prepare($sql);
+    $ret = $stmt->execute();
+
+	return 0;
+	
+}
+
+function genPasswordHash($password){
+	$hash = crypt( $password , 'piLogger' );
+	return $hash;
+}
+
+function dropPasswdTable(){
+	global $db;
+	
+	$sql = "drop table if exists passwd";
+    $stmt = $db->prepare($sql);
+    $ret = $stmt->execute();
+	
+	return 0;
+}
+
+function createPasswdTable(){
+	global $db;
+	
+	$sql = "create table if not exists passwd(uid integer, username string, password string);";
+    $stmt = $db->prepare($sql);
+    $ret = $stmt->execute();
+
+	return 0;
+}
+
+#-----------------------------------
+# getAppConfig()
+#-----------------------------------
 function getAppConfig($configFile){
 	#--- from http://inthebox.webmin.com/one-config-file-to-rule-them-all
 	$file=$configFile;
@@ -32,6 +126,7 @@ function getAppConfig($configFile){
 	#print_r($config);
 	return $config;
 }
+
 #-----------------------------------
 # getSensorGroups()
 #-----------------------------------
