@@ -182,6 +182,17 @@ Configuration of your setup
    
 9. Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
 
+Setting a new admin password
+----------------------------
+
+* Use the ~/piLogger/bin/resetPassword command to set a new password
+
+```
+~/piLogger/bin/resetPassword "hardToGu3ssP4ssw0rd"
+```
+
+Note: some characters are naturally expanded on the command line, so make sure to use "" or '' around your password if it contains special characters like !, ), * etc. 
+
 Upgrade from previous version
 =====================================================
 
