@@ -22,3 +22,6 @@ vendor
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# ignore restore files
+db/*
