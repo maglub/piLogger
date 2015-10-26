@@ -1,6 +1,44 @@
 {% extends "_layout.html" %}
 
 {% block div %}
+
+<!-- overriding sb-admin-2 timeline css to float the information to the right -->
+<style>
+    ul.timeline:before {
+        left: 40px;
+    }
+
+    ul.timeline > li > .timeline-panel {
+        width: calc(100% - 90px);
+        width: -moz-calc(100% - 90px);
+        width: -webkit-calc(100% - 90px);
+    }
+
+    ul.timeline > li > .timeline-badge {
+        top: 16px;
+        left: 15px;
+        margin-left: 0;
+    }
+
+    ul.timeline > li > .timeline-panel {
+        float: right;
+    }
+
+    ul.timeline > li > .timeline-panel:before {
+        right: auto;
+        left: -15px;
+        border-right-width: 15px;
+        border-left-width: 0;
+    }
+
+    ul.timeline > li > .timeline-panel:after {
+        right: auto;
+        left: -14px;
+        border-right-width: 14px;
+        border-left-width: 0;
+    }
+</style>
+
 <div class="row">
    <div class="col-lg-12">
       <h1 class="page-header">Sensors</h1>
@@ -79,7 +117,7 @@
  
 
 <div class="row">
-	<div class="col-lg-6">
+	<div class="col-sm-5">
 		<div class="panel panel-default">
 		    <div class="panel-heading">
 		        <i class="fa fa-clock-o fa-fw"></i> Responsive Timeline
