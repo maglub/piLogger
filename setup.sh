@@ -116,13 +116,15 @@ myGroup=$(id -g)
 
 sudo chown ${myUser}:${myGroup} "$dataDir"
 sudo chown ${myUser}:${myGroup} "$logDir"
-sudo chown ${myUser}:${myGroup} "$dbDir"
 sudo chown ${myUser}:${myGroup} "$graphDir"
 sudo chown ${myUser}:${myGroup} "$cacheDir"
 sudo chown ${myUser}:${myGroup} "$backupDir"
 sudo chown ${myUser}:${myGroup} "$dataDir/remote-logging-enabled"
 sudo chown ${myUser}:${myGroup} "$spoolDir"
 sudo chmod 777 $spoolDir
+
+sudo chown ${myUser}:www-data "$dbDir"
+sudo chmod 775 $dbDir
 
 [ ! -h $this_dir/html/cache ] && { ln -s $cacheDir $this_dir/html/cache ; }
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
