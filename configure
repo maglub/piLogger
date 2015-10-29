@@ -139,8 +139,8 @@ done
 
 #--- have SUDO ask for password if necessary
 
-[ -z "$noPassword" ] && { echo "Your user need a password for sudo" ; sudo -v ; }
-res=$?
+res=0
+[ -z "$noPassword" ] && { echo "Your user need a password for sudo" ; sudo -v ; res=$? ; }
 [ $res -ne 0 ] && { echo "Sudo ended badly, exiting" ; exit 1 ; }
 
 sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the following/ {printit="true"}' | grep "ALL$" | wc -l)
