@@ -18,16 +18,19 @@ errorExit(){
   exit 1
 }
 
-
+cat<<EOT
 #================================
 # Check that required variables are set
 #================================
+EOT
 
 [ -z "$interface" ] && errorExit "_interface_ variable in $configDir/piLogger.conf not set, please run $this_dir/configure"
 
+cat<<EOT
 #================================
 # Minimize install
 #================================
+EOT
 
 [ -n "$minimizeInstall" ] && {
   sudo rm -rf python_games
@@ -69,9 +72,11 @@ errorExit(){
   echo "sudo find / -name *.mp3 -exec rm {} \\; " ; # 1.94MB
 }
 
+cat<<EOT
 #================================
 # enable i2c kernel modules
 #================================
+EOT
 
 #--- enable i2c_arm and i2c1 options
 echo "  - enabling i2c config in /boot/config.txt"
@@ -82,9 +87,11 @@ echo "  - adding i2c-dev to /etc/modules"
 [ -z "$(grep i2c-dev /etc/modules)" ] && { sudo sh -c "echo i2c-dev >> /etc/modules" ; needReboot=true ; }
 
 
+cat<<EOT
 #================================
 # correctly configure locales
 #================================
+EOT
 
 #--- setting up the locale
 [ -n "$piLoggerLocale" ] && {
@@ -98,9 +105,11 @@ echo "  - adding i2c-dev to /etc/modules"
   }
 }
 
+cat<<EOT
 #================================
 # setup directories
 #================================
+EOT
 [ ! -d "$logDir" ]     && { echo "Creating logDir: $logDir"         ; sudo mkdir -p "$logDir"     ; }
 [ ! -d "$dataDir" ]    && { echo "Creating dataDir: $dataDir"       ; sudo mkdir -p "$dataDir"    ; }
 [ ! -d "$dbDir" ]      && { echo "Creating dbDir: $dbDir"           ; sudo mkdir -p "$dbDir"      ; }
@@ -130,9 +139,11 @@ sudo chmod 775 $dbDir
 [ ! -d $this_dir/html/graphs ] && { ln -s $dataDir/graphs $this_dir/html/graphs ; }
 [ ! -d $this_dir/html/xml ] && { mkdir $dataDir/xml ; ln -s $dataDir/xml $this_dir/html/xml ; }
 
+cat<<EOT
 #================================
 # Make sure the latest updates are available
 #================================
+EOT
 curTS=$(date "+%s")
 aptTS=$(stat -c %Y /var/cache/apt/)
 
@@ -141,21 +152,27 @@ aptTS=$(stat -c %Y /var/cache/apt/)
 #--- one week = 604800
 [ $ageApt -gt 604800 ] && sudo apt-get update
 
+cat<<EOT
 #================================
 # Check for dependencies
 #================================
+EOT
 
 echo "  - Interface: $interface"
 
-#--------------
+cat<<EOT
+#================================
 # bc
-#--------------
+#================================
+EOT
 sudo dpkg -s bc >/dev/null 2>&1 || { echo "  - Installing bc" ; sudo apt-get -q -y install bc ; }
 sudo dpkg -s dnsutils >/dev/null 2>&1 || { echo "  - Installing dnsutils" ; sudo apt-get -q -y install dnsutils ; }
 
-#--------------
+cat<<EOT
+#================================
 # OWFS
-#--------------
+#================================
+EOT
 sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get -q -y install owfs ; }
 [ ! -h /etc/init.d/start1wire ] && { sudo ln -s $this_dir/etc/init.d/start1wire /etc/init.d/ ; needReboot=true ; }
 [ ! -h /etc/rc2.d/S02start1wire ] && { sudo update-rc.d start1wire defaults ; needReboot=true ; }
@@ -163,14 +180,18 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 #--- remove dummy devices from the config file /etc/owfs.conf
 sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf 
 
-#------------------
+cat<<EOT
+#================================
 # RRDTool
-#------------------
+#================================
+EOT
 sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo apt-get -q -y install rrdtool ; }
 
-#------------------
+cat<<EOT
+#================================
 # Lighttpd
-#------------------
+#================================
+EOT
 sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -q -y install lighttpd ; }
 
 [ -f /etc/lighttpd/lighttpd.conf ]  && { sudo mv /etc/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf.org ; sudo ln -s $configDir/lighttpd/lighttpd.conf /etc/lighttpd ; }
@@ -179,9 +200,11 @@ sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo
 [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.conf /etc/lighttpd/conf-enabled
 
 
-#----------------------
+cat<<EOT
+#================================
 # sqlite3
-#----------------------
+#================================
+EOT
 sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo apt-get -q -y install sqlite3 ; }
 
 #--- setup the sqlite3 config database
@@ -194,28 +217,32 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 }
 
 
-#----------------------
+cat<<EOT
+#================================
 # php5
-#----------------------
+#================================
+EOT
 curInstallPackages=""
 for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd
 do
   sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
 done
 
-[ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -q -y install $curInstallPackages; }
+[ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -q -y install $curInstallPackages ; }
 
+cat<<EOT
 #================================
 # alias.conf file template
 #================================
+EOT
 [ ! -f $configDir/aliases.conf ] && {
 cat>$configDir/aliases.conf<<EOT
-#-----------------------------------------------
+#================================
 # aliases.conf
 #
 # Example:
 # indoor1;1wire;/mnt/1wire/bus.12/28.12ED2F040000
-#-----------------------------------------------
+#================================
 # alias ; type ; path
 EOT
 }
