@@ -28,6 +28,7 @@ Options:
   --withAbioWire    -> Using abio wire interface (will use Axiris port of owfs)
   --withLocale      -> Setting up en_US.UTF-8 locale
   --minimizeInstall -> Remove any unnecessary package/files from the Raspbian installation (Caution, will remove a lot!)
+  --noPassword      -> user pi does not have a password
 
 Default:
 
@@ -120,6 +121,10 @@ do
       minimizeInstall=true
       shift
       ;;
+    --noPassword)
+      noPassword=true
+      shift
+      ;;
     *)
       usage
       exit 1
@@ -134,7 +139,7 @@ done
 
 #--- have SUDO ask for password if necessary
 
-sudo -v
+[ -z "$noPassword" ] && { echo "Your user need a password for sudo" ; sudo -v ; }
 sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the following/ {printit="true"}' | grep "ALL$" | wc -l)
 [ $sudoCount -eq 0 ] && { echo "WARNING: you will need sudo rights for the installation. Check with sudo -l" ; }
 

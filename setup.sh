@@ -197,10 +197,13 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 #----------------------
 # php5
 #----------------------
-for package in php5 php5-sqlite php5-cgi php5-cli php5-rrd
+curInstallPackages=""
+for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd
 do
-  sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Installing $package" ; sudo apt-get -y install $package; }
+  sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package"
 done
+
+[ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -y install $curInstallPackages; }
 
 #================================
 # alias.conf file template
