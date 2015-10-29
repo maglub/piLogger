@@ -150,13 +150,13 @@ echo "  - Interface: $interface"
 #--------------
 # bc
 #--------------
-sudo dpkg -s bc >/dev/null 2>&1 || { echo "  - Installing bc" ; sudo apt-get -y install bc ; }
-sudo dpkg -s dnsutils >/dev/null 2>&1 || { echo "  - Installing dnsutils" ; sudo apt-get -y install dnsutils ; }
+sudo dpkg -s bc >/dev/null 2>&1 || { echo "  - Installing bc" ; sudo apt-get -q -y install bc ; }
+sudo dpkg -s dnsutils >/dev/null 2>&1 || { echo "  - Installing dnsutils" ; sudo apt-get -q -y install dnsutils ; }
 
 #--------------
 # OWFS
 #--------------
-sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get -y install owfs ; }
+sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get -q -y install owfs ; }
 [ ! -h /etc/init.d/start1wire ] && { sudo ln -s $this_dir/etc/init.d/start1wire /etc/init.d/ ; needReboot=true ; }
 [ ! -h /etc/rc2.d/S02start1wire ] && { sudo update-rc.d start1wire defaults ; needReboot=true ; }
 
@@ -166,12 +166,12 @@ sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf
 #------------------
 # RRDTool
 #------------------
-sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo apt-get -y install rrdtool ; }
+sudo dpkg -s rrdtool >/dev/null 2>&1 || { echo "  - Installing rrdtool" ; sudo apt-get -q -y install rrdtool ; }
 
 #------------------
 # Lighttpd
 #------------------
-sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -y install lighttpd ; }
+sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -q -y install lighttpd ; }
 
 [ -f /etc/lighttpd/lighttpd.conf ]  && { sudo mv /etc/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf.org ; sudo ln -s $configDir/lighttpd/lighttpd.conf /etc/lighttpd ; }
 [ ! -h /etc/lighttpd/conf-enabled/10-accesslog.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-accesslog.conf /etc/lighttpd/conf-enabled
@@ -182,7 +182,7 @@ sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo
 #----------------------
 # sqlite3
 #----------------------
-sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo apt-get -y install sqlite3 ; }
+sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo apt-get -q -y install sqlite3 ; }
 
 #--- setup the sqlite3 config database
 [ ! -f $appDbFile ] && {
@@ -203,7 +203,7 @@ do
   sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
 done
 
-[ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -y install $curInstallPackages; }
+[ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -q -y install $curInstallPackages; }
 
 #================================
 # alias.conf file template
