@@ -220,55 +220,73 @@ cat>$configDir/aliases.conf<<EOT
 EOT
 }
 
+cat<<EOT
 #================================
 # Set up bash completion by linking shellFunctions to /etc/bash_completion.d/piLogger
 #================================
+EOT
 echo "  - Setting up bash completion"
 [ ! -h /etc/bash_completion.d/piLogger ] && { sudo ln -s $this_dir/bin/shellFunctions /etc/bash_completion.d/piLogger ; needReboot=true ; }
 
+cat<<EOT
 #================================
 # /etc/piLogger.conf link to installation directory
 #================================
+EOT
 [[ ! -d /etc/piLogger.d && ! -h /etc/piLogger.d ]] && sudo ln -s $configDir /etc/piLogger.d
 
+cat<<EOT
 #================================
 # Setup logrotate
 #================================
+EOT
 [[ ! -r /etc/logrotate.d/piLogger ]] && sudo cp $configDir/logrotate.d/piLogger /etc/logrotate.d/piLogger
 
+cat<<EOT
 #================================
 # Setup sudoers
 #================================
+EOT
 sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:root /etc/sudoers.d/piLogger ; sudo chmod 0440 /etc/sudoers.d/piLogger 
 
+cat<<EOT
 #================================
 # Show info about timezones
 #================================
+EOT
   echo "* If your timezone is not set, you can do so by running:"
   echo "sudo cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime"
 
+cat<<EOT
 #================================
 # Setup admin password (setting the default password to "admin")
 #================================
+EOT
 $this_dir/bin/resetPassword admin
 
+cat<<EOT
 #================================
 # Run the upgrade script
 #================================
+EOT
 
 $this_dir/bin/upgrade.sh --doIt
 
+cat<<EOT
 #================================
 # Run composer
 #================================
+EOT
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 cd $this_dir
 composer install
 cd -
 
+cat<<EOT
 #================================
 # End
 #================================
+EOT
 [ -n "$needReboot" ] && {
   echo "* Done, please reboot!"
   echo "  sudo shutdown -r now"
