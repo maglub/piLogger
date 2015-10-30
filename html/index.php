@@ -109,7 +109,7 @@ $app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
 
 
 $app->get('/config', function () use ($app) {
-    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins() ]);
+    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins(), 'plugininfo' => getPluginInfos() ]);
 });
 
 $app->map('/login', function () use ($app) {

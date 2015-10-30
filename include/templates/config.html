@@ -106,16 +106,18 @@
                                 <table class="table table-condensed table-hover">
                                         <thead>
                                                 <tr>
-                                                        <th>Plugin name</th>
-                                                        <th>Plugin activated</th>
+                                                        <th>Plugin</th>
+                                                        <th>Active</th>
+                                                        <th>Info</th>
                                                 </tr>
                                         </thead>
                                         <tbody>
                                         {% for plugin in installedPlugins %}
 
                                                 <tr>
-                                                        <td> {{ plugin }}                                                                                                   </td>
-                                                        <td> {% if plugin in activePlugins %}  YES  {% else %} NO {% endif %}                                           </td>
+                                                        <td> {{ plugin }} </td>
+                                                        <td> {% if plugin in activePlugins %} Yes {% else %} No {% endif %} </td>
+                                                        <td> {{ plugininfo[plugin] }} </td>
                                                 </tr>
                                                 {% endfor %}
                                         </tbody>
