@@ -512,4 +512,27 @@ function getListOfActivePlugins(){
   return array_diff(scandir('/var/lib/piLogger/remote-logging-enabled/'), array('..', '.')); 
 
 }
+
+#-----------------------------------
+# getPluginInfos()
+#-----------------------------------
+function getPluginInfos(){
+
+  // initialize empty info array
+  $info = array();
+
+  // define the info for piLogger-clud plugin
+  $files = exec('ls -f /var/spool/piLogger/ | wc -l ') -2;
+  $info['piLogger-cloud'] = $files.' in spool directory';
+
+  // define the info for piLogger-remote plugin
+  $info['piLgger-remote'] = '';
+
+  // define the info for shiftr.io plugin
+  $info['shiftr.io'] = '';
+
+  // return the array
+  return $info;
+
+}
 ?>
