@@ -523,7 +523,7 @@ function getPluginInfos(){
 
   // define the info for piLogger-clud plugin
   $files = exec('ls -f /var/spool/piLogger/ | wc -l ') -2;
-  $info['piLogger-cloud'] = $files.' in spool directory';
+  $info['piLogger-cloud'] = $files.' files in spool directory';
 
   // define the info for piLogger-remote plugin
   $info['piLgger-remote'] = '';
