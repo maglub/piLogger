@@ -46,6 +46,7 @@ errorExit(){
   sudo apt-get -y autoremove lxdeterminal
   sudo apt-get -y autoremove hicolor-icon-theme 
   sudo apt-get -y autoremove libreoffice
+  sudo apt-get -y autoremove libreoffice-core
   sudo apt-get -y autoremove
   sudo apt-get -y clean
   sudo rm -rf /usr/share/icons/*
