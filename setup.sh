@@ -18,7 +18,6 @@ errorExit(){
   exit 1
 }
 
-
 #================================
 # Check that required variables are set
 #================================
@@ -163,6 +162,11 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 
 #--- remove dummy devices from the config file /etc/owfs.conf
 sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf 
+
+#--- disable owftpd, owhttpd and owserver
+sudo update-rc.d owftpd disable > /dev/null
+sudo update-rc.d owhttpd disable > /dev/null
+sudo update-rc.d owserver disable > /dev/null
 
 #------------------
 # RRDTool
