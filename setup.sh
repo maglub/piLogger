@@ -18,7 +18,10 @@ errorExit(){
   exit 1
 }
 
+<<<<<<< HEAD
 cat<<EOT
+=======
+>>>>>>> master
 #================================
 # Check that required variables are set
 #================================
@@ -49,6 +52,7 @@ EOT
   sudo apt-get -y autoremove lxdeterminal
   sudo apt-get -y autoremove hicolor-icon-theme 
   sudo apt-get -y autoremove libreoffice
+  sudo apt-get -y autoremove libreoffice-core
   sudo apt-get -y autoremove
   sudo apt-get -y clean
   sudo rm -rf /usr/share/icons/*
@@ -180,8 +184,17 @@ sudo dpkg -s owfs >/dev/null 2>&1 || { echo "  - Installing owfs" ; sudo apt-get
 #--- remove dummy devices from the config file /etc/owfs.conf
 sudo sed -i 's/^server: FAKE/#server: FAKE/' /etc/owfs.conf 
 
+<<<<<<< HEAD
 cat<<EOT
 #================================
+=======
+#--- disable owftpd, owhttpd and owserver
+sudo update-rc.d owftpd disable > /dev/null
+sudo update-rc.d owhttpd disable > /dev/null
+sudo update-rc.d owserver disable > /dev/null
+
+#------------------
+>>>>>>> master
 # RRDTool
 #================================
 EOT

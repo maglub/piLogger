@@ -114,7 +114,11 @@ function processSpoolDir(){
      sensor=$( cat $file | cut -d"," -f 1)
      time=$( cat $file | cut -d"," -f 2)
      value=$( cat $file | cut -d"," -f 3) 
-
+  
+     # check that the file is not empty - remove otherwise and continue
+     # see https://github.com/maglub/piLogger/issues/144 for details
+     [ -z "$sensor" ] && { logIt "  - Error: $file does not contain any data, removing it." ; rm $file ; continue ; }
+     
      response=$(curl -H 'Content-Type: application/json' -X PUT \
                 --write-out "%{http_code}" --silent --output /dev/null \
                 -d "{\"probeTime\": \"$time\",\"probeValue\": \"$value\",\"authToken\": \"$authToken\"}" \
