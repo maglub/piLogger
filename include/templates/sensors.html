@@ -2,43 +2,6 @@
 
 {% block div %}
 
-<!-- overriding sb-admin-2 timeline css to float the information to the right -->
-<style>
-    ul.timeline:before {
-        left: 40px;
-    }
-
-    ul.timeline > li > .timeline-panel {
-        width: calc(100% - 90px);
-        width: -moz-calc(100% - 90px);
-        width: -webkit-calc(100% - 90px);
-    }
-
-    ul.timeline > li > .timeline-badge {
-        top: 16px;
-        left: 15px;
-        margin-left: 0;
-    }
-
-    ul.timeline > li > .timeline-panel {
-        float: right;
-    }
-
-    ul.timeline > li > .timeline-panel:before {
-        right: auto;
-        left: -15px;
-        border-right-width: 15px;
-        border-left-width: 0;
-    }
-
-    ul.timeline > li > .timeline-panel:after {
-        right: auto;
-        left: -14px;
-        border-right-width: 14px;
-        border-left-width: 0;
-    }
-</style>
-
 <div class="row">
    <div class="col-lg-12">
       <h1 class="page-header">Sensors</h1>
@@ -79,6 +42,56 @@
 	</div>
 </div>
 
+
+<div class="row">
+        <div class="col-sm-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-clock-o fa-fw"></i> Responsive Timeline
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <ul class="timeline">
+
+                            <li>
+                                <div class="timeline-badge"><i class="fa  fa-hdd-o"></i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">1-wire interface</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>The interface is presenting data in /mnt/1wire</p>
+                                    </div>
+                                </div>
+                                        </li>
+
+                                {% for sensor in sensors %}
+                                <li class="timeline-inverted">
+                                <div class="timeline-badge"><i class="fa  fa-tachometer"></i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">Id: {{ sensor['id']}}<br>Alias: {{ sensor['alias'] }}</h4>
+                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C - {{ lastTemperature[sensor['id']]['datestamp'] }}</small>
+                                        </p>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>This sensor is connected to XYZ</p>
+                                                                <p>Type: {{ sensor['type'] }}</p>
+                                                                <p><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </p>
+                                    </div>
+                                </div>
+                                        </li>
+                                {% endfor %}
+                        </ul>
+                </div>
+        </div>
+      </div>
+</div>
+
+
+
 <div class="row">
    <div class="col-lg-12">
       <h1 class="page-header">New Sensors</h1>
@@ -116,53 +129,6 @@
 </div>
  
 
-<div class="row">
-	<div class="col-sm-5">
-		<div class="panel panel-default">
-		    <div class="panel-heading">
-		        <i class="fa fa-clock-o fa-fw"></i> Responsive Timeline
-		    </div>
-		    <!-- /.panel-heading -->
-		    <div class="panel-body">
-		        <ul class="timeline">
-
-		            <li>
-		                <div class="timeline-badge"><i class="fa  fa-hdd-o"></i>
-		                </div>
-		                <div class="timeline-panel">
-		                    <div class="timeline-heading">
-		                        <h4 class="timeline-title">1-wire interface</h4>
-		                    </div>
-		                    <div class="timeline-body">
-		                        <p>The interface is presenting data in /mnt/1wire</p>
-		                    </div>
-		                </div>
-					</li>
-
-				{% for sensor in sensors %}
-                                <li class="timeline-inverted">
-		                <div class="timeline-badge"><i class="fa  fa-tachometer"></i>
-		                </div>
-		                <div class="timeline-panel">
-		                    <div class="timeline-heading">
-		                        <h4 class="timeline-title">Id: {{ sensor['id']}}<br>Alias: {{ sensor['alias'] }}</h4>
-		                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C - {{ lastTemperature[sensor['id']]['datestamp'] }}</small>
-		                        </p>
-		                    </div>
-		                    <div class="timeline-body">
-		                        <p>This sensor is connected to XYZ</p>
-								<p>Type: {{ sensor['type'] }}</p>
-								<p><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </p>
-		                    </div>
-		                </div>
-					</li>
-		   		{% endfor %}
-		        </ul>
-		</div>
-	</div>
-</div>
-								
- 
 {% endblock %}
 
 {% block myjavascript %}
@@ -181,5 +147,43 @@
            height: auto !important;
        }
     </style>
+
+    <!-- overriding sb-admin-2 timeline css to float the information to the right -->
+    <style>
+    ul.timeline:before {
+        left: 40px;
+    }
+
+    ul.timeline > li > .timeline-panel {
+        width: calc(100% - 90px);
+        width: -moz-calc(100% - 90px);
+        width: -webkit-calc(100% - 90px);
+    }
+
+    ul.timeline > li > .timeline-badge {
+        top: 16px;
+        left: 15px;
+        margin-left: 0;
+    }
+
+    ul.timeline > li > .timeline-panel {
+        float: right;
+    }
+
+    ul.timeline > li > .timeline-panel:before {
+        right: auto;
+        left: -15px;
+        border-right-width: 15px;
+        border-left-width: 0;
+    }
+
+    ul.timeline > li > .timeline-panel:after {
+        right: auto;
+        left: -14px;
+        border-right-width: 14px;
+        border-left-width: 0;
+    }
+    </style>
+
 
 {% endblock %}
