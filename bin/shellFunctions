@@ -56,7 +56,7 @@ _getTemperature() {
   return 0
 }
 complete -F _getTemperature getTemperature
-complete -F _getTemperature logTemperature
+complete -F _getTemperature logMetric
 
 _genGraph(){
   local cur prev opts base

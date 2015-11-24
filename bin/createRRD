@@ -15,8 +15,11 @@ dbFile=$dbDir/${sensorName}.${sensorType}.rrd
 startDate="$(date "+%Y%m%d 00:00")"
 startDateEpoc=$(date -d "$startDate" "+%s")
 
-logIt "  - Creating new RRD $dbFile start: $startDate "
 
+#--- if the db file already exist, do nothing
+[[ -z "$forceIt" && -f $dbFile ]] && { logIt "Error: $dbFile already exist, exiting" ; exit 1 ; }
+
+logIt "  - Creating new RRD $dbFile start: $startDate "
 
 #--- 259200 samples of 10 seconds -> 1 month
 #--- 86400 sampes of 1 minute -> 60 days

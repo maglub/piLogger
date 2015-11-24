@@ -14,8 +14,15 @@ cat<<EOT
 
 Usage:
 
-  $this_script [ alias | /path/to/device ]
-  $this_script deviceAddress temperature
+  $this_script [ --type=type ] [ alias | /path/to/device ] [ temperature ]
+
+  type = {temperature, humidity, blinks, etc} (default is temperature)
+
+Example
+
+  $this_script deviceAddress                              # will get the temperature from the "deviceAddress" sensor
+  $this_script deviceAddress 27.5                         # will add the temperature 27.5 to the "deviceAddress" sensor
+  $this_script --type=humidity deviceAddress 50           # will add the humidity 50 to the "deviceAddress" sensor
 
 EOT
 }
@@ -24,6 +31,15 @@ EOT
 # MAIN
 #================================
 [ -z "$1" ] && { usage ; exit 1 ; }
+
+metricType=temperature
+
+case $1 in
+  --type*)
+    metricType=${1#*=}
+    shift
+    ;;
+esac
 
 action=none
 [ -n "$1" ] && action=readSensor
@@ -51,4 +67,4 @@ esac
 logIt "  - Logging data for device $curDevice, $curTemperature C"
 
 #--- at this point, there HAS to be a device, and there has to be a temperature
-logTemperature $curDevice $curTemperature
+logTemperature $curDevice $curTemperature $metricType
