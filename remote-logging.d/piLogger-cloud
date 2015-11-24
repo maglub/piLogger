@@ -33,7 +33,6 @@ cloudHost=api.pilogger.net
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
 . $PILOGGER_BASE_DIR/bin/functions
 
-
 #============================
 # Available variables
 #============================
@@ -101,12 +100,15 @@ function processSpoolDir(){
   wget -q --spider http://google.com
 
   if [ $? -ne 0 ]; then
-     logIt "Error: Seems we dont have an internet connection"
+     logIt "Error: Seems like we dont have an internet connection"
      exit 1
   fi
 
   local tries=0
 
+  logIt "============================================="
+  logIt "  * Starting to send spool files (pid: $$)"
+  logIt "============================================="
   for file in /var/spool/piLogger/${this_script}*
   do
      
@@ -123,16 +125,28 @@ function processSpoolDir(){
                 --write-out "%{http_code}" --silent --output /dev/null \
                 -d "{\"probeTime\": \"$time\",\"probeValue\": \"$value\",\"authToken\": \"$authToken\"}" \
                 http://$cloudHost/api/sensor/$sensor )
+     rc=$?
+
+     local httpReturnCode=$response
+     [ $rc -ne 0 ] && httpReturnCode=999
 
      # check the HTTP response header code
      # if all good we delete the spool file
-     if [ "$response" -eq "200" ]; then
-        logIt "data sent - deleting $file"
-        sudo rm $file
-     else
-        logIt "Error: could not connect to $cloudHost to send file $file"
+     case $httpReturnCode in
+       200)
+         logIt "data sent - deleting $file"
+         sudo rm $file
+         ;;
+       403)
+         #--- Forbidden
+         logIt "HTTP: $httpReturnCode (Forbidden). This sensor is most likely not registered yet. Deleting the file it."
+         sudo rm $file
+         ;;
+       *)
+         logIt "Error: $httpReturnCode Could not connect to $cloudHost to send file $file"
         (( tries = $tries + 1 ))
-     fi
+        ;;
+     esac
 
      [ $tries -gt 1 ] && { logIt "Error: Multiple connection errors when connecting to $cloudHost" ; exit 1 ; }
 
@@ -200,27 +214,40 @@ done
   exit 0
 }
 
-
 #--- for the cloud logging to work, we need some of the variables
 [ -z "$PILOGGER_DEVICE_IDENTIFIER" ] && { errorExit "Error: PILOGGER_DEVICE_IDENTIFIER not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TIMESTAMP" ] && { errorExit "Error: PILOGGER_METRIC_TIMESTAMP not set" ; }
 [ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+[ -z "$PILOGGER_METRIC_TYPE" ] && { errorExit "Error: PILOGGER_METRIC_TYPE not set" ; }
 
 # calculate sensor id hash
 PILOGGER_SENSOR_HASH=$( echo $PILOGGER_DEVICE_IDENTIFIER+$PILOGGER_SENSOR | md5sum | cut -d" " -f1 )
 
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
-                --write-out "%{http_code}" --silent --output /dev/null \
+                --write-out "%{http_code}" --silent \
                 -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"authToken\": \"$authToken\"}" \
                 http://$cloudHost/api/sensor/$PILOGGER_SENSOR_HASH )
+rc=$?
+
+httpReturnCode=$(echo "$response" | tail -1 | sed -e 's/.*\(...\)/\1/')
+[ $rc -ne 0 ] && httpReturnCode=999 # rc<>0 means that web server did not answer
 
 # check the HTTP response header code
-if [ "$response" -eq "200" ]; then
-   logIt "successfully sent measurement to piLogger cloud"
-else
-   logIt "error: did get HTTP status code $response from REST api - something went wrong"
+case $httpReturnCode in
+  200)
+    logIt "successfully sent measurement to piLogger cloud - $PILOGGER_SENSOR, $PILOGGER_SENSOR_HASH"
+    ;;
+   
+  403)
+    #--- Forbidden
+    logIt "HTTP: $httpReturnCode. This sensor is most likely not registered yet. Ignoring it."
+    logIt "    -> $response"
+    ;;
+
+  *)
+    logIt "error: did get HTTP status code $response from REST api - something went wrong - $PILOGGER_SENSOR, $PILOGGER_SENSOR_HASH"
 
    # writing data to spool directory for later processing
    timenow=$(date +%s)
@@ -230,5 +257,6 @@ else
    logIt "writing measured data to $spoolDir/$spoolFileName for later processing"
   
    echo $spoolFileContent >> $spoolDir/$spoolFileName
+   ;;
+esac
  
-fi
