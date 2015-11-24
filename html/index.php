@@ -1,12 +1,6 @@
 <?php
 	session_start();
 
-	require_once("./stub.php");
-
-	require_once($root . "myfunctions.inc.php");
-	require_once($root."/../vendor/autoload.php");
-	$config = getAppConfig($root . "/../etc/piLogger.conf");
-
         //set up environment for cli
         if (!(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT'] !== "")) {
                 $_SERVER['HTTP_HOST'] = "cron";
@@ -17,9 +11,15 @@
                 $pathInfo = $argv[0];
         }
 
+	require_once("./stub.php");
+
+	require_once($root . "myfunctions.inc.php");
+	require_once($root."/../vendor/autoload.php");
+	$config = getAppConfig($root . "/../etc/piLogger.conf");
+
         #--- instantiate Slim and SlimJson
         $app = new \Slim\Slim(array(
-             'templates.path' => '../include/templates')
+             'templates.path' => $root . '/templates')
         );
 
         //if run from the command-line
