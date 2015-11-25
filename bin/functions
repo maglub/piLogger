@@ -18,21 +18,24 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 #------------------------------------
 # errorExit
 #------------------------------------
-errorExit(){
+function errorExit(){
   logIt "ERROR: $@"
   exit 1
 }
 
 #------------------------------------
-# logIt
+# logIt()
 #------------------------------------
-logIt(){
-  logIt_TS=$(date "+%Y%m%d_%H%M%S")
-  echo "$logIt_TS;$thisScript;$@" >> $logFile
-  echo "$logIt_TS;$thisScript;$@" 1>&2
+function logIt(){
+  local TS=$(date "+%Y%m%d_%H%M%S")
+  echo "$TS;$thisScript;$@" >> $logFile
+  echo "$TS;$thisScript;$@" 1>&2
 }
 
-logCommand(){
+#------------------------------------
+# logCommand()
+#------------------------------------
+function logCommand(){
   local curCommand=$@
 
   if [ -n "$debug" ]
@@ -49,7 +52,7 @@ $curCommand
 #------------------------------------
 # listDevices
 #------------------------------------
-getAllDevices(){
+function getAllDevices(){
   ld_dir="$1"
   ld_force="$2"
 
@@ -57,14 +60,14 @@ getAllDevices(){
   [[ -n "$ld_force" ]] && { echo $ld_dir/[0-9]*  | grep -v "\*$" ; return 0 ; }
   local curRes=$(dbGetAllDevicePaths)
   [ -n "$curRes" ] && { echo $curRes ; logIt "Found devices in the database." ; return 0 ; }
-  logIt "No scanned devices in the database, cheking in fs."
+  [ -n "$debug" ] && logIt "No scanned devices in the database, cheking in fs."
   echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
 }
 
 #------------------------------------
 # getAllDeviceNames
 #------------------------------------
-getAllDeviceNames(){
+function getAllDeviceNames(){
   ld_dir=$1
   ls -1 $ld_dir/bus* | grep "^[0-9]" 
 }
@@ -72,7 +75,7 @@ getAllDeviceNames(){
 #------------------------------------
 # getDeviceTypeByDevicePath
 #------------------------------------
-getDeviceTypeByDevicePath() {
+function getDeviceTypeByDevicePath() {
   cur_deviceType=$(cat $1/type)
   [ -n "$debug" ] && echo "Device type: $cur_deviceType" 1>&2
   echo $cur_deviceType
@@ -96,7 +99,7 @@ function getTemperature(){
 #------------------------------------
 # getTemperatureByDevicePath
 #------------------------------------
-getTemperatureByDevicePath(){
+function getTemperatureByDevicePath(){
   curOut=$(cat $1/$temperatureFile | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
   [ -n "$debug" ] && logIt "device: $1 temperature: $curOut"
   echo $curOut
@@ -119,7 +122,7 @@ function getTemperatureByDeviceAlias(){
 #------------------------------------
 # getDeviceAliasesByDevicePath
 #------------------------------------
-getDeviceAliasesByDevicePath() {
+function getDeviceAliasesByDevicePath() {
   cur_deviceAliases=$(dbGetDeviceAliasByDevicePath $1)
   [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
   echo "$cur_deviceAliases"
@@ -128,7 +131,7 @@ getDeviceAliasesByDevicePath() {
 #------------------------------------
 # getDevicePathByAlias
 #------------------------------------
-getDevicePathByAlias(){
+function getDevicePathByAlias(){
   [ -f $piLoggerDeviceAliasFile ] && grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3 
   return 0 
 }
@@ -250,7 +253,7 @@ function logTemperatureRemote(){
 #---------------------------------
 # getDBFileByAlias
 #---------------------------------
-getDBFileByAlias(){
+function getDBFileByAlias(){
   local curDevice
 
   if [ -a $dbDir/${1##*/}.rrd ]
@@ -265,7 +268,7 @@ getDBFileByAlias(){
 #---------------------------------
 # getGraphColorFromGraphTemplateByAlias
 #---------------------------------
-getGraphColorFromGraphTemplateByAlias(){
+function getGraphColorFromGraphTemplateByAlias(){
   local curAlias
   local curGraphName
 
@@ -278,14 +281,14 @@ getGraphColorFromGraphTemplateByAlias(){
 #---------------------------------
 # getAliasesFromGraphTemplate
 #---------------------------------
-getAliasesFromGraphTemplate(){
+function getAliasesFromGraphTemplate(){
   cat $configDir/graph.$1.conf 2>/dev/null | grep -v "^#" | cut -d";" -f1
 }
 
 #---------------------------------
 # callRemoteLoggingPlugins
 #---------------------------------
-callRemoteLoggingPlugins(){
+function callRemoteLoggingPlugins(){
    
    # lets get the activated plugins and iterate over them
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
@@ -301,7 +304,7 @@ callRemoteLoggingPlugins(){
 #---------------------------------
 # callSpoolerFunctions
 #---------------------------------
-callSpoolerFunctions(){
+function callSpoolerFunctions(){
 
    # loop over all active plugins
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
@@ -309,17 +312,17 @@ callSpoolerFunctions(){
        # check if there are spooler files for this plugin
 	local numSpoolFiles="$(find $spoolDir -type f -name "${activePlugin}*" 2>/dev/null | wc -l)"
        if [ "$numSpoolFiles" -gt 0 ]; then
-          logIt "spooler files for plugin $activePlugin found ($numSpoolFiles)" 
+          logIt "  - Spooler files for plugin $activePlugin found in $spoolDir ($numSpoolFiles)" 
 
           if [ $(ps -ef | grep "$activePlugin \-\-processSpool" | grep -v grep | wc -l) -gt 0 ]; then
-             logIt "not calling processSpoolDir option on $activePlugin as there is already 1 process running"
+             logIt "  - Not calling processSpoolDir option on $activePlugin as there is already 1 process running"
           else
-             logIt "calling processSpoolDir option on $activePlugin in the background"
+             logIt "  - Calling processSpoolDir option on $activePlugin in the background"
              export PILOGGER_BASE_DIR=$baseDir
              $baseDir/remote-logging.d/$activePlugin --processSpoolDir &
           fi
        else
-          logIt "No spooler files for plugin $activePlugin found" 
+          [ -n "$debug" ] && logIt "No spooler files for plugin $activePlugin found" 
        fi
 
    done
