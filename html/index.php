@@ -108,10 +108,35 @@ $app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
 });
 
 
-$app->get('/config', function () use ($app) {
-    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins(), 'plugininfo' => getPluginInfos() ]);
-});
+#=============================================================
+# /config
+#=============================================================
+$app->map('/config', function () use ($app,$root) {
+  if ($app->request()->isPost()) {
+    $action = $app->request->post('actionCrontab');
+    switch ($action) {
+      case "Disable":
+        $res = shell_exec("sudo -u pi ${root}/../bin/wrapper disableCrontab > /dev/null 2>&1");
+        break;
 
+      case "Enable":
+        $res = shell_exec("sudo -u pi ${root}/../bin/wrapper enableCrontab > /dev/null 2>&1");
+        break;
+
+    }
+    $app->redirect('/config');
+  }
+
+
+
+    $crontab = shell_exec("sudo -u pi ${root}/../bin/wrapper getCrontab 2>/dev/null");
+
+    $app->render('config.html', ['plotConfig' => getDbPlotConfig(), 'sensorGroups' => getSensorGroupsAll(), 'plotGroups' => getPlotGroups(), 'installedPlugins' => getListOfInstalledPlugins(), 'activePlugins' => getListOfActivePlugins(), 'plugininfo' => getPluginInfos(), "crontab" => $crontab ]);
+})->via('GET', 'POST')->name('config');
+
+#=============================================================
+# /login
+#=============================================================
 $app->map('/login', function () use ($app) {
 
     $username = null;

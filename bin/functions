@@ -328,3 +328,69 @@ function callSpoolerFunctions(){
    done
 
 }
+
+#------------------------------
+# genCrontab(){
+#------------------------------
+function genCrontab(){
+  #--- argument is measured in seconds between each shot
+  #--- the interval should be divisible by 60
+  #--- if the interval is over 60, it should be even minutes, divisible by 60
+  #--- at the moment, it is not possible to set an interval > 3600
+
+  local interval=$1
+  [ $interval -gt 3600 ] && return 1
+
+  if [ $interval -lt 60 ]
+  then
+    local sleepTime=0
+    while [ $sleepTime -lt 60 ]
+    do
+      cat $baseDir/config/crontab.template | sed -e 's/XXX_DIVIDER_XXX/1/g' -e 's/XXX_SLEEP_TIME_XXX/'$sleepTime'/g'
+      (( sleepTime += $interval ))
+    done
+  else
+    local sleepTime=0
+    local divider=1
+    (( divider = $interval / 60 ))
+    cat $baseDir/config/crontab.template | sed -e 's/XXX_DIVIDER_XXX/'$divider'/g' -e 's/XXX_SLEEP_TIME_XXX/'$sleepTime'/g'
+
+  fi
+
+}
+
+function setCrontab(){
+  local interval="$1"
+  (crontab -l | grep -v "XXX_PISNAPPER_CRON_XXX"; $this_dir/wrapper genCrontab $interval ) | crontab  -
+}
+
+function killCronJobs(){
+  ps -ef | grep [X]XX_PISNAPPER_CRON_XXX | awk '{print $2}' | xargs -L1 -IX kill X
+  return 0
+}
+
+function genDisabledCrontab(){
+  local interval="$1"
+  crontab -l | awk ' $0 !~ /^#/ { printf "#Disabled: %s\n", $0;} /^#/ {print}'
+}
+
+function genEnabledCrontab(){
+  local interval="$1"
+  crontab -l | sed -e 's/^#Disabled: //'
+}
+
+function disableCrontab(){
+  local interval="$1"
+  genDisabledCrontab | crontab  -
+}
+
+function enableCrontab(){
+  local interval="$1"
+  genEnabledCrontab | crontab  -
+}
+
+function getCrontab(){
+  crontab -l | grep -E "# m h|#Disabled:"
+  crontab -l | grep -vE "^#|^$"
+}
+

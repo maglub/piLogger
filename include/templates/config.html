@@ -128,5 +128,29 @@
         </div>
 </div>
 
+{% if isAuthenticated %}
+<!-- Only visible if logged in -->
+<div class="row">
+  <div class="col-lg-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Crontab
+      </div>
+    <div id="panel" class="panel-body">
+      {% if crontab %}
+        <pre>{{ crontab }}</pre>
+      {% else %}
+        No crontab configured!
+      {% endif %}
+        <form role="form" action="/config" method="POST">
+          <input type="submit" name="actionCrontab" value="Enable" class="btn btn-success btn-primary">
+          <input type="submit" name="actionCrontab" value="Disable" class="btn btn-success btn-primary">
+        </form>
+    </div>
+  </div>
+<div>
+
+{% endif %}
+
  
 {% endblock %}

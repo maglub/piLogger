@@ -1,5 +1,5 @@
 User_Alias PILOGGER_HTTPD = www-data
-Cmnd_Alias PILOGGER_HTTPD_CMD = /home/pi/piLogger/bin/createRRD * 
+Cmnd_Alias PILOGGER_HTTPD_CMD = /home/pi/piLogger/bin/createRRD * , /home/pi/piLogger/bin/wrapper *
 
 PILOGGER_HTTPD ALL=(ALL) NOPASSWD: PILOGGER_HTTPD_CMD
 

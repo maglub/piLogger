@@ -432,3 +432,15 @@ function piLogger_doUpgrade_20151025-001_to_20151113-001(){
   if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
 
 }
+#========================================
+# from 20151113-001 to 20151125-001
+#========================================
+function piLogger_doUpgrade_20151113-001_to_20151125-001(){
+  echo "  - Re-copying /etc/sudoers.d/piLogger"
+
+  sudo cp $configDir/sudoers.d/piLogger /etc/sudoers.d/piLogger ; sudo chown root:root /etc/sudoers.d/piLogger ; sudo chmod 0440 /etc/sudoers.d/piLogger 
+  res=$?
+
+  return $res
+}
+
