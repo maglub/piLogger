@@ -139,7 +139,7 @@ function processSpoolDir(){
          ;;
        403)
          #--- Forbidden
-         logIt "HTTP: $httpReturnCode (Forbidden). This sensor is most likely not registered yet. Deleting the file it."
+         logIt "HTTP: $httpReturnCode (Forbidden). Sensor $sensor is most likely not registered yet. Deleting the file it."
          sudo rm $file
          ;;
        *)
@@ -242,7 +242,7 @@ case $httpReturnCode in
    
   403)
     #--- Forbidden
-    logIt "HTTP: $httpReturnCode. This sensor is most likely not registered yet. Ignoring it."
+    logIt "HTTP: $httpReturnCode. Sensor $PILOGGER_SENSOR is most likely not registered yet. Ignoring it."
     logIt "    -> $response"
     ;;
 
