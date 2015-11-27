@@ -222,7 +222,17 @@ function logTemperature(){
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
   rrdtool update $lt_dbFile N:${curTemperature}
 
-  [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature $curDeviceType
+  local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_blacklist= | grep -w "$curDevice" |  wc -l)
+
+  if [ -n "remoteLogging" ]
+  then
+    if [ $isBlacklisted -eq 0 ]
+    then
+      logTemperatureRemote $curDevice $curTemperature $curDeviceType
+    else
+      logIt "    - Device $curDevice is globally blacklisted, skipping remote logging"
+    fi
+  fi
 
 }
 
@@ -291,12 +301,21 @@ function getAliasesFromGraphTemplate(){
 function callRemoteLoggingPlugins(){
    
    # lets get the activated plugins and iterate over them
+   logIt "    - Remote logging plugins"
+
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
    do
-      logIt "    - callRemoteLoggingPlugins: found $activePlugin"
-      #--- Sourcing the plugin is ugly. Only works for bash scripts
-      #. $configDir/remote-logging.d/$activePlugin
-      $baseDir/remote-logging.d/$activePlugin
+      local parsedScriptName=$(echo $activePlugin | sed -e 's/-/_/g')
+      local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_${parsedScriptName}_blacklist= | grep -w "$curDevice" |  wc -l)
+      if [ $isBlacklisted -eq 0 ]
+      then
+        logIt "    - $activePlugin -> sending data for $PILOGGER_SENSOR"
+        #--- Sourcing the plugin is ugly. Only works for bash scripts
+        #. $configDir/remote-logging.d/$activePlugin
+        $baseDir/remote-logging.d/$activePlugin
+      else
+        logIt "    - $activePlugin -> sensor $PILOGGER_SENSOR BLACKLISTED in remoteLogging_${parsedScriptName}_blacklist"
+      fi
    done
    
 }
