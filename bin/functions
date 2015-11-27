@@ -114,8 +114,6 @@ function getTemperatureByDeviceAlias(){
   if [ -n "$devicePath" ]
   then
     getTemperatureByDevicePath $devicePath
-  else 
-    getTemperatureByDevicePath $(getDevicePathByAlias $1)
   fi
 }
 
@@ -126,14 +124,6 @@ function getDeviceAliasesByDevicePath() {
   cur_deviceAliases=$(dbGetDeviceAliasByDevicePath $1)
   [ -n "$debug" ] && echo "getDeviceAliasesByDeviceId() Device aliases: $cur_deviceAliases" 1>&2
   echo "$cur_deviceAliases"
-}
-
-#------------------------------------
-# getDevicePathByAlias
-#------------------------------------
-function getDevicePathByAlias(){
-  [ -f $piLoggerDeviceAliasFile ] && grep "^${1};" $piLoggerDeviceAliasFile | cut -d";" -f3 
-  return 0 
 }
 
 #------------------------------------
@@ -151,10 +141,6 @@ function getDeviceIdByAny(){
   #--- check the database for an alias
   res=$(dbGetDeviceIdByDeviceAlias $curDevice)
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
-
-  #--- lastly check the alias file
-  res=$(getDeviceByAlias "$curDevice") 
-  [ -n "$res" ] && { basename $(getDeviceByAlias "$curDevice") ; return 0 ; }
 
 }
 
@@ -174,7 +160,6 @@ function getDevicePathByAny(){
 
   res=$(dbGetDevicePathByDeviceAlias $curDevice)
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
-  getDeviceByAlias "$curDevice" ; return 0
 
 }
 
@@ -208,7 +193,7 @@ function getLastRRDUpdate(){
 }
 
 #---------------------------------
-#logTemperature
+# logTemperature
 #---------------------------------
 function logTemperature(){
   local curDevice=$1
@@ -259,9 +244,6 @@ function getDBFileByAlias(){
   if [ -a $dbDir/${1##*/}.rrd ]
   then
     echo $dbDir/${1##*/}.rrd
-  else
-    curDevice=$(getDeviceByAlias $1) 
-    [ -n "$curDevice" ] && echo $dbDir/${curDevice}.rrd 
   fi
 }
 
@@ -330,7 +312,7 @@ function callSpoolerFunctions(){
 }
 
 #------------------------------
-# genCrontab(){
+# genCrontab
 #------------------------------
 function genCrontab(){
   #--- argument is measured in seconds between each shot
@@ -359,36 +341,57 @@ function genCrontab(){
 
 }
 
+#------------------------------
+# setCrontab
+#------------------------------
 function setCrontab(){
   local interval="$1"
   (crontab -l | grep -v "XXX_PISNAPPER_CRON_XXX"; $this_dir/wrapper genCrontab $interval ) | crontab  -
 }
 
+#------------------------------
+# killCronJobs
+#------------------------------
 function killCronJobs(){
   ps -ef | grep [X]XX_PISNAPPER_CRON_XXX | awk '{print $2}' | xargs -L1 -IX kill X
   return 0
 }
 
+#------------------------------
+# genDisabledCrontab
+#------------------------------
 function genDisabledCrontab(){
   local interval="$1"
   crontab -l | awk ' $0 !~ /^#/ { printf "#Disabled: %s\n", $0;} /^#/ {print}'
 }
 
+#------------------------------
+# genEnabledCrontab
+#------------------------------
 function genEnabledCrontab(){
   local interval="$1"
   crontab -l | sed -e 's/^#Disabled: //'
 }
 
+#------------------------------
+# disableCrontab
+#------------------------------
 function disableCrontab(){
   local interval="$1"
   genDisabledCrontab | crontab  -
 }
 
+#------------------------------
+# enableCrontab
+#------------------------------
 function enableCrontab(){
   local interval="$1"
   genEnabledCrontab | crontab  -
 }
 
+#------------------------------
+# getCrontab
+#------------------------------
 function getCrontab(){
   crontab -l | grep -E "# m h|#Disabled:"
   crontab -l | grep -vE "^#|^$"
