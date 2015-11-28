@@ -67,6 +67,11 @@
                      <li>
                         <a href="/config"><i class="fa fa-wrench fa-fw"></i> Config</a>
                      </li>
+{% if isAuthenticated %}
+                     <li>
+                        <a href="/admin"><i class="fa fa-wrench fa-fw"></i> Admin</a>
+                     </li>
+{% endif %}
 
                      <li>
 						{% if(isAuthenticated) %}
