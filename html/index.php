@@ -168,6 +168,12 @@ $app->get('/logout', function() use ($app){
 	
 });
 
+$app->get('/admin', function () use ($app, $root) {
+    $crontab = shell_exec("sudo -u pi ${root}/../bin/wrapper getCrontab 2>/dev/null");
+   $app->render('admin.html', [ "crontab" => $crontab ]);
+});
+
+
   $app->run();
 
 ?>
