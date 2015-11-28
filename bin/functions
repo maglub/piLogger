@@ -5,7 +5,8 @@ spoolDir=/var/spool/piLogger
 configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
 
-. $configDir/piLogger.conf
+getConfig
+
 [ -z "$dbDir" ] && dbDir=$dataDir/db
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
 [ -z "$applicationUser" ] && applicationUser=pi
@@ -14,6 +15,13 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 # Variables (normally set in piLogger.conf)
 #------------------------------------
 [ -z "$parallelProcessing" ] && parallelProcessing=1
+
+#------------------------------------
+# getConfig() -> so that we easily can migrate from piLogger.conf to any other way of dealing with config variables
+#------------------------------------
+function getConfig(){
+  . $configDir/piLogger.conf
+}
 
 #------------------------------------
 # errorExit
@@ -135,8 +143,8 @@ function getDeviceIdByAny(){
   local res=""
 
   #--- there is a directory (ie /mnt/1wire/deviceId) -> return just the deviceId
-  [ -d $curDevice ] && { basename "$curDevice" ; return 0 ; }
-  [ -d $oneWireDir/$curDevice ] && { echo "$curDevice" ; return 0 ; }
+  [ -d "$curDevice" ] && { basename "$curDevice" ; return 0 ; }
+  [ -d "$oneWireDir/$curDevice" ] && { echo "$curDevice" ; return 0 ; }
 
   #--- check the database for an alias
   res=$(dbGetDeviceIdByDeviceAlias $curDevice)
@@ -209,7 +217,7 @@ function logTemperature(){
 
   local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_blacklist= | grep -w "$curDevice" |  wc -l)
 
-  if [ -n "remoteLogging" ]
+  if [ -n "$remoteLogging" ]
   then
     if [ $isBlacklisted -eq 0 ]
     then
