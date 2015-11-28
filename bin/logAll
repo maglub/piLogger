@@ -46,7 +46,7 @@ EOT
 
   # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
-  echo $aliases | xargs -n 1 -P${parallelProcessing}  $this_dir/logMetric 
+  echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
   
   # process all compositeDevices
   for compositeDevice in $compositeDevices
