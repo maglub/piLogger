@@ -242,23 +242,6 @@ sudo service lighttpd restart
 
 cat<<EOT
 #================================
-# alias.conf file template
-#================================
-EOT
-[ ! -f $configDir/aliases.conf ] && {
-cat>$configDir/aliases.conf<<EOT
-#================================
-# aliases.conf
-#
-# Example:
-# indoor1;1wire;/mnt/1wire/bus.12/28.12ED2F040000
-#================================
-# alias ; type ; path
-EOT
-}
-
-cat<<EOT
-#================================
 # Set up bash completion by linking shellFunctions to /etc/bash_completion.d/piLogger
 #================================
 EOT
