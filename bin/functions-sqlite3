@@ -102,6 +102,15 @@ EOT
 }
 
 #---------------------------------
+# dbGetAllLocalAndActiveDeviceIds()
+#---------------------------------
+function dbGetAllLocalAndActiveDeviceIds(){
+  sqlite3 $appDbFile<<EOT
+  select id from sensor where type='1wire' and active = 'true';
+EOT
+}
+
+#---------------------------------
 # dbGetAllDeviceIds()
 #---------------------------------
 function dbGetAllDeviceIds(){
