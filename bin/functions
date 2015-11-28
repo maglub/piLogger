@@ -5,7 +5,8 @@ spoolDir=/var/spool/piLogger
 configDir=$this_dir/../etc
 piLoggerDeviceAliasFile=$configDir/aliases.conf
 
-. $configDir/piLogger.conf
+getConfig
+
 [ -z "$dbDir" ] && dbDir=$dataDir/db
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
 [ -z "$applicationUser" ] && applicationUser=pi
@@ -14,6 +15,13 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 # Variables (normally set in piLogger.conf)
 #------------------------------------
 [ -z "$parallelProcessing" ] && parallelProcessing=1
+
+#------------------------------------
+# getConfig() -> so that we easily can migrate from piLogger.conf to any other way of dealing with config variables
+#------------------------------------
+function getConfig(){
+  . $configDir/piLogger.conf
+}
 
 #------------------------------------
 # errorExit
@@ -135,8 +143,8 @@ function getDeviceIdByAny(){
   local res=""
 
   #--- there is a directory (ie /mnt/1wire/deviceId) -> return just the deviceId
-  [ -d $curDevice ] && { basename "$curDevice" ; return 0 ; }
-  [ -d $oneWireDir/$curDevice ] && { echo "$curDevice" ; return 0 ; }
+  [ -d "$curDevice" ] && { basename "$curDevice" ; return 0 ; }
+  [ -d "$oneWireDir/$curDevice" ] && { echo "$curDevice" ; return 0 ; }
 
   #--- check the database for an alias
   res=$(dbGetDeviceIdByDeviceAlias $curDevice)
@@ -207,7 +215,17 @@ function logTemperature(){
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
   rrdtool update $lt_dbFile N:${curTemperature}
 
-  [ -n "$remoteLogging" ] && logTemperatureRemote $curDevice $curTemperature $curDeviceType
+  local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_blacklist= | grep -w "$curDevice" |  wc -l)
+
+  if [ -n "$remoteLogging" ]
+  then
+    if [ $isBlacklisted -eq 0 ]
+    then
+      logTemperatureRemote $curDevice $curTemperature $curDeviceType
+    else
+      logIt "    - Device $curDevice is globally blacklisted, skipping remote logging"
+    fi
+  fi
 
 }
 
@@ -273,12 +291,21 @@ function getAliasesFromGraphTemplate(){
 function callRemoteLoggingPlugins(){
    
    # lets get the activated plugins and iterate over them
+   logIt "    - Remote logging plugins"
+
    for activePlugin in $(ls $dataDir/remote-logging-enabled)
    do
-      logIt "    - callRemoteLoggingPlugins: found $activePlugin"
-      #--- Sourcing the plugin is ugly. Only works for bash scripts
-      #. $configDir/remote-logging.d/$activePlugin
-      $baseDir/remote-logging.d/$activePlugin
+      local parsedScriptName=$(echo $activePlugin | sed -e 's/-/_/g')
+      local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_${parsedScriptName}_blacklist= | grep -w "$curDevice" |  wc -l)
+      if [ $isBlacklisted -eq 0 ]
+      then
+        logIt "    - $activePlugin -> sending data for $PILOGGER_SENSOR"
+        #--- Sourcing the plugin is ugly. Only works for bash scripts
+        #. $configDir/remote-logging.d/$activePlugin
+        $baseDir/remote-logging.d/$activePlugin
+      else
+        logIt "    - $activePlugin -> sensor $PILOGGER_SENSOR BLACKLISTED in remoteLogging_${parsedScriptName}_blacklist"
+      fi
    done
    
 }

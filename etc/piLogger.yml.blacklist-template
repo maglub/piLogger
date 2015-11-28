@@ -1,0 +1,16 @@
+remoteLogging:
+  enabled:       true
+  host:          192.168.2.61
+  blacklist: 28.123123123
+#-------------------------
+# for piLogger Cloud
+#-------------------------
+  piLogger_cloud:
+    deviceIdentifier: SECRET
+    authToken: "SECRET"
+    blacklist: 28.XXYYZZ
+#------------------------
+# shiftr.io
+#------------------------
+  shiftr:
+    shiftrAuth: "SECRET"
