@@ -444,3 +444,21 @@ function piLogger_doUpgrade_20151113-001_to_20151125-001(){
   return $res
 }
 
+#========================================
+# from 20151125-001 to 20151128-001
+#========================================
+function piLogger_doUpgrade_20151125-001_to_20151128-001(){
+
+  echo "  - removing old sqlite3 view device"
+  sqlite3 $appDbFile "drop view if exists device;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - removing old sqlite3 view devicegroup"
+  sqlite3 $appDbFile "drop view if exists devicegroup;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - removing old sqlite3 view devicemetric"
+  sqlite3 $appDbFile "drop view if exists devicemetric;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+}
