@@ -462,3 +462,18 @@ function piLogger_doUpgrade_20151125-001_to_20151128-001(){
   if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
 
 }
+
+#========================================
+# from 20151128-001 to 20151128-002
+#========================================
+function piLogger_doUpgrade_20151128-001_to_20151128-002(){
+
+  echo "  - add a new active column to sensor table"
+  sqlite3 $appDbFile "alter table sensor add column active boolean ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - initially set all sensors to active"
+  sqlite3 $appDbFile "update sensor set active = 'true' ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+}
