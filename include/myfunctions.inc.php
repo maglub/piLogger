@@ -358,7 +358,7 @@ function getDbPlotConfig($plotGroup = "%"){
 	$curRet = Array();
 	
     while ($row = $res->fetchArray() ) {
-		$curRet[] = Array("name"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
+		$curRet[] = Array("dashboard"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
     }
   
 	return $curRet;

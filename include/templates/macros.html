@@ -1,6 +1,6 @@
 {% macro graphBox(curPlotConfig) %}
-     <div id=graphdiv-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} graphItem " {% if isAuthenticated %}draggable="true"{% endif%}>
-                <div class="panel panel-default arne-dase"><div id="bar-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}}" class="panel-heading" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curPlotConfig['name']}}-{{curPlotConfig['timespan']}}
+     <div id=graphdiv-{{curPlotConfig['plotgroup']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} graphItem " {% if isAuthenticated %}draggable="true"{% endif%}>
+                <div class="panel panel-default arne-dase"><div id="bar-{{curPlotConfig['plotgroup']}}-{{curPlotConfig['timespan']}}" class="panel-heading" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curPlotConfig['plotgroup']}}-{{curPlotConfig['timespan']}}
 
                            <div class="pull-right">
                                 <div class="btn-group">
@@ -9,9 +9,9 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="/graph/{{curPlotConfig['name']}}">Show {{curPlotConfig['name']}} graphs</a> </li>
-                                        <li><a href="/graph/{{curPlotConfig['name']}}/{{curPlotConfig['timespan']}}">Show {{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} graph</a> </li>
-                                        <li><a href="/cache/sensorData.{{curPlotConfig['name']}}.{{curPlotConfig['timespan']}}.json">Show JSON data source</a> </li>
+                                        <li><a href="/graph/{{curPlotConfig['plotgroup']}}">Show {{curPlotConfig['plotgroup']}} graphs</a> </li>
+                                        <li><a href="/graph/{{curPlotConfig['plotgroup']}}/{{curPlotConfig['timespan']}}">Show {{curPlotConfig['plotgroup']}}-{{curPlotConfig['timespan']}} graph</a> </li>
+                                        <li><a href="/cache/sensorData.{{curPlotConfig['plotgroup']}}.{{curPlotConfig['timespan']}}.json">Show JSON data source</a> </li>
                                         <li class="divider"></li>
                                         <li><a href="#">Edit this graph</a> </li>
                                     </ul>
@@ -19,7 +19,7 @@
                             </div>
 
                 </div>
-                <div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} "></div>
+                <div id="{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}" margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} "></div>
                 </div>
   </div>
 {% endmacro %}

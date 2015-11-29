@@ -53,8 +53,8 @@ var firstTime = true;
 
 function drawGraphs(){
  	{% for curPlotConfig in plotConfig %}
-	log.log("Drawing graph: {{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}");
-    var nothing = printGroupGraph('{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['name']}}', '{{ curPlotConfig['timespan']}}', ! firstTime);
+	log.log("Drawing graph: {{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}");
+    var nothing = printGroupGraph('{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['plotgroup']}}', '{{ curPlotConfig['timespan']}}', ! firstTime);
    	{% endfor %}	
 
 	firstTime=false;
