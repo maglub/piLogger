@@ -1,7 +1,6 @@
 {% macro graphBox(curPlotConfig) %}
-     <div id=graphdiv-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} class="arne-dase">
-        <div class="col-lg-{{ curPlotConfig['size'] }}" >
-                <div class="panel panel-default arne-dase" {% if isAuthenticated %}draggable="true"{% endif%}><div id="bar-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}}" class="panel-heading column" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curPlotConfig['name']}}-{{curPlotConfig['timespan']}}
+     <div id=graphdiv-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} arne-dase column" {% if isAuthenticated %}draggable="true"{% endif%}>
+                <div class="panel panel-default arne-dase"><div id="bar-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}}" class="panel-heading" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curPlotConfig['name']}}-{{curPlotConfig['timespan']}}
 
                            <div class="pull-right">
                                 <div class="btn-group">
@@ -22,7 +21,6 @@
                 </div>
                 <div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} "></div>
                 </div>
-        </div>
   </div>
 {% endmacro %}
 

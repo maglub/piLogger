@@ -77,12 +77,15 @@ function drawGraphs(){
 var dragSrcEl = null;
 
 function handleDragStart(e) {
-  dragSrcEl = this.parentNode;
+  dragSrcEl = this;
+
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+  e.dataTransfer.setData('id', this.id);
+  e.dataTransfer.setData('className', this.className);
 
   log.log('Started dragging with dragSrcEl: ' + dragSrcEl.id);
-
-  this.style.opacity = '0.4';  // this / e.target is the source node.
-  this.parentNode.parentNode.parentNode.style.opacity = '0.4';  // this / e.target is the source node.
+  this.classList.add('transparent');
 }
 
 function handleDragOver(e) {
@@ -98,33 +101,34 @@ function handleDragOver(e) {
 function handleDragEnter(e) {
   // this / e.target is the current hover target.
   this.classList.add('over');
-  this.parentNode.classList.add('transparent');
   this.parentNode.classList.add('over');
 }
 
 function handleDragLeave(e) {
   this.classList.remove('over');  // this / e.target is previous target element.
   this.parentNode.classList.remove('over');
-  this.parentNode.classList.remove('transparent');
 }
 
 function handleDrop(e) {
   // this / e.target is current target element.
 
   this.classList.remove('over');
-  this.parentNode.classList.remove('over');
-  this.parentNode.classList.remove('transparent');
   log.log('I am in handleDrop');
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
 
+  // if the element land on itself, don't do anything
   if (dragSrcEl != this) {
-    log.log('we landed on someone else: ' + this.id + ', since I am: ' + dragSrcEl.id);
-    // Set the source column's HTML to the HTML of the column we dropped on.
-//    dragSrcEl.innerHTML = this.innerHTML;
-//    this.innerHTML = e.dataTransfer.getData('text/html');
+    // Set the source column's HTML, id, class to the HTML,id, class of the column we dropped on.
+    dragSrcEl.innerHTML = this.innerHTML;
+    dragSrcEl.id = this.id;
+    dragSrcEl.className = this.className;
+    this.innerHTML = e.dataTransfer.getData('text/html');
+    this.id = e.dataTransfer.getData('id');
+    this.className = e.dataTransfer.getData('className');
   }
+
   // See the section on the DataTransfer object.
 
   return false;
@@ -133,6 +137,8 @@ function handleDrop(e) {
 function handleDragEnd(e) {
   // this/e.target is the source node.
   log.log('Handling dragEnd');
+
+  dragSrcEl.classList.remove('transparent');
 
   [].forEach.call(cols, function (col) {
     col.classList.remove('over');
