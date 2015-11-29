@@ -1,5 +1,5 @@
 {% macro graphBox(curPlotConfig) %}
-     <div id=graphdiv-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} arne-dase column" {% if isAuthenticated %}draggable="true"{% endif%}>
+     <div id=graphdiv-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} graphItem " {% if isAuthenticated %}draggable="true"{% endif%}>
                 <div class="panel panel-default arne-dase"><div id="bar-{{curPlotConfig['name']}}-{{curPlotConfig['timespan']}}" class="panel-heading" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curPlotConfig['name']}}-{{curPlotConfig['timespan']}}
 
                            <div class="pull-right">
