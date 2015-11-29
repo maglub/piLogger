@@ -4,10 +4,10 @@
 
 {% block div %}
 <style>
-.column.over, .arne-dase.over {
+.graphItem.over {
   border: 2px dashed #000;
 }
-.arne-dase.transparent{
+.graphItem.transparent, .graphItem.over {
   opacity: 0.4;
 }
 
@@ -167,7 +167,7 @@ function handleDragEnd(e) {
 //#--- this is the top level element of the graphs
 var myTopElement = document.getElementById("graphList");
 
-var cols = document.querySelectorAll('#graphList  .column');
+var cols = document.querySelectorAll('#graphList  .graphItem');
   log.log('Setting up event listeners');
 [].forEach.call(cols, function(col) {
   col.addEventListener('dragstart', handleDragStart, false);
