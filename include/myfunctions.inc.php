@@ -352,7 +352,7 @@ function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
 function getDbPlotConfig($plotGroup = "%"){
 
     global $db;
-    $sql = "select * from plotconfig where visible='true' and plotgroup like '{$plotGroup}' order by prio;";
+    $sql = "select * from plotconfig where visible='true' and name like '{$plotGroup}' order by prio;";
  
     $res = $db->query($sql);
 	$curRet = Array();
