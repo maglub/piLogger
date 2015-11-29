@@ -3,6 +3,17 @@
 
 
 {% block div %}
+<style>
+.column.over, .arne-dase.over {
+  border: 2px dashed #000;
+}
+.arne-dase.transparent{
+  opacity: 0.4;
+}
+
+</style>
+
+
 <div class="row">
    <div class="col-lg-12">
       <h1 class="page-header">Graphs</h1>
@@ -10,33 +21,12 @@
 </div>
 
 <div class="row">
+  
+  <div id="columns">
 	{% for curPlotConfig in plotConfig %}
           {{ graphBox(curPlotConfig) }}
-<!--
-	<div class="col-lg-{{ curPlotConfig['size'] }}">
-		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}
-                           <div class="pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="/cache/sensorData.{{curPlotConfig['name']}}.{{curPlotConfig['timespan']}}.json">Show JSON data source</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Edit this graph</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                </div>
-	        <div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
-		</div>
-	</div>
--->
 	{% endfor %}
+  </div>
 </div>
 
 {% if "shiftr.io" in activePlugins %} 
@@ -53,7 +43,6 @@
 	</div>
 </div>
 {% endif %}
-
 {% endblock %}
 
 {% block myjavascript %}
@@ -78,6 +67,92 @@ function drawGraphs(){
 
 	 drawGraphs();
  });
-</script>
 
-{% endblock %}
+
+
+//#==========================================
+//# Functions for drag and drop
+//#==========================================
+
+var dragSrcEl = null;
+
+function handleDragStart(e) {
+  dragSrcEl = this.parentNode;
+
+  log.log('Started dragging with dragSrcEl: ' + dragSrcEl.id);
+
+  this.style.opacity = '0.4';  // this / e.target is the source node.
+  this.parentNode.parentNode.parentNode.style.opacity = '0.4';  // this / e.target is the source node.
+}
+
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault(); // Necessary. Allows us to drop.
+  }
+
+  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+  return false;
+}
+
+function handleDragEnter(e) {
+  // this / e.target is the current hover target.
+  this.classList.add('over');
+  this.parentNode.classList.add('transparent');
+  this.parentNode.classList.add('over');
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('over');  // this / e.target is previous target element.
+  this.parentNode.classList.remove('over');
+  this.parentNode.classList.remove('transparent');
+}
+
+function handleDrop(e) {
+  // this / e.target is current target element.
+
+  this.classList.remove('over');
+  this.parentNode.classList.remove('over');
+  this.parentNode.classList.remove('transparent');
+  log.log('I am in handleDrop');
+  if (e.stopPropagation) {
+    e.stopPropagation(); // stops the browser from redirecting.
+  }
+
+  if (dragSrcEl != this) {
+    log.log('we landed on someone else: ' + this.id + ', since I am: ' + dragSrcEl.id);
+    // Set the source column's HTML to the HTML of the column we dropped on.
+//    dragSrcEl.innerHTML = this.innerHTML;
+//    this.innerHTML = e.dataTransfer.getData('text/html');
+  }
+  // See the section on the DataTransfer object.
+
+  return false;
+}
+
+function handleDragEnd(e) {
+  // this/e.target is the source node.
+  log.log('Handling dragEnd');
+
+  [].forEach.call(cols, function (col) {
+    col.classList.remove('over');
+  });
+}
+
+{% if isAuthenticated %}
+var cols = document.querySelectorAll('#columns .column');
+  log.log('Setting up event listeners');
+[].forEach.call(cols, function(col) {
+  col.addEventListener('dragstart', handleDragStart, false);
+  col.addEventListener('dragenter', handleDragEnter, false)
+  col.addEventListener('dragover', handleDragOver, false);
+  col.addEventListener('dragleave', handleDragLeave, false);
+  col.addEventListener('drop', handleDrop, false);
+  log.log('  - Setting up dragend for: ' + col.id);
+  col.addEventListener('dragend', handleDragEnd, false);
+});
+{% endif %}
+
+  </script>
+{% endblock%}
+
