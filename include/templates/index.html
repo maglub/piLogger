@@ -22,7 +22,7 @@
 
 <div class="row">
   
-  <div id="columns">
+  <div id="graphList">
 	{% for curPlotConfig in plotConfig %}
           {{ graphBox(curPlotConfig) }}
 	{% endfor %}
@@ -59,8 +59,8 @@ function drawGraphs(){
 
 	firstTime=false;
 	//#--- reload the cache data after 60 seconds
-	log.log("Sleeping 60 seconds");
-    setTimeout('drawGraphs()', 60000);
+//	log.log("Sleeping 600 seconds");
+//    setTimeout('drawGraphs()', 600000);
 }
 
  $(document).ready(function(){
@@ -70,8 +70,16 @@ function drawGraphs(){
 
 
 
+{% if isAuthenticated %}
 //#==========================================
 //# Functions for drag and drop
+//#   - Based on: http://www.html5rocks.com/en/tutorials/dnd/basics/
+//#
+//# Description:
+//#
+//# This will allow you to move the graphs on a web page. The moved graph will
+//# be placed before the destination.
+//#
 //#==========================================
 
 var dragSrcEl = null;
@@ -79,10 +87,13 @@ var dragSrcEl = null;
 function handleDragStart(e) {
   dragSrcEl = this;
 
+/*
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/html', this.innerHTML);
   e.dataTransfer.setData('id', this.id);
   e.dataTransfer.setData('className', this.className);
+  e.dataTransfer.setData('sourceObject',this);
+*/
 
   log.log('Started dragging with dragSrcEl: ' + dragSrcEl.id);
   this.classList.add('transparent');
@@ -121,12 +132,20 @@ function handleDrop(e) {
   // if the element land on itself, don't do anything
   if (dragSrcEl != this) {
     // Set the source column's HTML, id, class to the HTML,id, class of the column we dropped on.
+
+/*
+    //--- this switches the place between the src and dst
     dragSrcEl.innerHTML = this.innerHTML;
     dragSrcEl.id = this.id;
     dragSrcEl.className = this.className;
     this.innerHTML = e.dataTransfer.getData('text/html');
     this.id = e.dataTransfer.getData('id');
     this.className = e.dataTransfer.getData('className');
+*/
+
+    //--- this puts src before dst
+    myTopElement.insertBefore( dragSrcEl, this);
+
   }
 
   // See the section on the DataTransfer object.
@@ -145,8 +164,10 @@ function handleDragEnd(e) {
   });
 }
 
-{% if isAuthenticated %}
-var cols = document.querySelectorAll('#columns .column');
+//#--- this is the top level element of the graphs
+var myTopElement = document.getElementById("graphList");
+
+var cols = document.querySelectorAll('#graphList  .column');
   log.log('Setting up event listeners');
 [].forEach.call(cols, function(col) {
   col.addEventListener('dragstart', handleDragStart, false);
