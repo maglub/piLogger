@@ -56,7 +56,7 @@ $twig->addGlobal('isAuthenticated', isAuthenticated());
 #===================================================
 
 $app->get('/:route', function () use ($app) {
-    $app->render('index.html', ['plotConfig' => getDbPlotConfig(),'activePlugins' => getListOfActivePlugins()]);
+    $app->render('index.html', ['plotConfig' => getDbPlotConfig('default'),'activePlugins' => getListOfActivePlugins()]);
 })->conditions(array("route" => "(|home)"));
 
 $app->get('/graph/:config_name', function ($config_name) use ($app) {
