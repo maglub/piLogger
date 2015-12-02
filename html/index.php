@@ -64,7 +64,7 @@ $app->get('/graph/:config_name', function ($config_name) use ($app) {
 });
 
 $app->get('/graph/:plotgroup/:timespan', function ($plotgroup, $timespan, $size = 12) use ($app) {
-   $app->render('graph.html', ['plotConfig' => Array(Array("name"=>"{$plotgroup}", "timespan"=>"{$timespan}", "size"=> $size))]);
+   $app->render('graph.html', ['plotConfig' => Array(Array("plotgroup"=>"{$plotgroup}", "timespan"=>"{$timespan}", "size"=> $size))]);
 });
 
 

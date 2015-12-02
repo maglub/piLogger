@@ -16,8 +16,9 @@
 				<table class="table table-condensed table-hover"> 
 					<thead>
 						<tr>
+							<th>Dashboard</th>
 							<th>Graph name</th>
-							<th>Plot group</th>
+							<th>Plot</th>
 							<th>Timespan</th>
 							<th>Size</th>
 						</tr>
@@ -25,8 +26,9 @@
 					<tbody>
 						{% for curPlotConfig in plotConfig %}
 						<tr>
-							<td> <a href="/graph/{{ curPlotConfig['dashboard']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['dashboard']}}-{{ curPlotConfig['timespan']}}</a>						</td>
-							<td> <a href="/graph/{{ curPlotConfig['dashboard']}}">{{ curPlotConfig['dashboard']}}</a> 													</td>
+							<td> {{ curPlotConfig['dashboard']}}						</td>
+							<td> <a href="/graph/{{ curPlotConfig['plotgroup']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}</a>						</td>
+							<td> <a href="/graph/{{ curPlotConfig['plotgroup']}}">{{ curPlotConfig['plotgroup']}}</a> 													</td>
 							<td> {{ curPlotConfig['timespan']}}													</td>
 							<td> {{ curPlotConfig['size']}}														</td>
 						</tr>
