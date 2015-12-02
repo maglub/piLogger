@@ -45,7 +45,7 @@ EOT
   # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   #echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
-  echo $aliases | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
+  dbGetAllLocalAndActiveSensorAndMetricIds | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
   
   # process all compositeSensors
   for compositeSensor in $compositeSensors
