@@ -15,8 +15,11 @@ cat<<EOT
 
 Usage:
 
-  $this_script --db                 - Get device ID's from the database 
-  $this_script capture.NAME.conf    - Get device ID's from a config file
+  $this_script --db                 - Log active sensors in the database 
+  $this_script --active             - Log active sensors in the database 
+
+  $this_script --logDisabled         - Log all sensors in the database
+  $this_script --all                 - Log all sensors in the database
 
 EOT
 }
@@ -27,8 +30,16 @@ EOT
 [ -z "$1" ] && { usage ; exit 1 ; }
 
   case $1 in
-    --db)
-      aliases=$(dbGetAllLocalSensorIds)
+    --db|--active)
+      aliases=$(dbGetAllLocalAndActiveSensorAndMetricIds)
+      compositeDevices="$(dbGetAllCompositeSensors)"
+      ;;
+    --help|-h)
+      usage
+      exit 1
+      ;;
+    --logDisabled|--all)
+      aliases=$(dbGetAllLocalSensorAndMetricIds)
       compositeDevices="$(dbGetAllCompositeSensors)"
       ;;
     *)
@@ -45,7 +56,7 @@ EOT
   # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   #echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
-  dbGetAllLocalAndActiveSensorAndMetricIds | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
+  echo $aliases | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
   
   # process all compositeSensors
   for compositeSensor in $compositeSensors

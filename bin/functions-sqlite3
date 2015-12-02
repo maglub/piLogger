@@ -105,6 +105,10 @@ function dbGetAllLocalAndActiveSensorAndMetricIds(){
   sqlite3 -separator " " $appDbFile "select id, metric from sensor where type='1wire' and active='true';"
 }
 
+function dbGetAllLocalSensorAndMetricIds(){
+  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type='1wire';"
+}
+
 #---------------------------------
 # dbGetAllLocalAndActiveDeviceIds()
 #---------------------------------
