@@ -28,6 +28,7 @@ function dbGetDeviceIdByDeviceAlias(){
   select id from alias where alias = '$1'; 
 EOT
 }
+
 #---------------------------------
 # dbGetAliasesFromDeviceGroup()
 #---------------------------------
@@ -36,8 +37,6 @@ function dbGetAliasesFromDeviceGroup(){
   select a.alias from alias a, sensorgroup b where a.id = b.sensor_id and b.groupname = '$1';
 EOT
 }
-
-
 
 #---------------------------------
 # dbGetAliasesFromPlotGroup()
@@ -58,7 +57,6 @@ function dbGetDeviceIdsFromPlotGroup(){
   select sensor_id from plotgroup where groupname = '$1';
 EOT
 }
-
 
 #---------------------------------
 # dbGetAllDeviceGroups()
@@ -101,17 +99,11 @@ function dbGetAllLocalSensorIds(){
 EOT
 }
 
+#---------------------------------
+# dbGetAllLocalAndActiveSensorAndMetricIds()
+#---------------------------------
 function dbGetAllLocalAndActiveSensorAndMetricIds(){
   sqlite3 -separator " " $appDbFile "select id, metric from sensor where type='1wire' and active='true';"
-}
-
-#---------------------------------
-# dbGetAllLocalAndActiveDeviceIds()
-#---------------------------------
-function dbGetAllLocalAndActiveDeviceIds(){
-  sqlite3 $appDbFile<<EOT
-  select id from sensor where type='1wire' and active = 'true';
-EOT
 }
 
 #---------------------------------
@@ -122,7 +114,6 @@ function dbGetAllDeviceIds(){
   select id from sensor;
 EOT
 }
-
 
 #---------------------------------
 # dbGetAllDevicePaths()
@@ -165,10 +156,9 @@ EOT
   return 1
 }
 
-
-#========================================
-# Composite sensors
-#========================================
+#---------------------------------
+# isCompositeDevice()
+#---------------------------------
 function isCompositeDevice(){
   local curSensor="$1"
   curRes=$(sqlite3 $appDbFile "select count(*) from sensor where type = 'composite' and id = '$curSensor';")
@@ -177,6 +167,9 @@ function isCompositeDevice(){
   return 0
 }
 
+#---------------------------------
+# dbGetAllCompositeSensors()
+#---------------------------------
 function dbGetAllCompositeSensors(){
   sqlite3 $appDbFile "select id from sensor where type = 'composite';"
 }
@@ -232,8 +225,6 @@ EOT
     echo "$1"
   fi
 }
-
-
 
 #---------------------------------
 # dbAddDevice()
