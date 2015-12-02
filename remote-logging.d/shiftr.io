@@ -18,5 +18,5 @@ this_dir=$(cd `dirname $0`; pwd)
 . $PILOGGER_BASE_DIR/bin/functions
 
 logIt "  - Sending data to shiftr.io: $HOSTNAME:$PILOGGER_SENSOR:$PILOGGER_METRIC_VALUE"
-curl -X POST "http://$shiftrAuth@connect.shiftr.io/$HOSTNAME/${PILOGGER_SENSOR}" -d "${PILOGGER_SENSOR}:${PILOGGER_METRIC_VALUE}"
+curl -X POST "http://$shiftrAuth@broker.shiftr.io/$HOSTNAME/${PILOGGER_SENSOR}" -d "${PILOGGER_SENSOR}:${PILOGGER_METRIC_VALUE}"
 echo ""
