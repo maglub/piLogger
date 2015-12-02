@@ -26,8 +26,8 @@
 					<tbody>
 						{% for curPlotConfig in plotConfig %}
 						<tr>
-							<td> <a href="/graph/{{ curPlotConfig['name']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}</a>						</td>
-							<td> <a href="/graph/{{ curPlotConfig['name']}}">{{ curPlotConfig['name']}}</a> 													</td>
+							<td> <a href="/graph/{{ curPlotConfig['plotgroup']}}/{{ curPlotConfig['timespan']}}">{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}</a>						</td>
+							<td> <a href="/graph/{{ curPlotConfig['plotgroup']}}">{{ curPlotConfig['plotgroup']}}</a> 													</td>
 							<td> {{ curPlotConfig['timespan']}}													</td>
 							<td> {{ curPlotConfig['size']}}														</td>
 						</tr>
@@ -45,8 +45,8 @@
           {{ graphBox(curPlotConfig) }}
 
 <!--	<div class="col-lg-{{ curPlotConfig['size'] }}">
-		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['name']}}</div>
-				<div id="{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
+		<div class="panel panel-default"><div class="panel-heading"> {{ curPlotConfig['plotgroup']}}</div>
+				<div id="{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}" style="margin: 0 auto" class="large-{{ curPlotConfig['size'] }} small-{{ curPlotConfig['size'] }} columns"></div>
 		</div>
 	</div>
 -->
@@ -60,7 +60,7 @@
 <script type="text/javascript">
  $(document).ready(function(){
  	{% for curPlotConfig in plotConfig %}
-	   var nothing = printGroupGraph('{{ curPlotConfig['name']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['name']}}', '{{ curPlotConfig['timespan']}}');
+	   var nothing = printGroupGraph('{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['plotgroup']}}', '{{ curPlotConfig['timespan']}}');
    	{% endfor %}
  });
 </script>
