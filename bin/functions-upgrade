@@ -477,3 +477,18 @@ function piLogger_doUpgrade_20151128-001_to_20151128-002(){
   if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
 
 }
+
+#========================================
+# from 20151128-002 to 20151201-001
+#========================================
+function piLogger_doUpgrade_20151128-002_to_20151201-001(){
+
+  echo "  - add a new active column to sensor table"
+  sqlite3 $appDbFile "alter table sensor add column metric text ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - initially set all sensors to metric type: temperature"
+  sqlite3 $appDbFile "update sensor set metric = 'temperature' where metric is null ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+}

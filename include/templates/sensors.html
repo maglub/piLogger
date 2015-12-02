@@ -20,6 +20,7 @@
 							<th>Identifier</th>
 							<th>Alias</th>
 							<th>Type</th>
+							<th>Metric</th>
 							<th>Sparkline</th>
 							<th colspan=2>Last Reading</th>
 						</tr>
@@ -27,9 +28,10 @@
 					<tbody>
 						{% for sensor in sensors %}
 						<tr>
-							<td> <a href=/sensor/{{ sensor['id'] }}>{{ sensor['id'] }}</a> </td>
+							<td> {% if sensor['active'] == false %}<i class="fa fa-pause">{% endif %}</i> <a href=/sensor/{{ sensor['id'] }}>{{ sensor['id'] }}</a> </td>
 							<td> {{ sensor['alias'] }} </td>
 							<td> {{ sensor['type']}} </td>
+							<td> {{ sensor['metric']}} </td>
 							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </td>
 							<td> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C </td><td> ({{ lastTemperature[sensor['id']]['datestamp'] }}) </td>
 						</tr>

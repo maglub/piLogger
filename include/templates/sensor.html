@@ -18,6 +18,7 @@
 						<tr>
 							<th>Identifier</th>
 							<th>Value</th>
+							<th>Extra</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -33,9 +34,18 @@
 							<td> Type </td>
                                                         <td> {{ sensor['type'] }} </td>
 						</tr>
+						<tr>  
+							<td> Metric </td>
+                                                        <td> {{ sensor['metric'] }} </td>
+						</tr>
+						<tr>  
+							<td> State </td>
+                                                        <td> {% if sensor['active'] == true %}Active{% else %}Paused{% endif%} </td>
+						</tr>
 						<tr>
 							<td> Temperature </td>
-                                                        <td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> {{ sensor['temperature'] }}&deg;C ({{ sensor['datestamp'] }})	</td>
+                                                        <td> {{ sensor['temperature'] }}&deg;C ({{ sensor['datestamp'] }})
+                                                        <td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> <td>
 						</tr>
 					</tbody>
 				</table>

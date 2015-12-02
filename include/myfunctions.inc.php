@@ -186,7 +186,7 @@ function getSensors(){
   $ret = $db->query($sql);
   $retArray = [];
   while($row = $ret->fetchArray()){
-    $retArray[] = Array('id' => $row['id'], 'alias' => getSensorAliasById($row['id']),'type' => $row['type']);
+    $retArray[] = Array('id' => $row['id'], 'alias' => getSensorAliasById($row['id']),'type' => $row['type'],'path'=>$row['path'], 'metric'=>$row['metric'], 'active'=>($row['active'] == 'true')?true:false);
   }
   return $retArray;
 }
@@ -209,6 +209,8 @@ function getSensorById($id){
 	$retArray['id'] = $row['id'];
 	$retArray['type'] = $row['type'];
 	$retArray['path'] = $row['path'];	 
+	$retArray['metric'] = $row['metric'];	 
+	$retArray['active'] = ($row['active'] == 'true')?true:false;
 	$retArray['alias'] = Array(getSensorAliasById($row['id']));
     } 
 

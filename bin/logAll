@@ -28,14 +28,12 @@ EOT
 
   case $1 in
     --db)
-      aliases=$(dbGetAllLocalDeviceIds)
-      compositeDevices="$(dbGetAllCompositeDevices)"
+      aliases=$(dbGetAllLocalSensorIds)
+      compositeDevices="$(dbGetAllCompositeSensors)"
       ;;
     *)
-      curConfigFile=$1
-      [ ! -f $curConfigFile ] && errorExit "Could not find config file: $curConfigFile"
-
-      aliases="$(cat $curConfigFile | grep -v "^#")"
+      usage
+      exit 1
       ;;
   esac
 
@@ -46,12 +44,13 @@ EOT
 
   # log temperature for all local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
-  echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
+  #echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
+  echo $aliases | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
   
-  # process all compositeDevices
-  for compositeDevice in $compositeDevices
+  # process all compositeSensors
+  for compositeSensor in $compositeSensors
   do
-    curTemp=$($this_dir/getComposite $compositeDevice)
-    $this_dir/logMetric $compositeDevice $curTemp
+    curTemp=$($this_dir/getComposite $compositeSensor)
+    $this_dir/logMetric $compositeSensor $curTemp
   done
   

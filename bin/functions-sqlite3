@@ -93,12 +93,16 @@ EOT
 }
 
 #---------------------------------
-# dbGetAllLocalDeviceIds()
+# dbGetAllLocalSensorIds()
 #---------------------------------
-function dbGetAllLocalDeviceIds(){
+function dbGetAllLocalSensorIds(){
   sqlite3 $appDbFile<<EOT
   select id from sensor where type='1wire';
 EOT
+}
+
+function dbGetAllLocalAndActiveSensorAndMetricIds(){
+  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type='1wire' and active='true';"
 }
 
 #---------------------------------
@@ -173,7 +177,7 @@ function isCompositeDevice(){
   return 0
 }
 
-function dbGetAllCompositeDevices(){
+function dbGetAllCompositeSensors(){
   sqlite3 $appDbFile "select id from sensor where type = 'composite';"
 }
 
@@ -235,9 +239,16 @@ EOT
 # dbAddDevice()
 #---------------------------------
 function dbAddDevice(){
-  echo "  - Adding sensor: $1 type: $2 path: $3"
+  local sensor="$1"
+  local sensorType="$2"
+  local sensorPath="$3"
+  local sensorMetric="$4"
+
+  [ -z "$sensorMetric" ] && sensorMetric=temperature
+
+  echo "  - Adding sensor: $sensor type: $sensorType path: $sensorPath metric: $sensorMetric"
   sqlite3 $appDbFile<<EOT
-  insert into sensor (id, type, path) values ('$1', '$2', '$3');
+  insert into sensor (id, type, path, active, metric) values ('$sensor', '$sensorType', '$sensorPath', 'true', '$sensorMetric');
 EOT
 }
 
