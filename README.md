@@ -40,22 +40,28 @@ Installation of the software
 4. Fetch the piLogger software from GitHub
 
     ```
+    sudo apt-get install git
     git clone https://github.com/maglub/piLogger
     cd piLogger
     ```
 
 5. Configure the installation
    ```
-   ./configure
+   ./configure --withLocale
    ``` 
-   or, if you have the AbioWire interface (http://www.axiris.eu/en/index.php/one-wire/abiowire) use 
+   
+   An alternative is to minimize the installation footprint by removing unused packages:
+   
    ```
-   ./configure --withAbioWire --withLocale
+   ./configure --withLocale --minimizeInstall
    ```
 
 6. Run `./setup.sh` which will install necessary packages (this will take ca 5 - 10 minutes)
 
 7. `sudo reboot` since the install of owfs will not work before
+
+Now do step 1 below (Configuration of your setup), or go through the installation manually step by step.
+
 
 Configuration of your setup
 ---------------------------
