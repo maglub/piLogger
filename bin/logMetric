@@ -51,7 +51,7 @@ case $action in
     #--- get the deviceId and temperature
     curDevice=$(getDeviceIdByAny "$1")
     [ -z "$curDevice" ] && { errorExit "There is no device $1" ; }
-    curTemperature=$(getTemperature "$curDevice")
+    curTemperature=$(getMetricValue "$curDevice" "$metricType")
     [ -z "$curTemperature" ] && errorExit "Could not read temperature from $curDevice"
     ;;
   noreadSensor)
@@ -64,7 +64,7 @@ case $action in
     ;;
 esac
 
-logIt "  - Logging data for device $curDevice, $curTemperature C"
+logIt "  - Logging data for device $curDevice,metricType=$metricType - value =>  $curTemperature"
 
 #--- at this point, there HAS to be a device, and there has to be a temperature
 logTemperature $curDevice $curTemperature $metricType

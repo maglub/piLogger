@@ -36,6 +36,6 @@ case $1 in
     ;;
    *)
     curDevice=$1
-    getTemperature $curDevice
+    getMetricValue $curDevice
     ;;
 esac
