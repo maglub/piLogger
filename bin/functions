@@ -90,38 +90,49 @@ function getDeviceTypeByDevicePath() {
 }
 
 #------------------------------------
-# getTemperature
+# getMetricValue
 #------------------------------------
-function getTemperature(){
+function getMetricValue(){
 
   local curDevice="$1"
- 
-  [ -n "$debug" ] && logIt "fetching temperature for device: $curDevice"
-  [ -d $curDevice ] && { getTemperatureByDevicePath $curDevice ; return 0 ; }
-  [ -d $oneWireDir/$curDevice ] && { getTemperatureByDevicePath /mnt/1wire/$curDevice ; return 0 ; }
-  [ ! -d $curDevice ] && { getTemperatureByDeviceAlias $curDevice ; return 0 ; }
+  local curMetric="$2"
+
+  [ -z "$curMetric" ] && curMetric=temperature
+  [ -n "$debug" ] && logIt "fetching $curMetric for device: $curDevice"
+  [ -d $curDevice ] && { getMetricByDevicePath $curDevice $curMetric ; return 0 ; }
+  [ -d $oneWireDir/$curDevice ] && { getMetricByDevicePath /mnt/1wire/$curDevice $curMetric ; return 0 ; }
+  [ ! -d $curDevice ] && { getMetricByDeviceAlias $curDevice $curMetric; return 0 ; }
   
   return 0
 }
 
 #------------------------------------
-# getTemperatureByDevicePath
+# getMetricByDevicePath
 #------------------------------------
-function getTemperatureByDevicePath(){
-  curOut=$(cat $1/$temperatureFile | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
-  [ -n "$debug" ] && logIt "device: $1 temperature: $curOut"
+function getMetricByDevicePath(){
+
+  local metric="$2"
+  [ -z "$metric" ] && metric=temperature
+
+  curOut=$(cat $1/$metric | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
+  [ -n "$debug" ] && logIt "device: $1 $metric: $curOut"
   echo $curOut
 }
 
 #------------------------------------
-# getTemperatureByDeviceAlias
+# getMetricByDeviceAlias
 #------------------------------------
-function getTemperatureByDeviceAlias(){
+function getMetricByDeviceAlias(){
+
   local curAlias="$1"
   local devicePath=$(dbGetDevicePathByDeviceAlias $curAlias)
+
+  local curMetric="$2"
+  [ -z "$curMetric" ] && curMetric=temperature
+
   if [ -n "$devicePath" ]
   then
-    getTemperatureByDevicePath $devicePath
+    getTemperatureByDevicePath $devicePath $curMetric
   fi
 }
 
