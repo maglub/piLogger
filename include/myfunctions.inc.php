@@ -1,15 +1,11 @@
 <?php
-  global $root;
 
-  $vars = $_REQUEST;
-
-  require_once($root . "dbconfig.inc.php");
-  require_once($root . "sqlite3.inc.php");
-
-  db_connect();
+global $root;
+$vars = $_REQUEST;
+require_once($root . "dbconfig.inc.php");
 
 #-----------------------------------
-# getAppConfig()
+# authenticate()
 #-----------------------------------
 function authenticate($username, $password){
 	if (genPasswordHash($password) == getAdminPassword()){
@@ -19,6 +15,9 @@ function authenticate($username, $password){
 	}
 }
 
+#-----------------------------------
+# isAuthenticated()
+#-----------------------------------
 function isAuthenticated(){
 	if (isset($_SESSION['username']) && $_SESSION['username'] == "admin"){
 		return true;
@@ -28,78 +27,92 @@ function isAuthenticated(){
 }
 
 #-----------------------------------
-# getSensorGroups()
+# getAdminPassword()
 #-----------------------------------
 function getAdminPassword(){
   global $db;
 
   $sql = "select password from passwd where username = 'admin'";
-  $stmt = $db->prepare($sql);
+  $sth = $db->prepare($sql);
+  $sth->execute();
 
-  $ret = $stmt->execute();
-
-  if($row = $ret->fetchArray()){
+  if($row = $sth->fetch()){
     $password = $row['password']; 
   }
   
   return $password;
 }
 
+#-----------------------------------
+# setPassword()
+#-----------------------------------
 function setPassword($username, $password){
-	global $db;
+  global $db;
 	
-	$hash = genPasswordHash($password);
-	$sql = "update passwd set password = '{$hash}' where username = '{$username}'";
-    $stmt = $db->prepare($sql);
-    $ret = $stmt->execute();
+  $hash = genPasswordHash($password);
+  $sql = "update passwd set password = :hash where username = :user ";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':hash' => $hash, ':user' => $username));
 
-	return 0;
+  return 0;
 }
 
+#-----------------------------------
+# addUser()
+#-----------------------------------
 function addUser($uid,$username){
-	global $db;
+  global $db;
 	
-	$sql = "insert into passwd values ({$uid},'{$username}','')";
-    $stmt = $db->prepare($sql);
-    $ret = $stmt->execute();
+  $sql = "insert into passwd values (:uid,:username,'')";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':uid' => $uid, ':username' => $username));
 
-	return 0;
+  return 0;
 }
 
+#-----------------------------------
+# deleteUser()
+#-----------------------------------
 function deleteUser($username){
-	global $db;
+  global $db;
 	
-	$sql = "delete from passwd where username = '{$username}'";
-    $stmt = $db->prepare($sql);
-    $ret = $stmt->execute();
+  $sql = "delete from passwd where username = :username ";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':username' => $username));
 
-	return 0;
-	
+  return 0;
 }
 
+#-----------------------------------
+# genPasswordHash()
+#-----------------------------------
 function genPasswordHash($password){
-	$hash = crypt( $password , 'piLogger' );
-	return $hash;
+  $hash = crypt( $password , 'piLogger' );
+  return $hash;
 }
 
+#-----------------------------------
+# dropPasswdTable()
+#-----------------------------------
 function dropPasswdTable(){
-	global $db;
+  global $db;
 	
-	$sql = "drop table if exists passwd";
-    $stmt = $db->prepare($sql);
-    $ret = $stmt->execute();
+  $sql = "drop table if exists passwd";
+  $sth = $db->exec($sql);
 	
-	return 0;
+  return 0;
 }
 
+#-----------------------------------
+# createPasswdTable()
+#-----------------------------------
 function createPasswdTable(){
-	global $db;
+  global $db;
 	
-	$sql = "create table if not exists passwd(uid integer, username string, password string);";
-    $stmt = $db->prepare($sql);
-    $ret = $stmt->execute();
+  $sql = "create table if not exists passwd(uid integer, username string, password string);";
+  $sth = $db->exec($sql);
 
-	return 0;
+  return 0;
 }
 
 #-----------------------------------
@@ -122,8 +135,6 @@ function getAppConfig($configFile){
 	  }
 	}
  
-	// Print it out
-	#print_r($config);
 	return $config;
 }
 
@@ -131,15 +142,14 @@ function getAppConfig($configFile){
 # getSensorGroups()
 #-----------------------------------
 function getSensorGroups(){
-
   global $db;
   $retArray = array();
-  $sql = "select distinct groupname from sensorgroup;";
 
-  $ret = $db->query($sql);
-  while($row = $ret->fetchArray()){
-    $retArray[] = Array ('name' => $row['groupname']); 
+  $sql = "select distinct groupname from sensorgroup;";
+  foreach ($db->query($sql) as $row){
+    $retArray[] = Array ('name' => $row['groupname']);
   }
+
   return $retArray;
 }
 
@@ -147,30 +157,30 @@ function getSensorGroups(){
 # getSensorGroupMembers() 
 #-----------------------------------
 function getSensorGroupMembers($sensorGroup){
+  global $db;
+  $retArray = array();
 
-    global $db;
-    $retArray = array();
-    $sql = "select sensor_id from sensorgroup where groupname = '{$sensorGroup}';";
+  $sql = "select sensor_id from sensorgroup where groupname = :sensorGroup ";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':sensorGroup' => $sensorGroup));
 
-    $ret = $db->query($sql);
-    while($row = $ret->fetchArray()){
+  while($row = $sth->fetch()){
       $retArray[] = Array('sensor_id' => $row['sensor_id']) ; 
-    }
-    return $retArray;
-	
+  }
+
+  return $retArray;
 }
 
 #-----------------------------------
 # getSensorGroupsAll()
 #-----------------------------------
 function getSensorGroupsAll(){
-    global $db;
+  
+  $retArray = getSensorGroups();
 
-	$retArray = getSensorGroups();
-
-	foreach($retArray as &$curSensorGroup){
-	    $curSensorGroup['members'] = getSensorGroupMembers($curSensorGroup['name']);	
-	}
+  foreach($retArray as &$curSensorGroup){
+    $curSensorGroup['members'] = getSensorGroupMembers($curSensorGroup['name']);	
+  }
 
   return $retArray;
 }
@@ -180,14 +190,16 @@ function getSensorGroupsAll(){
 #-----------------------------------
 function getSensors(){
   global $db;
-  $sql = "select * from sensor;";
-
-  $n = 0;
-  $ret = $db->query($sql);
   $retArray = [];
-  while($row = $ret->fetchArray()){
+  $n = 0;
+
+  $sql = "select * from sensor";
+  $ret = $db->query($sql);
+
+  while($row = $ret->fetch()){
     $retArray[] = Array('id' => $row['id'], 'alias' => getSensorAliasById($row['id']),'type' => $row['type'],'path'=>$row['path'], 'metric'=>$row['metric'], 'active'=>($row['active'] == 'true')?true:false);
   }
+
   return $retArray;
 }
 
@@ -195,69 +207,70 @@ function getSensors(){
 # getSensorById()
 #-----------------------------------
 function getSensorById($id){
-	
-    global $db;
+  global $db;
+  $retArray = null;
 
+  $sql = "select * from sensor where id = :id limit 1;";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':id' => $id));
 
-    $sql = "select * from sensor where id = '{$id}' limit 1;";
+  while ($row = $sth->fetch()) {
+    $retArray['id'] = $row['id'];
+    $retArray['type'] = $row['type'];
+    $retArray['path'] = $row['path'];	 
+    $retArray['metric'] = $row['metric'];	 
+    $retArray['active'] = ($row['active'] == 'true')?true:false;
+    $retArray['alias'] = Array(getSensorAliasById($row['id']));
+  } 
 
-    $n = 0;
-    $ret = $db->query($sql);
-
-    $retArray = null;
-    while ($row = $ret->fetchArray()) {
-	$retArray['id'] = $row['id'];
-	$retArray['type'] = $row['type'];
-	$retArray['path'] = $row['path'];	 
-	$retArray['metric'] = $row['metric'];	 
-	$retArray['active'] = ($row['active'] == 'true')?true:false;
-	$retArray['alias'] = Array(getSensorAliasById($row['id']));
-    } 
-
-    return $retArray;
+  return $retArray;
 }
 
 #-----------------------------------
 # getSensorIdByAlias()
 #-----------------------------------
 function getSensorIdByAlias($alias){
-    global $db;
-    $sql = "select * from alias where alias = '{$alias}';";
-    $ret = $db->query($sql);
-    $row = $ret->fetchArray();
-	return $row['id'];
+  global $db;
+
+  $sql = "select * from alias where alias = :alias ";
+  $sth = $db->prepare();
+  $sth->execute(array(':alias' => $alias));
+  $row = $sth->fetch();
+  return $row['id'];
 }
 
 #-----------------------------------
 # getSensorByAlias()
 #-----------------------------------
 function getSensorByAlias($alias){
-	$curId = getSensorIdByAlias($alias);
-	$ret = getSensorById($curId);
-	return $ret;	
+  $curId = getSensorIdByAlias($alias);
+  $ret = getSensorById($curId);
+  return $ret;	
 }
 
 #-----------------------------------
 # getSensorTemperatureDataRangeById()
 #-----------------------------------
 function getSensorTemperatureDataRangeById($id, $range){
-	$ret = Array(12,15,24);
-	return $ret;
+  $ret = Array(12,15,24);
+  return $ret;
 }
 
 #-----------------------------------
 # getAliases()
 #-----------------------------------
 function getAliases(){
-    global $db;
-    $sql = "select alias, id from alias;";
-    $ret = $db->query($sql);
+  global $db;
+  $retArray = [];
 
-       $retArray = [];
-    while($row = $ret->fetchArray()){
-      $retArray[] = Array($row['alias'] => $row['id']) ; 
-    }
-       return $retArray;
+  $sql = "select alias, id from alias;";
+  $ret = $db->query($sql);
+
+  while($row = $ret->fetch()){
+    $retArray[] = Array($row['alias'] => $row['id']) ; 
+  }
+  
+  return $retArray;
 }
 
 #-----------------------------------
@@ -265,10 +278,12 @@ function getAliases(){
 #-----------------------------------
 function getSensorAliasById($curId){
   global $db;
-  $sql = "select alias from alias where id = '{$curId}';";
+
+  $sql = "select alias from alias where id = :id;";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':id' => $curId)); 
  
-  $ret = $db->query($sql);
-  if ($row = $ret->fetchArray() ) {
+  if ($row = $sth->fetch() ) {
     return $row['alias'];
   } else {
     return $curId;
@@ -299,37 +314,36 @@ function getDeviceStores(){
 # getPlotgroups()
 #-----------------------------------
 function getPlotgroups(){
-    global $db;
-    $sql = "select distinct(groupname) from plotgroup;";
- 
-    $ret = $db->query($sql);
-	$n = 0;
-    while($row = $ret->fetchArray()){
-      $retArray[] = getPlotGroupByGroupName($row['groupname']);
+  global $db;
 
-      $n++;
-    }
-    return $retArray;	
+  $sql = "select distinct(groupname) from plotgroup;";
+
+  foreach($db->query($sql) as $row){
+    $retArray[] = getPlotGroupByGroupName($row['groupname']); 
+  }
+
+  return $retArray;	
 }
 
 #-----------------------------------
 # getPlotGroupByGroupName()
 #-----------------------------------
 function getPlotGroupByGroupName($groupName){
-    global $db;
-    $sql = "select * from plotgroup where groupname = '{$groupName}';";
+  global $db;
+  $retArray = [];
+  $retArray['groupname'] = $groupName;
+  $retMembers = Array();
 
-    $ret = $db->query($sql);
-        $retArray = [];
-        $retArray['groupname'] = $groupName;
-		$retMembers = Array();
-    while($row = $ret->fetchArray()){
-                $retMembers[] = Array('sensor_id' => $row['sensor_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
-    }
+  $sql = "select * from plotgroup where groupname = :groupName";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':groupName' => $groupName));
 
-        $retArray['members'] = $retMembers;
-    return $retArray;
+  while($row = $sth->fetch()){
+    $retMembers[] = Array('sensor_id' => $row['sensor_id'], 'plot_type' => $row['plot_type'], 'plot_metric' => "temperature");
+  }
 
+  $retArray['members'] = $retMembers;
+  return $retArray;
 }
 
 #-----------------------------------
@@ -337,14 +351,17 @@ function getPlotGroupByGroupName($groupName){
 #-----------------------------------
 function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
   global $db;
-  $sql = "select plot_type from plotgroup where groupname = '{$curPlotType} and sensor_id = '{$curId}';";
- 
-  $ret = $db->query($sql);
-  if ($row = $ret->fetchArray() ) {
+
+  $sql = "select plot_type from plotgroup where groupname = :curPlotType and sensor_id = :curId";
+  $sth = $db->prepare(); 
+  $sth->execute(array(':curPlotType' => $curPlotType, ':curId' => $curId));
+
+  if ($row = $sth->fetch() ) {
     return $row['alias'];
   } else {
     return "AVERAGE";
   }
+
   return $retArray;
 }
 
@@ -352,18 +369,18 @@ function getAggregateTypeByPlotDeviceId($curPlotType, $curId){
 # getDbPlotConfig()
 #-----------------------------------
 function getDbPlotConfig($plotGroup = "%"){
+  global $db;
+  $curRet = Array();
 
-    global $db;
-    $sql = "select * from plotconfig where visible='true' and name like '{$plotGroup}' order by prio;";
- 
-    $res = $db->query($sql);
-	$curRet = Array();
-	
-    while ($row = $res->fetchArray() ) {
-		$curRet[] = Array("dashboard"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
-    }
+  $sql = "select * from plotconfig where visible='true' and name like :plotgroup order by prio;";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':plotgroup' => $plotGroup));
+
+  while ($row = $sth->fetch() ) {
+     $curRet[] = Array("dashboard"=>$row['name'], "plotgroup"=>$row['plotgroup'], "timespan"=>$row['timespan'], "size"=>$row['size'], "prio"=>$row['prio']); 
+  }
   
-	return $curRet;
+  return $curRet;
 }
 
 #-----------------------------------
@@ -394,10 +411,9 @@ function getSensorIdFromFilesystem($options = array() ){
 # createRRDDataBySensorId()
 #-----------------------------------
 function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
-	global $root;
-	$resOs = shell_exec("${root}/../bin/createRRD $curId $metricType 2>&1");
-	
-	return 0;
+  global $root;
+  $resOs = shell_exec("${root}/../bin/createRRD $curId $metricType 2>&1");
+  return 0;
 }
 
 #-----------------------------------
@@ -420,7 +436,6 @@ function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature")
    return $curRes; 
 
 }
-
 
 #-----------------------------------
 # getRRDDataBySensorId()
@@ -505,14 +520,11 @@ function getListOfInstalledPlugins(){
   	return array_diff(scandir($root . '/../remote-logging.d'), array('..', '.'));   
 }
 
-
 #-----------------------------------
 # getListOfActivePlugins()
 #-----------------------------------
 function getListOfActivePlugins(){
-
   return array_diff(scandir('/var/lib/piLogger/remote-logging-enabled/'), array('..', '.')); 
-
 }
 
 #-----------------------------------
