@@ -23,17 +23,19 @@
 							<th>Metric</th>
 							<th>Sparkline</th>
 							<th colspan=2>Last Reading</th>
+                                                        <th>Active</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for sensor in sensors %}
 						<tr>
-							<td> {% if sensor['active'] == false %}<i class="fa fa-pause">{% endif %}</i> <a href=/sensor/{{ sensor['id'] }}>{{ sensor['id'] }}</a> </td>
+							<td> <a href=/sensor/{{ sensor['id'] }}/{{ sensor['metric'] }}>{{ sensor['id'] }}</a> </td>
 							<td> {{ sensor['alias'] }} </td>
 							<td> {{ sensor['type']}} </td>
 							<td> {{ sensor['metric']}} </td>
-							<td> <span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </td>
-							<td> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C </td><td> ({{ lastTemperature[sensor['id']]['datestamp'] }}) </td>
+							<td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> </td>
+							<td> {{ sensor['LastMetricValue'] }} </td><td> ({{ sensor['LastMetricDateStamp'] }}) </td>
+                                                        <td> {% if sensor['active'] == false %} <i class="fa fa-times"> {% else %} <i class="fa fa-check"> {% endif %} </i></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -75,13 +77,13 @@
                                 <div class="timeline-panel">
                                     <div class="timeline-heading">
                                         <h4 class="timeline-title">Id: {{ sensor['id']}}<br>Alias: {{ sensor['alias'] }}</h4>
-                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ lastTemperature[sensor['id']]['temperature'] }}&deg;C - {{ lastTemperature[sensor['id']]['datestamp'] }}</small>
+                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{ sensor['LastMetricValue'] }} - {{ sensor['LastMetricDateStamp'] }}</small>
                                         </p>
                                     </div>
                                     <div class="timeline-body">
                                         <p>This sensor is connected to XYZ</p>
                                                                 <p>Type: {{ sensor['type'] }}</p>
-                                                                <p><span class="inlinesparkline">{{ sparklines[sensor['id']] }}</span> </p>
+                                                                <p><span class="inlinesparkline">{{ sensor['sparkline'] }}</span> </p>
                                     </div>
                                 </div>
                                         </li>

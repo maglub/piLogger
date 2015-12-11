@@ -206,13 +206,13 @@ function getSensors(){
 #-----------------------------------
 # getSensorById()
 #-----------------------------------
-function getSensorById($id){
+function getSensorById($id,$metricType='temperature'){
   global $db;
   $retArray = null;
 
-  $sql = "select * from sensor where id = :id limit 1;";
+  $sql = "select * from sensor where id = :id and metric = :metricType limit 1;";
   $sth = $db->prepare($sql);
-  $sth->execute(array(':id' => $id));
+  $sth->execute(array(':id' => $id,':metricType' => $metricType));
 
   while ($row = $sth->fetch()) {
     $retArray['id'] = $row['id'];
@@ -440,25 +440,25 @@ function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature")
 #-----------------------------------
 # getRRDDataBySensorId()
 #-----------------------------------
-function getRRDDataBySensorId($curId, $timeframe="24h"){
-   $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".temperature.rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
+function getRRDDataBySensorId($curId, $timeframe="24h",$metricType="temperature"){
+   $curRes = rrd_fetch("/var/lib/piLogger/db/" . $curId . ".".$metricType.".rrd", array( "AVERAGE", "--resolution", "3600", "--start", "-".$timeframe, "--end", "now" ) );
    return $curRes; 
 }
 
 #-----------------------------------
 # getLastRRDDataBySensorId()
 #-----------------------------------
-function getLastRRDDataBySensorId($curId){
-   $curRes = rrd_lastupdate("/var/lib/piLogger/db/" . $curId . ".temperature.rrd");
+function getLastRRDDataBySensorId($curId,$metricType="temperature"){
+   $curRes = rrd_lastupdate("/var/lib/piLogger/db/".$curId.".".$metricType.".rrd");
    return $curRes; 
 }
 
 #-----------------------------------
 # getLastTemperatureBySensorId()
 #-----------------------------------
-function getLastTemperatureBySensorId($curId){
-  $res = getLastRRDDataBySensorId($curId);
-  return Array("timestamp" => $res['last_update'], "temperature" => (float)$res['data'][0]);
+function getLastTemperatureBySensorId($curId,$metricType="temperature"){
+  $res = getLastRRDDataBySensorId($curId,$metricType);
+  return Array("timestamp" => $res['last_update'], "metricValue" => (float)$res['data'][0]);
 }
 
 #-----------------------------------
@@ -478,8 +478,8 @@ function getSensorInfoAll(){
 #-----------------------------------
 # printSparklineByDeviceId()
 #-----------------------------------
-function printSparklineByDeviceId($curId, $timeframe = "12h"){
-  $curRes = getRRDDataBySensorId($curId, $timeframe);
+function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperature"){
+  $curRes = getRRDDataBySensorId($curId, $timeframe,$metricType);
 
   $n = 0;
   $ret="";
