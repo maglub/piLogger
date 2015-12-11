@@ -70,22 +70,19 @@ $app->get('/graph/:plotgroup/:timespan', function ($plotgroup, $timespan, $size 
 
 $app->get('/sensors', function () use ($app) {
 
+        // get initial sensor info from database
 	$curSensors = getSensors();
-
-	$curLastTemperature = Array();
-	foreach ($curSensors as $curSensor){
-	        $curLastTemperature[$curSensor['id']] = getLastTemperatureBySensorId($curSensor['id']);
-	        $curLastTemperature[$curSensor['id']]['datestamp'] = date('Y-m-d G:i:s T',$curLastTemperature[$curSensor['id']]['timestamp']);
+        
+        // loop over all sensors and add new columns for later use in the template
+        for($x = 0; $x < count($curSensors); $x++) {
+                $curLastMetric = getLastTemperatureBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
+                $curSensors[$x]['LastMetricValue'] = $curLastMetric['metricValue'];
+                $curSensors[$x]['LastMetricTimeStamp'] = $curLastMetric['timestamp']; 
+                $curSensors[$x]['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
+                $curSensors[$x]['sparkline'] = printSparklineByDeviceId($curSensors[$x]['id'],"12h",$curSensors[$x]['metric']);
 	}
 	
-	$curSparklines = Array();
-
-	foreach ($curSensors as $curSensor){
-		$curSparklines[$curSensor['id']] = printSparklineByDeviceId($curSensor['id']);
-	}
-	
-	
-    $newSensors = [];
+        $newSensors = [];
 
 	foreach (getSensorIdFromFilesystem( array('forceScan'=>true) ) as $curSensorFile){
 		$curSensor = getSensorById($curSensorFile['id']);
@@ -95,7 +92,7 @@ $app->get('/sensors', function () use ($app) {
 		}
 	}
 	
-    $app->render('sensors.html', ['sensors' => $curSensors, 'sparklines' => $curSparklines , 'nonRegisteredFiles' => $newSensors, 'lastTemperature' => $curLastTemperature]);
+        $app->render('sensors.html', ['sensors' => $curSensors, 'nonRegisteredFiles' => $newSensors ]);
 });
 
 $app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
