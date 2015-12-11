@@ -95,11 +95,19 @@ $app->get('/sensors', function () use ($app) {
         $app->render('sensors.html', ['sensors' => $curSensors, 'nonRegisteredFiles' => $newSensors ]);
 });
 
-$app->get('/sensor/:sensorId', function ($sensorId) use ($app) {
-	$curSensor = getSensorById($sensorId);
-	$curSensor += getLastTemperatureBySensorId($sensorId);
-        $curSensor['datestamp'] = date('Y-m-d G:i:s T',$curSensor['timestamp']);
-	$curSensor['sparkline'] = printSparklineByDeviceId($sensorId);
+$app->get('/sensor/:sensorId/:metricType', function ($sensorId,$metricType) use ($app) {
+
+        // get the current sensor and all information
+	$curSensor = getSensorById($sensorId,$metricType);
+
+        // get the last metric value and time in an array
+        $curLastMetric = getLastTemperatureBySensorId($sensorId,$metricType);
+
+        // now extend the original array with further information
+	$curSensor['LastMetricValue'] = $curLastMetric['metricValue'];
+        $curSensor['LastMetricTimeStamp'] = $curLastMetric['timestamp'];
+        $curSensor['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
+	$curSensor['sparkline'] = printSparklineByDeviceId($sensorId,"12h",$metricType);
 	
    $app->render('sensor.html', [ 'sensor' => $curSensor ]);
 });

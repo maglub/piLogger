@@ -23,17 +23,19 @@
 							<th>Metric</th>
 							<th>Sparkline</th>
 							<th colspan=2>Last Reading</th>
+                                                        <th>Active</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for sensor in sensors %}
 						<tr>
-							<td> {% if sensor['active'] == false %}<i class="fa fa-pause">{% endif %}</i> <a href=/sensor/{{ sensor['id'] }}>{{ sensor['id'] }}</a> </td>
+							<td> <a href=/sensor/{{ sensor['id'] }}/{{ sensor['metric'] }}>{{ sensor['id'] }}</a> </td>
 							<td> {{ sensor['alias'] }} </td>
 							<td> {{ sensor['type']}} </td>
 							<td> {{ sensor['metric']}} </td>
 							<td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> </td>
 							<td> {{ sensor['LastMetricValue'] }} </td><td> ({{ sensor['LastMetricDateStamp'] }}) </td>
+                                                        <td> {% if sensor['active'] == false %} <i class="fa fa-times"> {% else %} <i class="fa fa-check"> {% endif %} </i></td>
 						</tr>
 						{% endfor %}
 					</tbody>

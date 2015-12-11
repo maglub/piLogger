@@ -3,12 +3,12 @@
 {% block div %}
 <div class="row">
    <div class="col-lg-12">
-      <h1 class="page-header">Sensor {{ sensor['id']}} : {{ sensor['temperature'] }}</h1>
+      <h1 class="page-header">Sensor {{ sensor['id']}} : {{ sensor['metric'] }}</h1>
    </div>
 </div>
 
 <div class="row"><!-- List of registered sensors in the database -->
-	<div class="col-lg-8">
+	<div class="col-lg-5">
 		<div class="panel panel-default">
 			<div class="panel-heading"> Sensor information</div>
 			<div class="panel-body">
@@ -18,7 +18,6 @@
 						<tr>
 							<th>Identifier</th>
 							<th>Value</th>
-							<th>Extra</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -44,9 +43,12 @@
 						</tr>
 						<tr>
 							<td> Temperature </td>
-                                                        <td> {{ sensor['temperature'] }}&deg;C ({{ sensor['datestamp'] }})
-                                                        <td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> <td>
+                                                        <td> {{ sensor['LastMetricValue'] }} ({{ sensor['LastMetricDateStamp'] }})
 						</tr>
+                                                <tr>
+                                                        <td> Sparkline History </td>
+                                                        <td> <span class="inlinesparkline">{{ sensor['sparkline'] }}</span> </td>
+                                                </tr>
 					</tbody>
 				</table>
                           </div>
