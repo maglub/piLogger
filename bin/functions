@@ -146,21 +146,25 @@ function getDeviceAliasesByDevicePath() {
 }
 
 #------------------------------------
-# getDeviceIdByAny
+# getSensorIdByAny
 #------------------------------------
-function getDeviceIdByAny(){
+function getSensorIdByAny(){
   #--- try and resolve a full device path through any input (device id, path, alias)
-  local curDevice="$1"
+  local curSensor="$1"
   local res=""
 
   #--- there is a directory (ie /mnt/1wire/deviceId) -> return just the deviceId
-  [ -d "$curDevice" ] && { basename "$curDevice" ; return 0 ; }
-  [ -d "$oneWireDir/$curDevice" ] && { echo "$curDevice" ; return 0 ; }
+  [ -d "$curSensor" ] && { basename "$curSensor" ; return 0 ; }
+  [ -d "$oneWireDir/$curSensor" ] && { echo "$curSensor" ; return 0 ; }
 
   #--- check the database for an alias
-  res=$(dbGetDeviceIdByDeviceAlias $curDevice)
+  res=$(dbGetDeviceIdByDeviceAlias $curSensor)
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
 
+  dbCheckSensorExistById $curSensor && { echo "$curSensor" ; return 0 ; }
+  #--- no device found
+  echo "Sensor $curSensor does not exist" 1>&2
+  return 1
 }
 
 #------------------------------------

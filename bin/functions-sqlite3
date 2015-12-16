@@ -100,7 +100,7 @@ EOT
 }
 
 function dbGetAllLocalAndActiveSensorAndMetricIds(){
-  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type='1wire' and active='true';"
+  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type in ('1wire','composite') and active='true';"
 }
 
 function dbGetAllLocalSensorAndMetricIds(){
@@ -515,15 +515,13 @@ EOT
 }
 
 #---------------------------------
-# dbCheckDeviceExistById()
+# dbCheckSensorExistById()
 #---------------------------------
-function dbCheckDeviceExistById(){
+function dbCheckSensorExistById(){
 
   local sensorId="$1"
   local res=$(
-  sqlite3 $appDbFile<<EOT
-      select count(id) from sensor where id = '$sensorId';
-EOT
+  sqlite3 $appDbFile " select count(id) from sensor where id = '$sensorId';"
 )
 
   if [ $res -eq 1 ]
@@ -533,6 +531,11 @@ EOT
     return 1
   fi
 
+}
+
+function dbCheckDeviceExistById(){
+  dbCheckSensorExistById $@
+  return $?
 }
 
 #---------------------------------
