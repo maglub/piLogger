@@ -14,7 +14,7 @@ cat<<EOT
 
 Usage:
 
-  $this_script [-rrd] alias|/path/to/device
+  $this_script alias|/path/to/device
 
 EOT
 }
