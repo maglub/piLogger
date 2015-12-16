@@ -49,22 +49,22 @@ action=none
 case $action in
   readSensor)
     #--- get the deviceId and temperature
-    curDevice=$(getDeviceIdByAny "$1")
-    [ -z "$curDevice" ] && { errorExit "There is no device $1" ; }
-    curTemperature=$(getMetricValue "$curDevice" "$metricType")
-    [ -z "$curTemperature" ] && errorExit "Could not read temperature from $curDevice"
+    curDevice=$(getSensorIdByAny "$1")
+    [ -z "$curDevice" ] && { errorExit "There is no sensor $1" ; }
+    curValue=$(getMetricValue "$curDevice" "$metricType")
+    [ -z "$curValue" ] && errorExit "Could not read temperature from $curDevice"
     ;;
   noreadSensor)
     #--- no existing device (external device) -> then a temperature has to be passed as well
     curDevice=$1
-    curTemperature=$2
+    curValue=$2
     ;;
   *)
     errorExit "No action"
     ;;
 esac
 
-logIt "  - Logging data for device $curDevice,metricType=$metricType - value =>  $curTemperature"
+logIt "  - Logging data for device $curDevice,metricType=$metricType - value =>  $curValue"
 
 #--- at this point, there HAS to be a device, and there has to be a temperature
-logTemperature $curDevice $curTemperature $metricType
+logTemperature $curDevice $curValue $metricType

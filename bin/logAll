@@ -32,7 +32,7 @@ EOT
   case $1 in
     --db|--active)
       aliases=$(dbGetAllLocalAndActiveSensorAndMetricIds)
-      compositeDevices="$(dbGetAllCompositeSensors)"
+      compositeSensors="$(dbGetAllCompositeSensors)"
       ;;
     --help|-h)
       usage
@@ -40,7 +40,7 @@ EOT
       ;;
     --logDisabled|--all)
       aliases=$(dbGetAllLocalSensorAndMetricIds)
-      compositeDevices="$(dbGetAllCompositeSensors)"
+      compositeSensors="$(dbGetAllCompositeSensors)"
       ;;
     *)
       usage

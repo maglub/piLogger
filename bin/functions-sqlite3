@@ -100,7 +100,7 @@ EOT
 }
 
 function dbGetAllLocalAndActiveSensorAndMetricIds(){
-  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type in ('1wire','composite') and active='true';"
+  sqlite3 -separator " " $appDbFile "select id, metric from sensor where type in ('1wire') and active='true';"
 }
 
 function dbGetAllLocalSensorAndMetricIds(){
