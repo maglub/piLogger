@@ -91,8 +91,8 @@
 		$app->render(200,o2h($res));
 	});
 	
-	$app->get('/sensor/:id/temperature/:range', function($id,$range = "") use ($app,$root) {
-		$res = getTemperatureRangeBySensorId($id,$range);
+	$app->get('/sensor/:id/:metric/:range', function($id,$metric,$range = "") use ($app,$root) {
+		$res = getTemperatureRangeBySensorId($id,$range,$metric);
 		$app->render(200,o2h($res));
 	});
 	
@@ -112,8 +112,8 @@
 		$app->render(200,o2h($res));
 	});
 	
-       $app->get('/alias/:alias/temperature/:range', function($alias,$range = "") use ($app,$root) {
-                       $res = getRRDRangeByIdType(getSensorIdByAlias($alias), "temperature", $range);
+       $app->get('/alias/:alias/:metric/:range', function($alias,$metric,$range = "") use ($app,$root) {
+                       $res = getRRDDataBySensorId(getSensorIdByAlias($alias), $range, $metric);
                        $app->render(200,o2h($res));
 	});
 
