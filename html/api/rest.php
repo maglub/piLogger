@@ -86,8 +86,8 @@
 	});
 
 	
-	$app->get('/sensor/:id/temperature', function($id) use ($app,$root) {
-                $res  = ["id" => $id] + getLastTemperatureBySensorId($id);
+	$app->get('/sensor/:id/:metric', function($id,$metric) use ($app,$root) {
+                $res  = ["id" => $id] + getLastTemperatureBySensorId($id,$metric);
 		$app->render(200,o2h($res));
 	});
 	
