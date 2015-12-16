@@ -96,13 +96,6 @@
 		$app->render(200,o2h($res));
 	});
 	
-        #--- deprecated, can be removed after proper testing of /sensor/:id/temperature:range
-	$app->get('/sensor/:id/temperature/:range/old', function($id,$range = "") use ($app,$root) {
-		$resOs = shell_exec("${root}/../bin/exportJSON --sensor={$id} {$range} 2>&1");
-		print "${resOs}";
-	});
-	
-	
 	$app->get('/sensor/all/info', function() use ($app, $root) {
 		$res = getSensorInfoAll();
 		$app->render(200,o2h($res));
