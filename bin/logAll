@@ -53,7 +53,7 @@ EOT
   # if we have any files in the spool directory we have to call the corresponding function to clear it
   [ $(find $spoolDir -type f | wc -l) -gt 0 ] && { logIt "$spoolDir is not Empty"; callSpoolerFunctions; } || logIt "$spoolDir is empty - no need to call corresponding functions"
 
-  # log temperature for all local devices
+  # log temperature for all local sensors
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   #echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
   echo $aliases | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
