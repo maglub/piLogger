@@ -496,8 +496,8 @@ function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperatu
 #-----------------------------------
 # getTemperatureRangeBySensorId()
 #-----------------------------------
-function getTemperatureRangeBySensorId($curId, $timeframe = "12h"){
-  $curRes = getRRDDataBySensorId($curId, $timeframe);
+function getTemperatureRangeBySensorId($curId, $timeframe="12h",$metricType="temperature"){
+  $curRes = getRRDDataBySensorId($curId, $timeframe, $metricType);
   $ret = array();
 
   $ret['sensor'] = $curId;
