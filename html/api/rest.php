@@ -53,10 +53,10 @@
 		$app->render(200,o2h($res));
 	});
 
-	$app->get('/sensor/:id', function($id) use ($app) {
-		$res=getSensorById($id);
-		$app->render(200,o2h($res));
-	});
+	$app->get('/sensor/:id/:metric', function($id,$metric) use ($app) { 
+		$res=getSensorById($id,$metric); 
+		$app->render(200,o2h($res)); 
+	}); 
 
 	
 	#--- new, proper REST for remote logging
