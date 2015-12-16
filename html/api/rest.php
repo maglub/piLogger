@@ -7,7 +7,6 @@
 		$_SERVER['DOCUMENT_ROOT'] = __DIR__ . "/..";
 		$argv = $GLOBALS['argv'];
 		array_shift($GLOBALS['argv']);
-		#$pathInfo = implode('/', $argv);
 		$pathInfo = $argv[0];
 	}
 
@@ -44,7 +43,6 @@
 		return $ret;
 	}
 
-	//$isAuthenticated = checkMySession(CONST_TRIAL);
 	$isAuthenticated = true;
 	#==================================
 	# MAIN
@@ -53,14 +51,12 @@
 	$app->get('/sensor', function() use ($app) {
 		$res=getSensors();
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 
 	$app->get('/sensor/:id', function($id) use ($app) {
 		$res=getSensorById($id);
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 
 	
 	#--- new, proper REST for remote logging
@@ -93,59 +89,50 @@
 	$app->get('/sensor/:id/temperature', function($id) use ($app,$root) {
                 $res  = ["id" => $id] + getLastTemperatureBySensorId($id);
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 	
 	$app->get('/sensor/:id/temperature/:range', function($id,$range = "") use ($app,$root) {
 		$res = getTemperatureRangeBySensorId($id,$range);
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 	
         #--- deprecated, can be removed after proper testing of /sensor/:id/temperature:range
 	$app->get('/sensor/:id/temperature/:range/old', function($id,$range = "") use ($app,$root) {
 		$resOs = shell_exec("${root}/../bin/exportJSON --sensor={$id} {$range} 2>&1");
 		print "${resOs}";
-	}//end of function
-	);
+	});
 	
 	
 	$app->get('/sensor/all/info', function() use ($app, $root) {
 		$res = getSensorInfoAll();
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 
        $app->get('/alias', function() use ($app) {
                $res=getAliases();
                $app->render(200,o2h($res));
-        }//end of function
-       );
+        });
 
 
 	$app->get('/alias/:alias', function($alias) use ($app) {
 		$res=getSensorByAlias($alias);
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 	
        $app->get('/alias/:alias/temperature/:range', function($alias,$range = "") use ($app,$root) {
                        $res = getRRDRangeByIdType(getSensorIdByAlias($alias), "temperature", $range);
                        $app->render(200,o2h($res));
-               }//end of function
-       );
+	});
 
 	$app->get('/plotgroup', function() use ($app) {
 		$res=getPlotgroups();
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 
 	$app->get('/plotgroup/:groupName', function($groupName) use ($app) {
 		$res=getPlotgroupByGroupName($groupName);
 		$app->render(200,o2h($res));
-	}//end of function
-	);
+	});
 	
 	$app->run();
 
