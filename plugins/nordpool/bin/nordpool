@@ -1,0 +1,56 @@
+#!/usr/bin/php5
+<?php
+
+
+function getMarketData($date = ""){
+
+  $curl = curl_init();
+
+  if ($date == "") {
+    $url = "http://www.nordpoolspot.com/api/marketdata/page/10?currency=,,EUR,EUR";
+  } else {
+    #--- note, american date DD-MM-YYYY
+    $url = "http://www.nordpoolspot.com/api/marketdata/page/10?currency=,SEK,SEK,EUR&endDate={$date}";
+  }
+
+  curl_setopt($curl, CURLOPT_URL,$url); 
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+  curl_setopt($curl, CURLOPT_USERPWD, "admin:Br09k13");
+  $result = curl_exec($curl);
+
+  $result_parsed = json_decode($result);
+
+  $myList =  array();
+  foreach ($result_parsed->data->Rows as $row){
+    $myRow = array();
+    foreach ($row->Columns as $column){
+      $myRow[$column->Name] =  str_replace(',','.',str_replace(' ','', $column->Value));
+    }
+    $myList[] = array("time" => $row->StartTime, "epoc" => strtotime($row->StartTime), "name" => str_replace('&nbsp;','',$row->Name) ) + $myRow;
+  }
+
+  curl_close($curl);
+
+  return $myList;
+}
+
+function printTable($marketData){
+  printf ("%-20s %-13s %-15s %-8s %-8s %-8s %-8s\n", "Date", "epoc", "period", "SE1", "SE2", "SE3", "SE4");
+
+  foreach ($marketData as $curRow){
+    printf("%-20s %-13s %-15s %-8s %-8s %-8s %-8s\n", $curRow["time"], $curRow["epoc"], $curRow["name"],$curRow["SE1"], $curRow["SE2"], $curRow["SE3"], $curRow["SE4"]);
+  }
+
+  return 0;
+}
+#===========================================
+#
+#===========================================
+
+$date = "27-11-2015";
+$myMarketData = getMarketData($date);
+printTable($myMarketData);
+
+
+?>

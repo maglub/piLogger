@@ -1,0 +1,11 @@
+logDir=$this_dir/../log
+logFile=$logDir/${this_script}.log
+#------------------------------------
+# logIt
+#------------------------------------
+logIt(){
+  logIt_TS=$(date "+%Y%m%d_%H%M%S")
+  echo "$logIt_TS;$thisScript;$@" >> $logFile
+  echo "$logIt_TS;$thisScript;$@" 1>&2
+}
+
