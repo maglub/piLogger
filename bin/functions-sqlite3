@@ -12,7 +12,8 @@ EOT
 # dbGetDBFileByAlias()
 #---------------------------------
 function dbGetDBFileByAlias(){
-  local curSensorType=temperature
+  local curSensorType=$2
+  [ -z "$curSensorType" ] && curSensorType=temperature
 
   [ -f "$rrdDir/${1}.${curSensorType}.rrd" ] && { echo "$rrdDir/$1.${curSensorType}.rrd" ; return 0 ; }
 
@@ -45,6 +46,16 @@ function dbGetAliasesFromPlotGroup(){
   #--- Make sure to return deviceId if there is no alias for the sensor
   sqlite3 $appDbFile<<EOT
   select ifnull(al.alias,pg.sensor_id) from plotgroup pg left outer join alias al on pg.sensor_id = al.id where pg.groupname = '$1';
+  -- select a.alias from alias a, plotgroup b where a.id = b.sensor_id and b.groupname = '$1';
+EOT
+}
+
+function dbGetAliaseTokensFromPlotGroup(){
+  #--- Make sure to return deviceId if there is no alias for the sensor
+  sqlite3 $appDbFile<<EOT
+    select sensorname.name || ':' || ifnull(pg.metric,'temperature') || ':' || sensorname.multiplier from (select sensor.id, sensor.metric, sensor.multiplier, ifnull(alias.alias,sensor.id) as name from sensor left outer join alias on sensor.id = alias.id) sensorname, plotgroup pg where pg.sensor_id = sensorname.id and sensorname.metric = pg.metric and pg.groupname = '$1';
+  -- select ifnull(al.alias,pg.sensor_id) || ':' || ifnull(pg.metric,'temperature') || ':' || multiplier from plotgroup pg left outer join alias al on pg.sensor_id = al.id left outer join sensor on pg.sensor_id = sensor.id where pg.groupname = '$1';
+  -- select ifnull(al.alias,pg.sensor_id) || ':' || ifnull(pg.metric,'temperature') from plotgroup pg left outer join alias al on pg.sensor_id = al.id where pg.groupname = '$1';
   -- select a.alias from alias a, plotgroup b where a.id = b.sensor_id and b.groupname = '$1';
 EOT
 }
@@ -120,9 +131,7 @@ EOT
 # dbGetAllDevicePaths()
 #---------------------------------
 function dbGetAllDevicePaths(){
-  sqlite3 $appDbFile<<EOT
-  select path from sensor where path <> '';
-EOT
+  sqlite3 $appDbFile "select path from sensor where path <> '';"
 }
 
 #---------------------------------

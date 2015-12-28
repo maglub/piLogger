@@ -67,4 +67,4 @@ esac
 logIt "  - Logging data for sensor $curSensor,metricType=$metricType - value =>  $curValue"
 
 #--- at this point, there HAS to be a sensor, and there has to be a temperature
-logTemperature $curSensor $curValue $metricType
+logMetric $curSensor $curValue $metricType

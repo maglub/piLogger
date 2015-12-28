@@ -226,6 +226,25 @@ function getSensorById($id,$metricType='temperature'){
   return $retArray;
 }
 
+function sensorExistsById($id){
+  global $db;
+  $retArray = null;
+
+  $sql = "select count(*) as num from sensor where id = :id limit 1;";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':id' => $id));
+
+  while ($row = $sth->fetch()) {
+    $num = $row['num'];
+  }
+
+  if ($num == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 #-----------------------------------
 # getSensorIdByAlias()
 #-----------------------------------
@@ -399,7 +418,15 @@ function getSensorIdFromFilesystem($options = array() ){
   $curRet = [] ;
   foreach ($curRes as $curFile) {
     if (is_dir($sensorDir . "/" . $curFile) && preg_match('/^-?[0-9]+$/', $curFile[0]) ) {
-      $curRet[] = array("id"=>$curFile);
+      $curType = file_get_contents($sensorDir . "/" . $curFile . "/type");
+      $curId = file_get_contents($sensorDir . "/" . $curFile . "/id");
+      $curFamily = file_get_contents($sensorDir . "/" . $curFile . "/family");
+
+      #--- get the available metrics
+      $curFiles = scandir($sensorDir . "/" . $curFile);
+      $curMetrics = array_diff(scandir($sensorDir . "/" . $curFile), array('..', '.','address', 'alias', 'crc8', 'family', 'locator', 'id', 'memory', 'pages', 'r_id', 'type','r_address','r_locator'));
+
+      $curRet[] = array("id"=>$curFile, "type" => $curType, "family" => $curFamily, "sensorId" => $curId, "metrics" => $curMetrics);
     }
 
   }
@@ -420,6 +447,7 @@ function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
 # setRRDDataBySensorId()
 #-----------------------------------
 function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature"){
+
 	if (!file_exists("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd")){
 		createRRDDatabaseBySensorId($curId, $metricType);
 	}
@@ -480,10 +508,11 @@ function getSensorInfoAll(){
 #-----------------------------------
 function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperature"){
   $curRes = getRRDDataBySensorId($curId, $timeframe,$metricType);
+  $metricType = preg_replace('/\./', '_', $metricType);
 
   $n = 0;
   $ret="";
-  foreach($curRes['data']['temperature'] as $ts => $value){
+  foreach($curRes['data'][$metricType] as $ts => $value){
     if(!is_nan($value)){
       $ret .= (($n > 0)?",".$value: $value);
       $n+=1;

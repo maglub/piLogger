@@ -85,9 +85,7 @@ $app->get('/sensors', function () use ($app) {
         $newSensors = [];
 
 	foreach (getSensorIdFromFilesystem( array('forceScan'=>true) ) as $curSensorFile){
-		$curSensor = getSensorById($curSensorFile['id']);
-
-		if (!$curSensor){
+		if (! sensorExistsById($curSensorFile['id'])){
 			$newSensors[] = $curSensorFile;
 		}
 	}

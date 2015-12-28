@@ -1,15 +1,40 @@
 #!/bin/bash
 
 this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+
 . $this_dir/functions
 sensorName=$1
 sensorType=$2
+sensorMinValue=$3
 
 [ -z "$dbDir" ] && errorExit "No data directory: $dbDir"
 [ -z "$sensorName" ] && errorExit "No sensorName parameter given"
 [ -z "$sensorType" ] && sensorType=temperature
 
+sensorTypeFiltered=$(echo "$sensorType" | sed -e 's/\./_/g')
 dbFile=$dbDir/${sensorName}.${sensorType}.rrd
+
+case $sensorType in
+  counter*)
+    dbType=COUNTER
+    ;;
+  *)
+    dbType=GAUGE
+    ;;
+esac
+
+echo "sensorTypeFiltered=$sensorTypeFiltered" 1>&2
+echo "dbType=$dbType" 1>&2
+echo "Arguments: $*"
+
+if [ -z "$sensorMinValue"  ]
+then
+  minValue=U
+else
+  minValue=$sensorMinValue
+fi
+
 
 #--- rrd file starts today
 startDate="$(date "+%Y%m%d 00:00")"
@@ -24,10 +49,13 @@ logIt "  - Creating new RRD $dbFile start: $startDate "
 #--- 259200 samples of 10 seconds -> 1 month
 #--- 86400 sampes of 1 minute -> 60 days
 #--- 86400 sampes of 10 minutes -> 600 days
+scriptFile=$(mktemp -t $this_script.XXXXXX)
+
+cat>$scriptFile<<EOT
 rrdtool create $dbFile \
   --start $startDateEpoc \
   --step 10 \
-  DS:${sensorType}:GAUGE:259200:U:U \
+  DS:${sensorTypeFiltered}:$dbType:259200:${minValue}:U \
   RRA:AVERAGE:0.5:1:259200 \
   RRA:AVERAGE:0.5:6:86400 \
   RRA:AVERAGE:0.5:60:86400 \
@@ -37,6 +65,11 @@ rrdtool create $dbFile \
   RRA:MAX:0.5:1:259200 \
   RRA:MAX:0.5:6:86400 \
   RRA:MAX:0.5:60:86400
+EOT
+
+sh $scriptFile
+cat $scriptFile
+rm $scriptFile
 
 chmod g+w $dbFile
 sudo chgrp www-data $dbFile
