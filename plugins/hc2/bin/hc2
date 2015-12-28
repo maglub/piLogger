@@ -10,7 +10,7 @@ function getSensorData($id = ""){
   if ($id == "") {
     curl_setopt($curl, CURLOPT_URL, "http://192.168.3.10/api/devices");
   } else {
-    curl_setopt($curl, CURLOPT_URL, "http://192.168.3.10/api/devices/53");
+    curl_setopt($curl, CURLOPT_URL, "http://192.168.3.10/api/devices/{$id}");
   }
 
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
