@@ -9,7 +9,7 @@
   db_connect();
 
 #-----------------------------------
-# getAppConfig()
+# authenticate()
 #-----------------------------------
 function authenticate($username, $password){
 	if (genPasswordHash($password) == getAdminPassword()){
@@ -105,7 +105,7 @@ function createPasswdTable(){
 #-----------------------------------
 # getAppConfig()
 #-----------------------------------
-function getAppConfig($configFile){
+function getAppConfig($configFile = __DIR__ . "/../etc/piLogger.conf"){
 	#--- from http://inthebox.webmin.com/one-config-file-to-rule-them-all
 	$file=$configFile;
 	$lines = file($file);
