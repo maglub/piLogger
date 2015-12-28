@@ -175,6 +175,20 @@ function dbGetAllCompositeSensors(){
   sqlite3 $appDbFile "select id from sensor where type = 'composite';"
 }
 
+#---------------------------------
+# dbGetAllScriptSensors()
+#---------------------------------
+function dbGetAllScriptSensors(){
+  sqlite3 $appDbFile "select id from sensor where type = 'script';"
+}
+
+#---------------------------------
+# dbGetScriptBySensorId()
+#---------------------------------
+function dbGetScriptBySensorId(){
+  sqlite3 $appDbFile "select path from sensor where id = '$1';"
+}
+
 
 #---------------------------------
 # dbGetDevicePathByDeviceId()
