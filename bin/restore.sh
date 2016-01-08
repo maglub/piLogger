@@ -64,7 +64,7 @@ function restoreRemoteLoggingScripts(){
   OLD_IFS=$IFS
   IFS='
 '
-  for line in $(cat $linkFile)
+  for line in $(cat $linkFile | grep -v "^\* ->" )
   do
     IFS=$OLD_IFS
     fileName=$(echo $line | awk -F" -> " '{print $1}')
