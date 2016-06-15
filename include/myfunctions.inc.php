@@ -482,9 +482,9 @@ function getLastRRDDataBySensorId($curId,$metricType="temperature"){
 }
 
 #-----------------------------------
-# getLastTemperatureBySensorId()
+# getLastDataBySensorId()
 #-----------------------------------
-function getLastTemperatureBySensorId($curId,$metricType="temperature"){
+function getLastDataBySensorId($curId,$metricType="temperature"){
   $res = getLastRRDDataBySensorId($curId,$metricType);
   return Array("timestamp" => $res['last_update'], "metricValue" => (float)$res['data'][0]);
 }
@@ -495,7 +495,7 @@ function getLastTemperatureBySensorId($curId,$metricType="temperature"){
 function getSensorInfoAll(){
   $res = getSensors();
   foreach ($res as &$curRes) {
-    $curRes['temperature'] = getLastTemperatureBySensorId($curRes['id']);
+    $curRes['temperature'] = getLastDataBySensorId($curRes['id']);
     $curRes['devicePath'] = $curRes['id'];
     $curRes['sensorName'] = $curRes['id'];
     $curRes['aliases'] = array($curRes['alias']);
@@ -523,18 +523,22 @@ function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperatu
 }
 
 #-----------------------------------
-# getTemperatureRangeBySensorId()
+# getDataRangeBySensorId()
 #-----------------------------------
-function getTemperatureRangeBySensorId($curId, $timeframe="12h",$metricType="temperature"){
+function getDataRangeBySensorId($curId, $timeframe="12h",$metricType="temperature"){
   $curRes = getRRDDataBySensorId($curId, $timeframe, $metricType);
   $ret = array();
 
-  $ret['sensor'] = $curId;
-  $ret['temperature'] = array();
+  $metricTypeParsed = preg_replace('/\./', '_', $metricType);
 
-  foreach($curRes['data']['temperature'] as $ts => $value){
+
+  $ret['sensor'] = $curId;
+  $ret['type'] = $metricType;
+  $ret['data'] = array();
+
+  foreach($curRes['data'][$metricTypeParsed] as $ts => $value){
     if(!is_nan($value)){
-      $ret['temperature'][] = array( $ts *1000 ,(float)$value);
+      $ret['data'][] = array( $ts *1000 ,(float)$value);
     }
   }
 

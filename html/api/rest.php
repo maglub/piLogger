@@ -87,12 +87,12 @@
 
 	
 	$app->get('/sensor/:id/:metric', function($id,$metric) use ($app,$root) {
-                $res  = ["id" => $id] + getLastTemperatureBySensorId($id,$metric);
+                $res  = ["id" => $id] + getLastDataBySensorId($id,$metric);
 		$app->render(200,o2h($res));
 	});
 	
 	$app->get('/sensor/:id/:metric/:range', function($id,$metric,$range = "") use ($app,$root) {
-		$res = getTemperatureRangeBySensorId($id,$range,$metric);
+		$res = getDataRangeBySensorId($id,$range,$metric);
 		$app->render(200,o2h($res));
 	});
 	

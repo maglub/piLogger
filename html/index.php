@@ -75,7 +75,7 @@ $app->get('/sensors', function () use ($app) {
         
         // loop over all sensors and add new columns for later use in the template
         for($x = 0; $x < count($curSensors); $x++) {
-                $curLastMetric = getLastTemperatureBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
+                $curLastMetric = getLastDataBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
                 $curSensors[$x]['LastMetricValue'] = $curLastMetric['metricValue'];
                 $curSensors[$x]['LastMetricTimeStamp'] = $curLastMetric['timestamp']; 
                 $curSensors[$x]['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
@@ -99,7 +99,7 @@ $app->get('/sensor/:sensorId/:metricType', function ($sensorId,$metricType) use 
 	$curSensor = getSensorById($sensorId,$metricType);
 
         // get the last metric value and time in an array
-        $curLastMetric = getLastTemperatureBySensorId($sensorId,$metricType);
+        $curLastMetric = getLastDataBySensorId($sensorId,$metricType);
 
         // now extend the original array with further information
 	$curSensor['LastMetricValue'] = $curLastMetric['metricValue'];
