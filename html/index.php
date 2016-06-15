@@ -76,7 +76,7 @@ $app->get('/sensors', function () use ($app) {
         // loop over all sensors and add new columns for later use in the template
         for($x = 0; $x < count($curSensors); $x++) {
                 $curLastMetric = getLastDataBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
-                $curSensors[$x]['LastMetricValue'] = $curLastMetric['metricValue'];
+                $curSensors[$x]['LastMetricValue'] = $curLastMetric['data'];
                 $curSensors[$x]['LastMetricTimeStamp'] = $curLastMetric['timestamp']; 
                 $curSensors[$x]['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
                 $curSensors[$x]['sparkline'] = printSparklineByDeviceId($curSensors[$x]['id'],"12h",$curSensors[$x]['metric']);
