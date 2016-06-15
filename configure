@@ -4,6 +4,7 @@ this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
 configDir=$this_dir/etc
 configFile=$configDir/piLogger.conf
+configYml=$configDir/piLogger.yml
 
 withAbioWire=""
 piLoggerLocale=""
@@ -152,6 +153,7 @@ sudoCount=$(sudo -l 2>/dev/null | awk 'printit=="true" {print} /may run the foll
 #--- prepare the config file
 
 [ -f $configFile ] && errorExit "File $configFile already exists. Exiting! Please remove the config file before running again."
+[ -f $configYml ] && errorExit "File $configYml already exists. Exiting! Please remove the config file before running again."
 
 #--- set the interface
 
@@ -205,6 +207,26 @@ remoteHost=""
 deviceIdentifier=$deviceIdentifier
 authToken=""
 
+EOT
+
+
+cat>$configYml<<EOT
+remoteLogging:
+  enabled:       true
+  host:
+  blacklist: 
+#-------------------------
+# for piLogger Cloud
+#-------------------------
+  piLogger_cloud:
+    deviceIdentifier: SECRET
+    authToken: "SECRET"
+    blacklist: 
+#------------------------
+# shiftr.io
+#------------------------
+  shiftr:
+    shiftrAuth: "SECRET"
 EOT
 
 [ -n "$minimizeInstall" ] && { echo "minimizeInstall=true" >> $configFile ; }

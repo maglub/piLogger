@@ -33,6 +33,7 @@ EOT
     --db|--active)
       aliases=$(dbGetAllLocalAndActiveSensorAndMetricIds)
       compositeSensors="$(dbGetAllCompositeSensors)"
+      scriptSensors="$(dbGetAllScriptSensors)"
       ;;
     --help|-h)
       usage
@@ -57,6 +58,15 @@ EOT
   [ -z "$parallelProcessing" ] && parallelProcessing=1
   #echo $aliases | xargs -L1 -n 1 -P${parallelProcessing} $this_dir/logMetric --type=temperature 
   echo $aliases | xargs -n 2 -P${parallelProcessing} bash -c $this_dir'/logMetric --type=$1 $0' 
+  
+  # process all scripted sensors
+  for scriptSensor in $scriptSensors
+  do
+    curScript=$(dbGetScriptBySensorId $scriptSensor)
+    logIt "  - Running script $curScript for sensor: $scriptSensor"
+    curTemp=$($curScript)
+    $this_dir/logMetric $scriptSensor $curTemp
+  done
   
   # process all compositeSensors
   for compositeSensor in $compositeSensors
