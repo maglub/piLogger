@@ -107,7 +107,7 @@ do
 
   #--- 2015-12-16 => change this occurance of temperature to "values" asap, which requires rewrite of graph code in javascript
   #--- XXX
-  printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
+  printf '%s\n{"sensor":"'%s'", "type":"temperature", "data":[' "${curComma}" ${curAlias}
 
   curDbFile=$(dbGetDBFileByAlias $curAlias $curMetric)
 

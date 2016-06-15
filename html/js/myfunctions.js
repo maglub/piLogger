@@ -54,71 +54,19 @@ function getSpinnerOptsSmall(){
 //----------------------------------------------------------
   function draw_chart(myDiv, myData){
 
-
-/*
-     var plotData = [];
-     var plotDataSensors = [ ];
-
-     var plotDataArray = new Array();
-
-     for (i=0; i<myData.length ; i++) {
-       plotDataArray[i] = new Object();
-       plotDataArray[i].data = myData[i].temperature.slice(0);
-       plotDataArray[i].name = myData[i].sensor.slice(0);
-       plotData[i] = myData[i].temperature.slice(0);
-       plotDataSensors[i] = myData[i].sensor.slice(0);
-     }
-
-     var options={
-          chart: {
-              type: 'line',
-              zoomType: 'x'
-          },
-          plotOptions: { line: {animation: false },
-                         series: {animation: false ,
-                         marker: { enabled: false } }
-                       },
-          title: {
-              text: 'Temperatures: ' + myPane 
-          },
-          xAxis: {
-              type: 'datetime',
-              title: 'Date',
-              maxZoom: 1800000
-          },
-          yAxis: {
-              title: {
-                  text: 'C'
-              }
-          },
-                   //plotDataArray is an array [ { data: [], name: string } ]
-          series:  plotDataArray
-
-     };
-
-     //$('#highcharts').highcharts( options );
-     $('#'+myPane).highcharts( options );
-
-        Highcharts.setOptions({                                            // This is for all plots, change Date axis to local timezone
-                global : {
-                    useUTC : false
-                }
-            });
-
-
-*/
-
       // variables for holding information from myData
       var plotData = [];
       var plotDataSensors = [ ];
       var plotDataArray = new Array();
+
+      var graphTitle = myData[0].type + ": " + myDiv;
    
       // loop over all json data that we get and store them in an array
       for (i=0; i<myData.length ; i++) {
          plotDataArray[i] = new Object();
-         plotDataArray[i].data = myData[i].temperature.slice(0);
+         plotDataArray[i].data = myData[i].data.slice(0);
          plotDataArray[i].name = myData[i].sensor.slice(0);
-         plotData[i] = myData[i].temperature.slice(0);
+         plotData[i] = myData[i].data.slice(0);
          plotDataSensors[i] = myData[i].sensor.slice(0);
       }
    
@@ -138,7 +86,7 @@ function getSpinnerOptsSmall(){
             renderTo: myDiv
          },
          title: {
-            text: 'Temperatures: ' + myDiv
+            text: graphTitle 
          },
          xAxis: {
             type: 'datetime',
@@ -147,7 +95,7 @@ function getSpinnerOptsSmall(){
          },
          yAxis: {
             title: {
-               text: 'C'
+               text: ''
             }
          },
          credits: {
@@ -261,7 +209,7 @@ function printGauge(myPane, myData){
     
         series: [{
             name: '' ,
-            data: [ myData.temperature ] ,
+            data: [ myData.data ] ,
             tooltip: {
                 valueSuffix: 'C'
             }
@@ -287,7 +235,7 @@ function updateDevicesPane(deviceData){
       outputString += '<li>' + deviceData[i].sensorName + 
                       " -> " + deviceData[i].devicePath +
                       " -> " + deviceData[i].aliases.toString() +
-                      " -> " + deviceData[i].temperature;
+                      " -> " + deviceData[i].data;
     }
     outputString += '</ul>';
 
