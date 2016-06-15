@@ -31,9 +31,20 @@ function getSensorData($id = ""){
   return $result_parsed;
 }
 
-function getTemperature($id){
+function getSensorValue($id){
   $res = getSensorData($id);
-  return $res->properties->value;
+
+  switch ($res->properties->value) {
+    case "true":
+      return 10;
+      break;
+    case "false":
+      return 0;
+      break;
+    default:
+      return $res->properties->value;
+      break;
+  }
 }
 
 #=========================================
@@ -41,7 +52,7 @@ function getTemperature($id){
 #=========================================
 
   if (! isset( $argv[1] ) ) { exit(1); }
-  $curTemperature = getTemperature($argv[1]);
-  print "{$curTemperature}\n";
+  $curSensorValue = getSensorValue($argv[1]);
+  print "{$curSensorValue}\n";
 
 ?>
