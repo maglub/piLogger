@@ -36,7 +36,7 @@ logIt "* Starting export of JSON for $1 $2"
 
 #--- if no parameters sent, print "Default graph"
 
-[ -z "$1" ] && { curAliases=$(dbGetAliaseTokensFromPlotGroup default) ; graphName=default ; numSensors=2 ; }
+[ -z "$1" ] && { curAliases=$(dbGetAliasTokensFromPlotGroup default) ; graphName=default ; numSensors=2 ; }
 
 
 if [ -n "$1" ]
@@ -50,7 +50,7 @@ then
 	
 		*)
 		graphName=$1
-		curAliases=$(dbGetAliaseTokensFromPlotGroup $graphName)
+		curAliases=$(dbGetAliasTokensFromPlotGroup $graphName)
 		numSensors=2
 		;;
 		

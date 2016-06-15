@@ -50,10 +50,10 @@ function dbGetAliasesFromPlotGroup(){
 EOT
 }
 
-function dbGetAliaseTokensFromPlotGroup(){
+function dbGetAliasTokensFromPlotGroup(){
   #--- Make sure to return deviceId if there is no alias for the sensor
   sqlite3 $appDbFile<<EOT
-    select sensorname.name || ':' || ifnull(pg.metric,'temperature') || ':' || sensorname.multiplier from (select sensor.id, sensor.metric, sensor.multiplier, ifnull(alias.alias,sensor.id) as name from sensor left outer join alias on sensor.id = alias.id) sensorname, plotgroup pg where pg.sensor_id = sensorname.id and sensorname.metric = pg.metric and pg.groupname = '$1';
+    select sensorname.name || ':' || ifnull(pg.metric,'temperature') || ':' || ifnull(sensorname.multiplier,1) from (select sensor.id, sensor.metric, sensor.multiplier, ifnull(alias.alias,sensor.id) as name from sensor left outer join alias on sensor.id = alias.id) sensorname, plotgroup pg where pg.sensor_id = sensorname.id and sensorname.metric = pg.metric and pg.groupname = '$1';
   -- select ifnull(al.alias,pg.sensor_id) || ':' || ifnull(pg.metric,'temperature') || ':' || multiplier from plotgroup pg left outer join alias al on pg.sensor_id = al.id left outer join sensor on pg.sensor_id = sensor.id where pg.groupname = '$1';
   -- select ifnull(al.alias,pg.sensor_id) || ':' || ifnull(pg.metric,'temperature') from plotgroup pg left outer join alias al on pg.sensor_id = al.id where pg.groupname = '$1';
   -- select a.alias from alias a, plotgroup b where a.id = b.sensor_id and b.groupname = '$1';
