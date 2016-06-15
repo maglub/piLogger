@@ -259,7 +259,7 @@ function logTemperature(){
 #---------------------------------
 function logTemperatureRemote(){
   local sensor=$1
-  local temperature=$2
+  local data=$2
   local metricType=$3
   
   [ -z "$metricType" ] && metricType=temperature
@@ -270,7 +270,7 @@ function logTemperatureRemote(){
   export PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
   export PILOGGER_DEVICE_NAME="$HOSTNAME"
   export PILOGGER_SENSOR="$sensor"
-  export PILOGGER_METRIC_VALUE="$temperature"
+  export PILOGGER_DATA="$data"
   export PILOGGER_METRIC_TYPE="$metricType"
   export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
   

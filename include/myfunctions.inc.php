@@ -268,14 +268,6 @@ function getSensorByAlias($alias){
 }
 
 #-----------------------------------
-# getSensorTemperatureDataRangeById()
-#-----------------------------------
-function getSensorTemperatureDataRangeById($id, $range){
-  $ret = Array(12,15,24);
-  return $ret;
-}
-
-#-----------------------------------
 # getAliases()
 #-----------------------------------
 function getAliases(){
@@ -446,13 +438,13 @@ function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
 #-----------------------------------
 # setRRDDataBySensorId()
 #-----------------------------------
-function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature"){
+function setRRDDataBySensorId($curId, $data, $metricType = "temperature"){
 
 	if (!file_exists("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd")){
 		createRRDDatabaseBySensorId($curId, $metricType);
 	}
 	
-   $curRes = rrd_update("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd", array( "N:" . $metricValue ) );
+   $curRes = rrd_update("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd", array( "N:" . $data ) );
 
    if($curRes == 0 ) {
 	   $err = rrd_error();
@@ -486,7 +478,7 @@ function getLastRRDDataBySensorId($curId,$metricType="temperature"){
 #-----------------------------------
 function getLastDataBySensorId($curId,$metricType="temperature"){
   $res = getLastRRDDataBySensorId($curId,$metricType);
-  return Array("timestamp" => $res['last_update'], "metricValue" => (float)$res['data'][0]);
+  return Array("timestamp" => $res['last_update'], "type"=>$metricType, "data" => (float)$res['data'][0]);
 }
 
 #-----------------------------------
