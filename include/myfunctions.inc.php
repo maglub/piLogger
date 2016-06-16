@@ -154,6 +154,24 @@ function getSensorGroups(){
 }
 
 #-----------------------------------
+# getMultiplierBySensorIdMetricType($curId, $metricType)
+#-----------------------------------
+function getMultiplierBySensorIdMetricType($curId, $metricType){
+  global $db;
+  $retArray = array();
+
+  $sql = "select multiplier from sensor where id = :sensorId and type = :sensorType";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':sensorId' => $curId, ':sensorType' => $metricType));
+
+  while($row = $sth->fetch()){
+      $retArray = array('multiplier' => $row['multiplier']) ; 
+  }
+
+  $retArray = array('multiplier' => 0.1);
+  return $retArray;
+}
+#-----------------------------------
 # getSensorGroupMembers() 
 #-----------------------------------
 function getSensorGroupMembers($sensorGroup){
@@ -252,18 +270,32 @@ function getSensorIdByAlias($alias){
   global $db;
 
   $sql = "select * from alias where alias = :alias ";
-  $sth = $db->prepare();
+  $sth = $db->prepare($sql);
   $sth->execute(array(':alias' => $alias));
   $row = $sth->fetch();
   return $row['id'];
 }
 
 #-----------------------------------
+# getSensorIdMetricByAlias()
+#-----------------------------------
+function getSensorIdMetricByAlias($alias){
+  global $db;
+
+
+  $sql = "select id, ifnull(metric, 'temperature') as metric from alias where alias = :alias ";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':alias' => $alias));
+  $row = $sth->fetch();
+  return array("id" => $row['id'], "metric" => $row['metric']);
+}
+
+#-----------------------------------
 # getSensorByAlias()
 #-----------------------------------
 function getSensorByAlias($alias){
-  $curId = getSensorIdByAlias($alias);
-  $ret = getSensorById($curId);
+  $curRes = getSensorIdMetricByAlias($alias);
+  $ret = getSensorById($curRes['id'], $curRes['metric']);
   return $ret;	
 }
 
@@ -519,6 +551,11 @@ function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperatu
 #-----------------------------------
 function getDataRangeBySensorId($curId, $timeframe="12h",$metricType="temperature"){
   $curRes = getRRDDataBySensorId($curId, $timeframe, $metricType);
+  
+  $curMultiplierRes = getMultiplierBySensorIdMetricType($curId, $metricType);
+  //$curMultiplierRes = array('multiplier' => 0.1);
+  $curMultiplier = $curMultiplierRes['multiplier'];
+
   $ret = array();
 
   $metricTypeParsed = preg_replace('/\./', '_', $metricType);
@@ -530,7 +567,11 @@ function getDataRangeBySensorId($curId, $timeframe="12h",$metricType="temperatur
 
   foreach($curRes['data'][$metricTypeParsed] as $ts => $value){
     if(!is_nan($value)){
-      $ret['data'][] = array( $ts *1000 ,(float)$value);
+      if ($metricType == "counter.A" || $metricType == "counter.B") {
+        $ret['data'][] = array( $ts *1000 ,(float)$value * 3600 * $curMultiplier );
+      } else {
+        $ret['data'][] = array( $ts *1000 ,(float)$value);
+      }
     }
   }
 
