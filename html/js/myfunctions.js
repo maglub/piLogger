@@ -377,3 +377,45 @@ function printGroupGraph(curPane, groupName, curHours, dontSpinIt){
    return 0;
 
 }
+
+function printSensorGraph(curPane, sensorName, curHours, dontSpinIt){
+  log.log("dase");
+
+
+        dontSpinIt = dontSpinIt || false;
+
+    var target = document.getElementById(curPane);
+
+        if (! dontSpinIt) {
+          var spinner = new Spinner(getSpinnerOpts()).spin(target);
+        }
+
+    // print the graph
+
+    var url='/api/sensor/' + sensorName + '/temperature/12h';
+
+   log.log("XXX graph data url: " + url);
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: function(data) {
+        // XXX
+        // transform the data so that it looks like a plot group
+        draw_chart(curPane, [ data ]);
+                if (! dontSpinIt) {
+          log.log("XXX Stopping spinner");
+          spinner.stop();
+                  }
+      },
+      error: function(data) {
+          spinner.stop();
+          var target2 = document.getElementById(curPane);
+          target2.innerHTML = 'Error: could not load data for graph';
+      }
+    //end of ajax
+    });
+
+   return 0;
+
+}

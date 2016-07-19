@@ -24,3 +24,27 @@
   </div>
 {% endmacro %}
 
+{% macro graphBoxSensor(curSensor, timespan) %}
+     <div id=graphdiv-{{curSensor['id']}}-{{curPlotConfig['timespan']}} class="col-lg-{{ curPlotConfig['size'] }} graphItem " {% if isAuthenticated %}draggable="true"{% endif%}>
+                <div class="panel panel-default arne-dase"><div id="bar-{{curSensor['id']}}-{{timespan}}" class="panel-heading" ><i class="fa fa-bar-chart-o fa-fw "></i> {{ curSensor['id']}}-{{timespan}}
+
+                           <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Actions
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="/api/sensor/{{curSensor['id']}}/temperature/12h">Show JSON data source</a> </li>
+                                        <li class="divider"></li>
+                                        <li><a href="#">Edit this graph</a> </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                </div>
+                <div id="{{curSensor['id']}}-{{timespan}}" margin: 0 auto" class="large-12 small-12"></div>
+                </div>
+  </div>
+{% endmacro %}
+

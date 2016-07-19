@@ -1,4 +1,5 @@
 {% extends "_layout.html" %}
+{% from 'macros.html' import graphBoxSensor %}
 
 {% block div %}
 <div class="row">
@@ -57,6 +58,10 @@
 	</div>
 </div>
 
+<div class="row">
+          {{ graphBoxSensor(sensor,'12h') }}
+</div>
+
  
 {% endblock %}
 
@@ -76,5 +81,13 @@
            height: auto !important;
        }
     </style>
+
+<script type="text/javascript">
+ $(document).ready(function(){
+   //var nothing = printGroupGraph('{{ curPlotConfig['plotgroup']}}-{{ curPlotConfig['timespan']}}', '{{ curPlotConfig['plotgroup']}}', '{{ curPlotConfig['timespan']}}');
+   var nothing = printSensorGraph('{{ sensor['id']}}-12h', '{{sensor['id']}}', '12h', false);
+ });
+</script>
+
 
 {% endblock %}
