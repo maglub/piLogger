@@ -492,3 +492,53 @@ function piLogger_doUpgrade_20151128-002_to_20151201-001(){
   if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
 
 }
+
+#========================================
+# from 20151201-001 to 20160615-001
+#========================================
+function piLogger_doUpgrade_20151201-001_to_20160615-001(){
+
+  local ts=$(date "+%Y%m%d_%H%M%S")
+
+  echo "  - Making a copy of $appDbFile to ${appDbFile}.$ts"
+  cp $appDbFile ${appDbFile}.$ts
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - add a new \"metric\" column to plotgroup table"
+  sqlite3 $appDbFile "alter table plotgroup add column metric text ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - initially set all plotgroups to metric type: temperature"
+  sqlite3 $appDbFile "update plotgroup set metric = 'temperature' where metric is null ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - add a new \"multiplier\" column to sensor table"
+  sqlite3 $appDbFile "alter table sensor add column multiplier float ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - initially set all sensor multipliers to 1"
+  sqlite3 $appDbFile "update sensor set multiplier = 1 where multiplier is null ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+}
+
+#========================================
+# from 20160615-001 to 20160615-002
+#========================================
+function piLogger_doUpgrade_20160615-001_to_20160615-002(){
+
+  local ts=$(date "+%Y%m%d_%H%M%S")
+
+  echo "  - Making a copy of $appDbFile to ${appDbFile}.$ts"
+  cp $appDbFile ${appDbFile}.$ts
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - add a new \"metric\" column to the alias table"
+  sqlite3 $appDbFile "alter table alias add column metric text ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+
+  echo "  - initially set all aliases to metric type: temperature"
+  sqlite3 $appDbFile "update alias set metric = 'temperature' where metric is null ;"
+  if [ $? -eq 0 ]; then echo "    - done"; else return 1; fi
+}
+

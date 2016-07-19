@@ -10,7 +10,7 @@ this_script=$(basename $0)
 # PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
 # PILOGGER_DEVICE_NAME="$HOSTNAME"
 # PILOGGER_SENSOR="$sensor"
-# PILOGGER_METRIC_VALUE="$temperature"
+# PILOGGER_METRIC_DATA="$data"
 # PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
 #----------------------------------------
@@ -31,7 +31,7 @@ The following environment variables have to be set to run this script:
 
   * PILOGGER_BASE_DIR (i.e PILOGGER_BASE_DIR=/home/pi/piLogger)
   * PILOGGER_SENSOR
-  * PILOGGER_METRIC_VALUE
+  * PILOGGER_DATA
   * PILOGGER_METRIC_TYPE
 
 To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
@@ -40,7 +40,7 @@ Example:
 
 If debugging from the command line:
 
-PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=apa PILOGGER_METRIC_VALUE=55.5 ./$this_script
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=apa PILOGGER_DATA=55.5 ./$this_script
 
 EOT
 }
@@ -55,7 +55,7 @@ EOT
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
 
 [ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
-[ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+[ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
 
@@ -63,12 +63,12 @@ EOT
 # MAIN
 #===================================
 
-logIt "Logging $PILOGGER_SENSOR:$PILOGGER_METRIC_VALUE to $remoteHost"
-#wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}/set/temperature/${PILOGGER_METRIC_VALUE}"
+logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $remoteHost"
+#wget -t 1 -q -O - "http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}/set/temperature/${PILOGGER_DATA}"
 
 curl $curlOpts  -w "%{http_code}\n" \
 		-H 'Content-Type: application/json' \
-        -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
+        -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_DATA\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
 		-X PUT \
 		"http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
 

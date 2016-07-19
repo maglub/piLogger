@@ -32,9 +32,11 @@ EOT
 #--- set default parameters
 exportTime=24h
 
+logIt "* Starting export of JSON for $1 $2"
+
 #--- if no parameters sent, print "Default graph"
 
-[ -z "$1" ] && { curAliases=$(dbGetAliasesFromPlotGroup default) ; graphName=default ; numSensors=2 ; }
+[ -z "$1" ] && { curAliases=$(dbGetAliasTokensFromPlotGroup default) ; graphName=default ; numSensors=2 ; }
 
 
 if [ -n "$1" ]
@@ -48,7 +50,7 @@ then
 	
 		*)
 		graphName=$1
-		curAliases=$(dbGetAliasesFromPlotGroup $graphName)
+		curAliases=$(dbGetAliasTokensFromPlotGroup $graphName)
 		numSensors=2
 		;;
 		
@@ -73,20 +75,50 @@ toDateEpoc=$(date -d "$toDate" "+%s")
 [ $numSensors -gt 1 ] && printf "["
 
 curComma=" "
-for curAlias in $curAliases
+for curAliasTokens in $curAliases
 do
-#  echo $curAlias 1>&2
+  #curAlias=${curAliasTokens%:*}
+  #curMetric=${curAliasTokens#*:}
+
+  curAlias=$(echo ${curAliasTokens} | cut -d":" -f1)
+  curMetric=$(echo ${curAliasTokens} | cut -d":" -f2)
+  curMultiplier=$(echo ${curAliasTokens} | cut -d":" -f3)
+
+  [ -n "$debug" ] && echo "curAliasTokens: $curAliasTokens" 1>&2
+  [ -n "$debug" ] && echo "curAlias: $curAlias" 1>&2
+  [ -n "$debug" ] && echo "curMetric: $curMetric" 1>&2
+  [ -n "$debug" ] && echo "curMultiplier: $curMultiplier" 1>&2
+
+  curMetricFiltered=$(echo ${curMetric} | sed -e 's/\./_/g')
   curVName=$(echo $curAlias | sed -e 's/\.//g')
   curAggregateType=$(dbGetAggregateTypeByPlotDeviceAlias $graphName $curAlias)
+  curAggregateType=AVERAGE
+  [ -z "$curMetric" ] && curMetric=temperature
 
-  #--- xxx add alias check
-#  echo "curAggregateType ($graphName $curAlias) = $curAggregateType" 1>&2
 
-  printf '%s\n{"sensor":"'%s'", "temperature":[' "${curComma}" ${curAlias}
+  case $curMetric in
+    counter*)
+      rrdMultiplicator=$(echo "3600 * $curMultiplier" | bc)
+      ;;
+    *)
+      rrdMultiplicator=1
+      ;;
+  esac
 
-  curDbFile=$(dbGetDBFileByAlias $curAlias)
+  #--- 2015-12-16 => change this occurance of temperature to "values" asap, which requires rewrite of graph code in javascript
+  #--- XXX
+  printf '%s\n{"sensor":"'%s'", "type":"temperature", "data":[' "${curComma}" ${curAlias}
 
-  logCommand rrdtool xport -s now-${exportTime} -e now --step 60  DEF:${curVName}=${curDbFile}:temperature:${curAggregateType}  XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if ($n > 0); $n++ ; printf "[%i, %.2f]", $1*1000, $2*1; }'
+  curDbFile=$(dbGetDBFileByAlias $curAlias $curMetric)
+
+  tmpFile=$(mktemp -t $this_script.XXXXXX)
+  cat>$tmpFile<<EOT
+  #rrdtool xport -s now-${exportTime} -e now --step 60  DEF:${curVName}=${curDbFile}:$curMetricFiltered:${curAggregateType} XPORT:${curVName}:$curVName | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if (\$n > 0); \$n++ ; printf "[%i, %.2f]", \$1*1000, \$2*1; }'
+  rrdtool xport -s now-${exportTime} -e now --step 60  DEF:${curVName}=${curDbFile}:$curMetricFiltered:${curAggregateType} CDEF:output=${curVName},$rrdMultiplicator,*  XPORT:output:output | perl -ne 'if(m!.*row><t>(.*)</t><v>([^N]*?)</v>!) { printf "," if (\$n > 0); \$n++ ; printf "[%i, %.2f]", \$1*1000, \$2*1; }'
+EOT
+#  cat $tmpFile 1>&2
+  sh $tmpFile
+#  rm $tmpFile
 
   curComma=","
   printf "]}"

@@ -14,15 +14,15 @@ cat<<EOT
 
 Usage:
 
-  $this_script [ --type=type ] [ alias | /path/to/device ] [ temperature ]
+  $this_script [ --type=type ] [ alias | /path/to/sensor ] [ temperature ]
 
   type = {temperature, humidity, blinks, etc} (default is temperature)
 
 Example
 
-  $this_script deviceAddress                              # will get the temperature from the "deviceAddress" sensor
-  $this_script deviceAddress 27.5                         # will add the temperature 27.5 to the "deviceAddress" sensor
-  $this_script --type=humidity deviceAddress 50           # will add the humidity 50 to the "deviceAddress" sensor
+  $this_script sensorAddress                              # will get the temperature from the "sensorAddress" sensor
+  $this_script sensorAddress 27.5                         # will add the temperature 27.5 to the "sensorAddress" sensor
+  $this_script --type=humidity sensorAddress 50           # will add the humidity 50 to the "sensorAddress" sensor
 
 EOT
 }
@@ -45,26 +45,26 @@ action=none
 [ -n "$1" ] && action=readSensor
 [ -n "$2" ] && action=noreadSensor
 
-#--- check the device
+#--- check the sensor
 case $action in
   readSensor)
-    #--- get the deviceId and temperature
-    curDevice=$(getDeviceIdByAny "$1")
-    [ -z "$curDevice" ] && { errorExit "There is no device $1" ; }
-    curTemperature=$(getMetricValue "$curDevice" "$metricType")
-    [ -z "$curTemperature" ] && errorExit "Could not read temperature from $curDevice"
+    #--- get the sensorId and temperature
+    curSensor=$(getSensorIdByAny "$1")
+    [ -z "$curSensor" ] && { errorExit "There is no sensor $1" ; }
+    curValue=$(getMetricValue "$curSensor" "$metricType")
+    [ -z "$curValue" ] && errorExit "Could not read temperature from $curSensor"
     ;;
   noreadSensor)
-    #--- no existing device (external device) -> then a temperature has to be passed as well
-    curDevice=$1
-    curTemperature=$2
+    #--- no existing sensor (external sensor) -> then a temperature has to be passed as well
+    curSensor=$1
+    curValue=$2
     ;;
   *)
     errorExit "No action"
     ;;
 esac
 
-logIt "  - Logging data for device $curDevice,metricType=$metricType - value =>  $curTemperature"
+logIt "  - Logging data for sensor $curSensor,metricType=$metricType - value =>  $curValue"
 
-#--- at this point, there HAS to be a device, and there has to be a temperature
-logTemperature $curDevice $curTemperature $metricType
+#--- at this point, there HAS to be a sensor, and there has to be a temperature
+logMetric $curSensor $curValue $metricType

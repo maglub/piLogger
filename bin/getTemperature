@@ -30,8 +30,8 @@ case $1 in
     exit 0
     ;;
   -rrd)
-    [ -n "$debug" ] && logIt "device: $2"
-    getLastRRDUpdate $2
+    [ -n "$debug" ] && logIt "device: $2 $3"
+    getLastRRDUpdate $2 $3
     exit 0
     ;;
    *)

@@ -41,7 +41,7 @@ cloudHost=api.pilogger.net
 # PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
 # PILOGGER_DEVICE_NAME="$HOSTNAME"
 # PILOGGER_SENSOR="$sensor"
-# PILOGGER_METRIC_VALUE="$temperature"
+# PILOGGER_DATA="$data"
 # PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
 #----------------------------------
@@ -69,7 +69,7 @@ The following environment variables have to be set to run this script:
   * PILOGGER_DEVICE_IDENTIFIER
   * PILOGGER_SENSOR
   * PILOGGER_METRIC_TIMESTAMP
-  * PILOGGER_METRIC_VALUE
+  * PILOGGER_DATA
 
 To send data to a remote host, the variable "authToken" and "deviceIdentifier" has to be set in etc/piLogger.conf
 
@@ -85,7 +85,7 @@ PILOGGER_BASE_DIR=/home/pi/piLogger authToken=<your token> deviceIdentifier=\$(c
 
 When sending data to piLogger-cloud, if debugging from the command line:
 
-PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE_IDENTIFIER=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) PILOGGER_SENSOR=test-device PILOGGER_METRIC_TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S") PILOGGER_METRIC_VALUE=55.5 ./$this_script
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_DEVICE_IDENTIFIER=$(cat /sys/class/net/eth0/address | md5sum | cut -d" " -f1) PILOGGER_SENSOR=test-device PILOGGER_METRIC_TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S") PILOGGER_DATA=55.5 ./$this_script
 
 EOT
 }
@@ -218,7 +218,7 @@ done
 [ -z "$PILOGGER_DEVICE_IDENTIFIER" ] && { errorExit "Error: PILOGGER_DEVICE_IDENTIFIER not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TIMESTAMP" ] && { errorExit "Error: PILOGGER_METRIC_TIMESTAMP not set" ; }
-[ -z "$PILOGGER_METRIC_VALUE" ] && { errorExit "Error: PILOGGER_METRIC_VALUE not set" ; }
+[ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
 [ -z "$PILOGGER_METRIC_TYPE" ] && { errorExit "Error: PILOGGER_METRIC_TYPE not set" ; }
 
 # calculate sensor id hash
@@ -227,7 +227,7 @@ PILOGGER_SENSOR_HASH=$( echo $PILOGGER_DEVICE_IDENTIFIER+$PILOGGER_SENSOR | md5s
 # now do the HTTP PUT request to the REST API
 response=$(curl -H 'Content-Type: application/json' -X PUT \
                 --write-out "%{http_code}" --silent \
-                -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_METRIC_VALUE\",\"authToken\": \"$authToken\"}" \
+                -d "{\"probeTime\": \"$PILOGGER_METRIC_TIMESTAMP\",\"probeValue\": \"$PILOGGER_DATA\",\"authToken\": \"$authToken\"}" \
                 http://$cloudHost/api/sensor/$PILOGGER_SENSOR_HASH )
 rc=$?
 
@@ -252,7 +252,7 @@ case $httpReturnCode in
    # writing data to spool directory for later processing
    timenow=$(date +%s)
    spoolFileName=${this_script}_$$_$timenow
-   spoolFileContent="${PILOGGER_SENSOR_HASH},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_METRIC_VALUE},${PILOGGER_SENSOR}"
+   spoolFileContent="${PILOGGER_SENSOR_HASH},${PILOGGER_METRIC_TIMESTAMP},${PILOGGER_DATA},${PILOGGER_SENSOR}"
   
    logIt "writing measured data to $spoolDir/$spoolFileName for later processing"
   

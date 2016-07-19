@@ -299,7 +299,7 @@ done
   for device in $(cat $configDir/devices.scanned 2>/dev/null)
   do
     shortDevice=$(basename $device);
-    if ! dbCheckDeviceExistById $shortDevice
+    if ! dbCheckSensorExistById $shortDevice
     then
       echo ./dbTool --add -d --deviceType 1wire --deviceId $shortDevice --devicePath $device;
     fi

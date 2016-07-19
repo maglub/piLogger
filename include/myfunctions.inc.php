@@ -118,7 +118,7 @@ function createPasswdTable(){
 #-----------------------------------
 # getAppConfig()
 #-----------------------------------
-function getAppConfig($configFile){
+function getAppConfig($configFile = __DIR__ . "/../etc/piLogger.conf"){
 	#--- from http://inthebox.webmin.com/one-config-file-to-rule-them-all
 	$file=$configFile;
 	$lines = file($file);
@@ -153,6 +153,24 @@ function getSensorGroups(){
   return $retArray;
 }
 
+#-----------------------------------
+# getMultiplierBySensorIdMetricType($curId, $metricType)
+#-----------------------------------
+function getMultiplierBySensorIdMetricType($curId, $metricType){
+  global $db;
+  $retArray = array();
+
+  $sql = "select multiplier from sensor where id = :sensorId and type = :sensorType";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':sensorId' => $curId, ':sensorType' => $metricType));
+
+  while($row = $sth->fetch()){
+      $retArray = array('multiplier' => $row['multiplier']) ; 
+  }
+
+  $retArray = array('multiplier' => 0.1);
+  return $retArray;
+}
 #-----------------------------------
 # getSensorGroupMembers() 
 #-----------------------------------
@@ -226,6 +244,25 @@ function getSensorById($id,$metricType='temperature'){
   return $retArray;
 }
 
+function sensorExistsById($id){
+  global $db;
+  $retArray = null;
+
+  $sql = "select count(*) as num from sensor where id = :id limit 1;";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':id' => $id));
+
+  while ($row = $sth->fetch()) {
+    $num = $row['num'];
+  }
+
+  if ($num == 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 #-----------------------------------
 # getSensorIdByAlias()
 #-----------------------------------
@@ -233,27 +270,33 @@ function getSensorIdByAlias($alias){
   global $db;
 
   $sql = "select * from alias where alias = :alias ";
-  $sth = $db->prepare();
+  $sth = $db->prepare($sql);
   $sth->execute(array(':alias' => $alias));
   $row = $sth->fetch();
   return $row['id'];
 }
 
 #-----------------------------------
-# getSensorByAlias()
+# getSensorIdMetricByAlias()
 #-----------------------------------
-function getSensorByAlias($alias){
-  $curId = getSensorIdByAlias($alias);
-  $ret = getSensorById($curId);
-  return $ret;	
+function getSensorIdMetricByAlias($alias){
+  global $db;
+
+
+  $sql = "select id, ifnull(metric, 'temperature') as metric from alias where alias = :alias ";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':alias' => $alias));
+  $row = $sth->fetch();
+  return array("id" => $row['id'], "metric" => $row['metric']);
 }
 
 #-----------------------------------
-# getSensorTemperatureDataRangeById()
+# getSensorByAlias()
 #-----------------------------------
-function getSensorTemperatureDataRangeById($id, $range){
-  $ret = Array(12,15,24);
-  return $ret;
+function getSensorByAlias($alias){
+  $curRes = getSensorIdMetricByAlias($alias);
+  $ret = getSensorById($curRes['id'], $curRes['metric']);
+  return $ret;	
 }
 
 #-----------------------------------
@@ -399,7 +442,15 @@ function getSensorIdFromFilesystem($options = array() ){
   $curRet = [] ;
   foreach ($curRes as $curFile) {
     if (is_dir($sensorDir . "/" . $curFile) && preg_match('/^-?[0-9]+$/', $curFile[0]) ) {
-      $curRet[] = array("id"=>$curFile);
+      $curType = file_get_contents($sensorDir . "/" . $curFile . "/type");
+      $curId = file_get_contents($sensorDir . "/" . $curFile . "/id");
+      $curFamily = file_get_contents($sensorDir . "/" . $curFile . "/family");
+
+      #--- get the available metrics
+      $curFiles = scandir($sensorDir . "/" . $curFile);
+      $curMetrics = array_diff(scandir($sensorDir . "/" . $curFile), array('..', '.','address', 'alias', 'crc8', 'family', 'locator', 'id', 'memory', 'pages', 'r_id', 'type','r_address','r_locator'));
+
+      $curRet[] = array("id"=>$curFile, "type" => $curType, "family" => $curFamily, "sensorId" => $curId, "metrics" => $curMetrics);
     }
 
   }
@@ -419,12 +470,13 @@ function createRRDDatabaseBySensorId($curId, $metricType = "temperature"){
 #-----------------------------------
 # setRRDDataBySensorId()
 #-----------------------------------
-function setRRDDataBySensorId($curId, $metricValue, $metricType = "temperature"){
+function setRRDDataBySensorId($curId, $data, $metricType = "temperature"){
+
 	if (!file_exists("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd")){
 		createRRDDatabaseBySensorId($curId, $metricType);
 	}
 	
-   $curRes = rrd_update("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd", array( "N:" . $metricValue ) );
+   $curRes = rrd_update("/var/lib/piLogger/db/" . $curId . "." . $metricType . ".rrd", array( "N:" . $data ) );
 
    if($curRes == 0 ) {
 	   $err = rrd_error();
@@ -454,11 +506,11 @@ function getLastRRDDataBySensorId($curId,$metricType="temperature"){
 }
 
 #-----------------------------------
-# getLastTemperatureBySensorId()
+# getLastDataBySensorId()
 #-----------------------------------
-function getLastTemperatureBySensorId($curId,$metricType="temperature"){
+function getLastDataBySensorId($curId,$metricType="temperature"){
   $res = getLastRRDDataBySensorId($curId,$metricType);
-  return Array("timestamp" => $res['last_update'], "metricValue" => (float)$res['data'][0]);
+  return Array("timestamp" => $res['last_update'], "type"=>$metricType, "data" => (float)$res['data'][0]);
 }
 
 #-----------------------------------
@@ -467,7 +519,7 @@ function getLastTemperatureBySensorId($curId,$metricType="temperature"){
 function getSensorInfoAll(){
   $res = getSensors();
   foreach ($res as &$curRes) {
-    $curRes['temperature'] = getLastTemperatureBySensorId($curRes['id']);
+    $curRes['temperature'] = getLastDataBySensorId($curRes['id']);
     $curRes['devicePath'] = $curRes['id'];
     $curRes['sensorName'] = $curRes['id'];
     $curRes['aliases'] = array($curRes['alias']);
@@ -480,10 +532,11 @@ function getSensorInfoAll(){
 #-----------------------------------
 function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperature"){
   $curRes = getRRDDataBySensorId($curId, $timeframe,$metricType);
+  $metricType = preg_replace('/\./', '_', $metricType);
 
   $n = 0;
   $ret="";
-  foreach($curRes['data']['temperature'] as $ts => $value){
+  foreach($curRes['data'][$metricType] as $ts => $value){
     if(!is_nan($value)){
       $ret .= (($n > 0)?",".$value: $value);
       $n+=1;
@@ -494,18 +547,31 @@ function printSparklineByDeviceId($curId,$timeframe="12h",$metricType="temperatu
 }
 
 #-----------------------------------
-# getTemperatureRangeBySensorId()
+# getDataRangeBySensorId()
 #-----------------------------------
-function getTemperatureRangeBySensorId($curId, $timeframe = "12h"){
-  $curRes = getRRDDataBySensorId($curId, $timeframe);
+function getDataRangeBySensorId($curId, $timeframe="12h",$metricType="temperature"){
+  $curRes = getRRDDataBySensorId($curId, $timeframe, $metricType);
+  
+  $curMultiplierRes = getMultiplierBySensorIdMetricType($curId, $metricType);
+  //$curMultiplierRes = array('multiplier' => 0.1);
+  $curMultiplier = $curMultiplierRes['multiplier'];
+
   $ret = array();
 
-  $ret['sensor'] = $curId;
-  $ret['temperature'] = array();
+  $metricTypeParsed = preg_replace('/\./', '_', $metricType);
 
-  foreach($curRes['data']['temperature'] as $ts => $value){
+
+  $ret['sensor'] = $curId;
+  $ret['type'] = $metricType;
+  $ret['data'] = array();
+
+  foreach($curRes['data'][$metricTypeParsed] as $ts => $value){
     if(!is_nan($value)){
-      $ret['temperature'][] = array( $ts *1000 ,(float)$value);
+      if ($metricType == "counter.A" || $metricType == "counter.B") {
+        $ret['data'][] = array( $ts *1000 ,(float)$value * 3600 * $curMultiplier );
+      } else {
+        $ret['data'][] = array( $ts *1000 ,(float)$value);
+      }
     }
   }
 

@@ -2,8 +2,11 @@
 
 this_dir=$(cd `dirname $0`;pwd)
 this_script=$(basename $0)
+
 . $this_dir/functions
 . $this_dir/functions-sqlite3
+
+[ -n "$debug" ] && set -x
 
 logIt "  - Refreshing caches $1"
 

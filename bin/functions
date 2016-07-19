@@ -58,18 +58,18 @@ $curCommand
 }
 
 #------------------------------------
-# listDevices
+# getAllDevices()
 #------------------------------------
 function getAllDevices(){
-  ld_dir="$1"
-  ld_force="$2"
+  local curDir="$1"
+  local forceIt="$2"
 
-  [[ -f $configDir/devices.scanned && -z "$ld_force" ]] && { cat $configDir/devices.scanned ; return 0 ; }
-  [[ -n "$ld_force" ]] && { echo $ld_dir/[0-9]*  | grep -v "\*$" ; return 0 ; }
+  [[ -n "$forceIt" ]] && { echo $curDir/[0-9]*  | grep -v "\*$" ; return 0 ; }
   local curRes=$(dbGetAllDevicePaths)
   [ -n "$curRes" ] && { echo $curRes ; logIt "Found devices in the database." ; return 0 ; }
   [ -n "$debug" ] && logIt "No scanned devices in the database, cheking in fs."
-  echo $ld_dir/bus*/[0-9]* | grep -v "\*$"
+  echo $curDir/bus*/[0-9]* | grep -v "\*$"
+  return 0
 }
 
 #------------------------------------
@@ -99,8 +99,8 @@ function getMetricValue(){
 
   [ -z "$curMetric" ] && curMetric=temperature
   [ -n "$debug" ] && logIt "fetching $curMetric for device: $curDevice"
+  [ -d $oneWireDir/$curDevice ] && { getMetricByDevicePath $oneWireDir/$curDevice $curMetric ; return 0 ; }
   [ -d $curDevice ] && { getMetricByDevicePath $curDevice $curMetric ; return 0 ; }
-  [ -d $oneWireDir/$curDevice ] && { getMetricByDevicePath /mnt/1wire/$curDevice $curMetric ; return 0 ; }
   [ ! -d $curDevice ] && { getMetricByDeviceAlias $curDevice $curMetric; return 0 ; }
   
   return 0
@@ -114,7 +114,15 @@ function getMetricByDevicePath(){
   local metric="$2"
   [ -z "$metric" ] && metric=temperature
 
-  curOut=$(cat $1/$metric | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
+  #curOut=$(cat $1/$metric | awk '{temp=$NF + 0.005; printf "%.2f\n",temp; }')
+  case $metric in
+    counter*)
+      curOut=$(cat $1/$metric | awk '{printf "%i\n",$NF; }')
+      ;;
+    *)
+      curOut=$(cat $1/$metric | awk '{printf "%.2f\n",$NF; }')
+      ;;
+  esac
   [ -n "$debug" ] && logIt "device: $1 $metric: $curOut"
   echo $curOut
 }
@@ -146,21 +154,25 @@ function getDeviceAliasesByDevicePath() {
 }
 
 #------------------------------------
-# getDeviceIdByAny
+# getSensorIdByAny
 #------------------------------------
-function getDeviceIdByAny(){
+function getSensorIdByAny(){
   #--- try and resolve a full device path through any input (device id, path, alias)
-  local curDevice="$1"
+  local curSensor="$1"
   local res=""
 
   #--- there is a directory (ie /mnt/1wire/deviceId) -> return just the deviceId
-  [ -d "$curDevice" ] && { basename "$curDevice" ; return 0 ; }
-  [ -d "$oneWireDir/$curDevice" ] && { echo "$curDevice" ; return 0 ; }
+  [ -d "$curSensor" ] && { basename "$curSensor" ; return 0 ; }
+  [ -d "$oneWireDir/$curSensor" ] && { echo "$curSensor" ; return 0 ; }
 
   #--- check the database for an alias
-  res=$(dbGetDeviceIdByDeviceAlias $curDevice)
+  res=$(dbGetDeviceIdByDeviceAlias $curSensor)
   [ -n "$res" ] && { echo "$res" ; return 0 ; }
 
+  dbCheckSensorExistById $curSensor && { echo "$curSensor" ; return 0 ; }
+  #--- no device found
+  echo "Sensor $curSensor does not exist" 1>&2
+  return 1
 }
 
 #------------------------------------
@@ -193,8 +205,6 @@ function getLastRRDUpdate(){
   local deviceId=""
   local dbFile=""
 
-#  printf "\ndebug: curDevice=$curDevice" 1>&2
-
   #--- the goal is to get a device-id or something mapping to a database file
   if [ -f "$dataDir/db/${curDevice}.$curDeviceType.rrd" ]
   then
@@ -208,36 +218,40 @@ function getLastRRDUpdate(){
   [ ! -f "$dbFile" ] && { echo "ERROR: no file $dbFile" 1>&2 ; return 1 ; }
   [ -n "$debug" ] && logIt "getLastRRDUpdate: $curDevice at $devicePath"
 
-  rrdtool info $dbFile | sed -n 's/ds\[temperature\]\.last_ds = "\(.*\)"/\1/gp'
+  rrdtool info $dbFile | sed -n 's/ds\[.*]\.last_ds = "\(.*\)"/\1/gp'
 }
 
 #---------------------------------
-# logTemperature
+# logMetric
 #---------------------------------
-function logTemperature(){
-  local curDevice=$1
-  local curTemperature=$2
-  local curDeviceType=$3
-  [ -z "$curDeviceType" ] && curDeviceType=temperature
+function logMetric(){
+  local curSensor=$1
+  local curValue=$2
+  local curMetric=$3
+  [ -z "$curMetric" ] && curMetric=temperature
 
-  local lt_dbFile=$dbDir/${curDevice}.${curDeviceType}.rrd
+  local lt_dbFile=$dbDir/${curSensor}.${curMetric}.rrd
 
-  [ ! -f $lt_dbFile ] && sudo -u $applicationUser $this_dir/createRRD $curDevice $curDeviceType
+  [ ! -f $lt_dbFile ] && sudo -u $applicationUser $this_dir/createRRD $curSensor $curMetric
   [ ! -f $lt_dbFile ] && { logIt "ERROR: no rrd database: $lt_dbFile" ; return 1 ; } 
-  rrdtool update $lt_dbFile N:${curTemperature}
+  rrdtool update $lt_dbFile N:${curValue}
 
-  local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_blacklist= | grep -w "$curDevice" |  wc -l)
+  local isBlacklisted=$($this_dir/parse_yml $baseDir/etc/piLogger.yml remoteLogging_blacklist= | grep -w "$curSensor" |  wc -l)
 
   if [ -n "$remoteLogging" ]
   then
     if [ $isBlacklisted -eq 0 ]
     then
-      logTemperatureRemote $curDevice $curTemperature $curDeviceType
+      logTemperatureRemote $curSensor $curValue $curMetric
     else
-      logIt "    - Device $curDevice is globally blacklisted, skipping remote logging"
+      logIt "    - Device $curSensor is globally blacklisted, skipping remote logging"
     fi
   fi
 
+}
+
+function logTemperature(){
+  logMetric $@
 }
 
 #---------------------------------
@@ -245,7 +259,7 @@ function logTemperature(){
 #---------------------------------
 function logTemperatureRemote(){
   local sensor=$1
-  local temperature=$2
+  local data=$2
   local metricType=$3
   
   [ -z "$metricType" ] && metricType=temperature
@@ -256,7 +270,7 @@ function logTemperatureRemote(){
   export PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
   export PILOGGER_DEVICE_NAME="$HOSTNAME"
   export PILOGGER_SENSOR="$sensor"
-  export PILOGGER_METRIC_VALUE="$temperature"
+  export PILOGGER_DATA="$data"
   export PILOGGER_METRIC_TYPE="$metricType"
   export PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
   

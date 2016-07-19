@@ -75,8 +75,8 @@ $app->get('/sensors', function () use ($app) {
         
         // loop over all sensors and add new columns for later use in the template
         for($x = 0; $x < count($curSensors); $x++) {
-                $curLastMetric = getLastTemperatureBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
-                $curSensors[$x]['LastMetricValue'] = $curLastMetric['metricValue'];
+                $curLastMetric = getLastDataBySensorId($curSensors[$x]['id'],$curSensors[$x]['metric']);
+                $curSensors[$x]['LastMetricValue'] = $curLastMetric['data'];
                 $curSensors[$x]['LastMetricTimeStamp'] = $curLastMetric['timestamp']; 
                 $curSensors[$x]['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
                 $curSensors[$x]['sparkline'] = printSparklineByDeviceId($curSensors[$x]['id'],"12h",$curSensors[$x]['metric']);
@@ -85,9 +85,7 @@ $app->get('/sensors', function () use ($app) {
         $newSensors = [];
 
 	foreach (getSensorIdFromFilesystem( array('forceScan'=>true) ) as $curSensorFile){
-		$curSensor = getSensorById($curSensorFile['id']);
-
-		if (!$curSensor){
+		if (! sensorExistsById($curSensorFile['id'])){
 			$newSensors[] = $curSensorFile;
 		}
 	}
@@ -101,7 +99,7 @@ $app->get('/sensor/:sensorId/:metricType', function ($sensorId,$metricType) use 
 	$curSensor = getSensorById($sensorId,$metricType);
 
         // get the last metric value and time in an array
-        $curLastMetric = getLastTemperatureBySensorId($sensorId,$metricType);
+        $curLastMetric = getLastDataBySensorId($sensorId,$metricType);
 
         // now extend the original array with further information
 	$curSensor['LastMetricValue'] = $curLastMetric['metricValue'];
