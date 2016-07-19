@@ -102,7 +102,8 @@ $app->get('/sensor/:sensorId/:metricType', function ($sensorId,$metricType) use 
         $curLastMetric = getLastDataBySensorId($sensorId,$metricType);
 
         // now extend the original array with further information
-	$curSensor['LastMetricValue'] = $curLastMetric['metricValue'];
+        //var_dump($curLastMetric);
+	$curSensor['LastMetricValue'] = $curLastMetric['data'];
         $curSensor['LastMetricTimeStamp'] = $curLastMetric['timestamp'];
         $curSensor['LastMetricDateStamp'] = date('Y-m-d G:i:s T',$curLastMetric['timestamp']);
 	$curSensor['sparkline'] = printSparklineByDeviceId($sensorId,"12h",$metricType);
