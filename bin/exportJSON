@@ -118,7 +118,7 @@ do
 EOT
 #  cat $tmpFile 1>&2
   sh $tmpFile
-#  rm $tmpFile
+  rm $tmpFile
 
   curComma=","
   printf "]}"
