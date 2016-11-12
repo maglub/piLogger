@@ -1,0 +1,48 @@
+#!/bin/bash
+#=============================================================
+# Script: getNordPol
+#
+# Author: Magnus Lubeck, 2016
+#=============================================================
+
+this_dir=$(cd $(dirname $0); pwd)
+this_script=$(basename $0)
+
+#=============================================================
+# Functions
+#=============================================================
+function usage(){
+
+  cat<<EOT
+
+Usage:
+
+  $this_script [ -d | --download ]
+
+EOT
+}
+
+function filterExcel(){
+  #--- filter the csv file
+  grep -E "<td style" | sed -e 's/<[^>]*./;/g' -e 's/[ \t	]//g' -e 's/^;//' -e 's/;;/;/g' -e 's/&nbsp;//g' -e 's/,/./g'
+# | cut -d";" -f1,2,3,4,5,6   | grep -vE 'Hours'
+}
+
+#=============================================================
+# Variables
+#=============================================================
+
+thisYear=$(date "+%Y")
+remoteFile="elspot-prices_${thisYear}_hourly_sek.xls"
+remoteURL="http://www.nordpoolspot.com/globalassets/marketdata-excel-files/${remoteFile}"
+
+inputFile=${remoteFile}.local
+
+#=============================================================
+# MAIN
+#=============================================================
+#--- fetching file if it does not exist, or script called with "--download" or "-d" (or any option at all, to be honest)
+[[ ! -f $inputFile || -n "$1" ]] && { echo "Fetching file from URL: ${remoteURL}" 1>&2 ; wget -q -O $inputFile $remoteURL ; }
+
+cat ${inputFile} | filterExcel  | awk -F";" '{ if ($3<90) { print "*", $0 } else { print }}'
+
