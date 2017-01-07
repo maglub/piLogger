@@ -1,0 +1,87 @@
+#!/bin/bash
+
+this_dir=$(cd `dirname $0`;pwd)
+this_script=$(basename $0)
+
+. $this_dir/../bin/functions
+
+# PILOGGER_BASE_DIR=$baseDir
+# PILOGGER_AUTH_TOKEN=$authToken
+# PILOGGER_DEVICE_IDENTIFIER=$deviceIdentifier
+# PILOGGER_DEVICE_NAME="$HOSTNAME"
+# PILOGGER_SENSOR="$sensor"
+# PILOGGER_METRIC_DATA="$data"
+# PILOGGER_METRIC_TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+#----------------------------------------
+# functions
+#----------------------------------------
+function errorExit(){
+  echo "$*" 1>&2
+  usage
+  exit 1
+}
+
+#----------------------------------
+# Usage
+#----------------------------------
+function usage(){
+  cat<<EOT
+
+Usage:
+
+  $this_script 
+
+The following environment variables have to be set to run this script:
+
+  * PILOGGER_BASE_DIR (i.e PILOGGER_BASE_DIR=/home/pi/piLogger)
+  * PILOGGER_DEVICE_IDENTIFIER
+  * PILOGGER_SENSOR
+  * PILOGGER_METRIC_TIMESTAMP
+  * PILOGGER_DATA
+
+To send data to a remote host, the variables "influxHost", "influxDb", and "influxSender" has to be set in etc/piLogger.conf
+
+Example:
+
+PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=test-device PILOGGER_DATA=55.5 $this_dir/$this_script
+
+EOT
+}
+
+
+#===================================
+# Setup environment
+#===================================
+
+[ -z "$PILOGGER_BASE_DIR" ] && { errorExit "Error: PILOGGER_BASE_DIR not set" ; }
+[ ! -f "$PILOGGER_BASE_DIR/etc/piLogger.conf" ] && { errorExit "Error: file not found $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+
+. $PILOGGER_BASE_DIR/etc/piLogger.conf
+
+[ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
+[ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
+[ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
+
+#===================================
+# MAIN
+#===================================
+
+logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $influxHost database: $influxDb table: sensor_data"
+
+#--- References
+#--- database created: curl -G http://192.168.4.55:8086/query --data-urlencode "q=CREATE DATABASE piLoggerStg3"
+#--- https://docs.influxdata.com/influxdb/v0.9/guides/querying_data/
+#--- https://docs.influxdata.com/influxdb/v0.9/guides/writing_data/
+#--- curl -G 'http://192.168.4.55:8086/query?pretty=true' --data-urlencode "db=piLoggerStg3" --data-urlencode "q=SELECT * FROM sensor_data "
+
+curl -i -XPOST "http://${influxHost}:${influxPort}/write?db=${influxDb}" --data-binary "sensor_data,sensor=${PILOGGER_SENSOR} value=${PILOGGER_DATA}"
+
+#curl $curlOpts  -w "%{http_code}\n" \
+#		-H 'Content-Type: application/json' \
+#        -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_DATA\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
+#		-X PUT \
+#		"http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
+#
+
