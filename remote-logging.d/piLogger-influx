@@ -40,11 +40,18 @@ The following environment variables have to be set to run this script:
   * PILOGGER_METRIC_TIMESTAMP
   * PILOGGER_DATA
 
-To send data to a remote host, the variables "influxHost", "influxDb", and "influxSender" has to be set in etc/piLogger.conf
+To send data to a remote host, the variables "influxHost", "influxPort", "influxDb", and "influxSender" has to be set in etc/piLogger.conf
 
 Example:
 
 PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=test-device PILOGGER_DATA=55.5 $this_dir/$this_script
+
+etc/piLogger.conf
+
+influxHost=192.168.4.57
+influxPort=8086
+influxSender=1wire-v003stg
+influxDb=piLoggerStg3
 
 EOT
 }
