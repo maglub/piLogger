@@ -70,7 +70,9 @@ EOT
 
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
 
-[ -z "$remoteHost" ] && { errorExit "Error: Variable \"remoteHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$influxHost" ] && { errorExit "Error: Variable \"influxHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$influxDb" ] && { errorExit "Error: Variable \"influxDb\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$influxPort" ] && { errorExit "Error: Variable \"influxPort\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 [ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
