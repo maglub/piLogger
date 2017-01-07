@@ -42,7 +42,11 @@ The following environment variables have to be set to run this script:
 
 To send data to a remote host, the variables "influxHost", "influxPort", "influxDb", and "influxSender" has to be set in etc/piLogger.conf
 
-Example:
+To enable this plugin, make a symlink in /var/lib/piLogger/remote-logging/enabled:
+
+Examples:
+
+ln -s $this_dir/$this_script /var/lib/piLogger/remote-logging-enabled
 
 PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=test-device PILOGGER_DATA=55.5 $this_dir/$this_script
 
