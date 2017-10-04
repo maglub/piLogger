@@ -216,10 +216,20 @@ cat<<EOT
 #================================
 EOT
 curInstallPackages=""
-for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd php5-curl
-do
-  sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
-done
+
+if [ -n "$(grep stretch /etc/os-release)" ]
+then
+for package in php-cgi php php-sqlite3 php-cli php-rrd php-curl
+  do
+    sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
+  done
+else
+  #--- older raspbian
+  for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd php5-curl
+  do
+    sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
+  done
+fi
 
 [ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -q -y install $curInstallPackages ; }
 
@@ -229,11 +239,18 @@ cat<<EOT
 #================================
 EOT
 sudo dpkg -s lighttpd >/dev/null 2>&1 || { echo "  - Installing lighttpd" ; sudo apt-get -q -y install lighttpd ; }
+sudo chmod 755 /var/log/lighttpd
 
 [ -f /etc/lighttpd/lighttpd.conf ]  && { sudo mv /etc/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf.org ; sudo ln -s $configDir/lighttpd/lighttpd.conf /etc/lighttpd ; }
 [ ! -h /etc/lighttpd/conf-enabled/10-accesslog.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-accesslog.conf /etc/lighttpd/conf-enabled
 [ ! -h /etc/lighttpd/conf-enabled/10-dir-listing.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-dir-listing.conf /etc/lighttpd/conf-enabled
-[ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.conf /etc/lighttpd/conf-enabled
+
+if [ -n "$(grep stretch /etc/os-release)" ]
+then
+  [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.stretch.conf /etc/lighttpd/conf-enabled/10-cgi.conf
+else
+  [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.jessie.conf /etc/lighttpd/conf-enabled/10-cgi.conf
+fi
 
 #--- make sure Apache2 is disabled
 sudo service apache2 stop
