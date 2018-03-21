@@ -8,6 +8,7 @@ piLoggerDeviceAliasFile=$configDir/aliases.conf
 [ -z "$dbDir" ] && dbDir=$dataDir/db
 [ -z "$graphDir" ] && graphDir=$dataDir/graphs
 [ -z "$applicationUser" ] && applicationUser=pi
+[ -z "$cacheDir" ] && cacheDir=$dataDir/cache
 
 #------------------------------------
 # Variables (normally set in piLogger.conf)
@@ -447,5 +448,12 @@ function enableCrontab(){
 function getCrontab(){
   crontab -l | grep -E "# m h|#Disabled:"
   crontab -l | grep -vE "^#|^$"
+}
+
+#------------------------------
+# getGitVersion
+#------------------------------
+function getGitVersion(){
+  curl -s https://raw.githubusercontent.com/maglub/piLogger/master/currentVersion | tee $cacheDir/gitVersion
 }
 
