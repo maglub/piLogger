@@ -290,6 +290,7 @@ function printGraph(curPane, curHours){
 function printGroupGraph(curPane, groupName, curHours, dontSpinIt){
 
 	dontSpinIt = dontSpinIt || false;
+	dontSpinIt = true;
 	
     var target = document.getElementById(curPane);
 	
@@ -331,6 +332,7 @@ function printSensorGraph(curPane, sensorName, curHours, dontSpinIt){
 
 
         dontSpinIt = dontSpinIt || false;
+        dontSpinIt = true;
 
     var target = document.getElementById(curPane);
 
