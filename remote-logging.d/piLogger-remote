@@ -33,6 +33,7 @@ The following environment variables have to be set to run this script:
   * PILOGGER_SENSOR
   * PILOGGER_DATA
   * PILOGGER_METRIC_TYPE
+  * PILOGGER_TRANSPORT (http/https)
 
 To send data to a remote host, the variable "remoteHost" has to be set in etc/piLogger.conf
 
@@ -58,6 +59,8 @@ EOT
 [ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
+[ -z "$PILOGGER_TRANSPORT" ] && PILOGGER_TRANSPORT=https
+[ -z "$curlOpts" ] && curlOpts="-k" 
 
 #===================================
 # MAIN
@@ -68,8 +71,7 @@ logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $remoteHost"
 
 curl $curlOpts  -w "%{http_code}\n" \
 		-H 'Content-Type: application/json' \
-        -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_DATA\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
+                -d "{\"deviceIdentifier\":\"remote\",\"sensorId\":\"$PILOGGER_SENSOR\",\"probeValue\": \"$PILOGGER_DATA\",\"metricType\":\"$PILOGGER_METRIC_TYPE\"}" \
 		-X PUT \
-		"http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
-
+		"${PILOGGER_TRANSPORT}://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
 
