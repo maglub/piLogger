@@ -212,25 +212,38 @@ sudo dpkg -s sqlite3 >/dev/null 2>&1 || { echo "  - Installing sqlite3" ; sudo a
 
 cat<<EOT
 #================================
-# php5
+# php
 #================================
 EOT
+
+echo "* Checking installed packages"
+
 curInstallPackages=""
 
-if [ -n "$(grep stretch /etc/os-release)" ]
-then
-for package in php-cgi php php-sqlite3 php-cli php-rrd php-curl
-  do
-    sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
-  done
-else
-  #--- older raspbian
-  for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd php5-curl
-  do
-    sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
-  done
-fi
+curRelease=$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2)
+echo "  - OS Release: $curRelease"
 
+case $curRelease in
+  jessie|wheezy)
+    #--- older raspbian
+    #--- note, php5-cgi has to come before php5. Otherwise apt-get will install apache2 to satisfy dependencies
+    #--- https://wildlyinaccurate.com/installing-php-on-debian-without-apache/
+    for package in php5-cgi php5 php5-sqlite php5-cli php5-rrd php5-curl lighttpd sqlite3 bc screen python-dev python-pip
+    do
+      echo -n "  - Checking $package"
+      sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
+    done
+    ;;
+  buster|stretch|*)
+    for package in php-cgi php php-sqlite3 php-cli php-rrd php-mbstring php-curl lighttpd sqlite3 bc screen python-dev python-pip
+      do
+        echo -n "  - Checking $package"
+        sudo dpkg -s $package >/dev/null 2>&1 || { echo "  - Adding package $package to the install list" ; curInstallPackages="$curInstallPackages $package" ; }
+      done
+    ;;
+esac
+
+echo
 [ -n "$curInstallPackages" ] && { echo "  - Installing packages: $curInstallPackages" ; sudo apt-get -q -y install $curInstallPackages ; }
 
 cat<<EOT
@@ -245,12 +258,17 @@ sudo chmod 755 /var/log/lighttpd
 [ ! -h /etc/lighttpd/conf-enabled/10-accesslog.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-accesslog.conf /etc/lighttpd/conf-enabled
 [ ! -h /etc/lighttpd/conf-enabled/10-dir-listing.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-dir-listing.conf /etc/lighttpd/conf-enabled
 
-if [ -n "$(grep stretch /etc/os-release)" ]
-then
-  [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.stretch.conf /etc/lighttpd/conf-enabled/10-cgi.conf
-else
-  [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && sudo ln -s $configDir/lighttpd/conf-enabled/10-cgi.jessie.conf /etc/lighttpd/conf-enabled/10-cgi.conf
-fi
+case $curRelease in
+  jessie|wheezy)
+    [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && { echo "* CGI for $curRelease" ; sudo ln -sf $configDir/lighttpd/conf-enabled/10-cgi.jessie.conf /etc/lighttpd/conf-enabled/10-cgi.conf ; }
+    ;; 
+  buster)
+    [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && { echo "* CGI for $curRelease" ; sudo ln -sf $configDir/lighttpd/conf-enabled/10-cgi.buster.conf /etc/lighttpd/conf-enabled/10-cgi.conf ; }
+    ;; 
+  stretch|*)
+    [ ! -h /etc/lighttpd/conf-enabled/10-cgi.conf ] && { echo "* CGI for $curRelease" ; sudo ln -sf $configDir/lighttpd/conf-enabled/10-cgi.stretch.conf /etc/lighttpd/conf-enabled/10-cgi.conf ; }
+    ;;
+esac
 
 #--- make sure Apache2 is disabled
 sudo service apache2 stop
