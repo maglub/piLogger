@@ -40,7 +40,7 @@ The following environment variables have to be set to run this script:
   * PILOGGER_METRIC_TIMESTAMP
   * PILOGGER_DATA
 
-To send data to a remote host, the variables "influxHost", "influxPort", "influxDb", and "influxSender" has to be set in etc/piLogger.conf
+To send data to a remote host, the variables "influxHost", "influxPort", "influxBucket", and "influxSender" has to be set in etc/piLogger.conf
 
 To enable this plugin, make a symlink in /var/lib/piLogger/remote-logging/enabled:
 
@@ -52,10 +52,13 @@ PILOGGER_BASE_DIR=/home/pi/piLogger PILOGGER_SENSOR=test-device PILOGGER_DATA=55
 
 etc/piLogger.conf
 
+#--- example:
 influxHost=192.168.4.57
 influxPort=8086
 influxSender=1wire-v003stg
-influxDb=piLoggerStg3
+influxOrg=smalometern.com
+influxBucket=piLoggerStg3
+influxToken=SECRET_TOKEN
 
 EOT
 }
@@ -71,8 +74,9 @@ EOT
 . $PILOGGER_BASE_DIR/etc/piLogger.conf
 
 [ -z "$influxHost" ] && { errorExit "Error: Variable \"influxHost\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
-[ -z "$influxDb" ] && { errorExit "Error: Variable \"influxDb\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$influxBucket" ] && { errorExit "Error: Variable \"influxBucket\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 [ -z "$influxPort" ] && { errorExit "Error: Variable \"influxPort\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
+[ -z "$influxToken" ] && { errorExit "Error: Variable \"influxToken\" not set in $PILOGGER_BASE_DIR/etc/piLogger.conf" ; }
 [ -z "$PILOGGER_DATA" ] && { errorExit "Error: PILOGGER_DATA not set" ; }
 [ -z "$PILOGGER_SENSOR" ] && { errorExit "Error: PILOGGER_SENSOR not set" ; }
 [ -z "$PILOGGER_METRIC_TYPE" ] && PILOGGER_METRIC_TYPE=temperature
@@ -81,7 +85,7 @@ EOT
 # MAIN
 #===================================
 
-logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $influxHost database: $influxDb table: sensor_data"
+logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $influxHost database: $influxBucket table: sensor_data"
 
 #--- References
 #--- database created: curl -G http://192.168.4.55:8086/query --data-urlencode "q=CREATE DATABASE piLoggerStg3"
@@ -89,7 +93,14 @@ logIt "Logging $PILOGGER_SENSOR:$PILOGGER_DATA to $influxHost database: $influxD
 #--- https://docs.influxdata.com/influxdb/v0.9/guides/writing_data/
 #--- curl -G 'http://192.168.4.55:8086/query?pretty=true' --data-urlencode "db=piLoggerStg3" --data-urlencode "q=SELECT * FROM sensor_data "
 
-curl -i -XPOST "http://${influxHost}:${influxPort}/write?db=${influxDb}" --data-binary "sensor_data,sensor=${PILOGGER_SENSOR} value=${PILOGGER_DATA}"
+[ -n "$debug" ] && { set -x ; }
+curl -i -XPOST "http://${influxHost}:${influxPort}/api/v2/write?org=${influxOrg}&bucket=${influxBucket}" \
+  --header "Authorization: Token $influxToken" \
+  --header "Content-Type: text/plain; charset=utf-8" \
+  --header "Accept: application/json" \
+  --data-binary "sensor_data,sensor=${PILOGGER_SENSOR} value=${PILOGGER_DATA}"
+
+[ -n "$debug" ] && { set +x ; }
 
 #curl $curlOpts  -w "%{http_code}\n" \
 #		-H 'Content-Type: application/json' \
@@ -97,4 +108,3 @@ curl -i -XPOST "http://${influxHost}:${influxPort}/write?db=${influxDb}" --data-
 #		-X PUT \
 #		"http://${remoteHost}/api/sensor/${PILOGGER_SENSOR}"
 #
-

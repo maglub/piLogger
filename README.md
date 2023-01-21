@@ -48,6 +48,9 @@ Installation of the software
 5. Configure the installation
    ```
    ./configure --withLocale
+
+   #--- if you use the bit-bang 1wire kernel module, you need to point to the proper oneWireDir 
+   oneWireDir=/sys/bus/w1/devices ./configure --withLocale
    ``` 
    
    An alternative is to minimize the installation footprint by removing unused packages:
@@ -187,6 +190,34 @@ Configuration of your setup
    ```
    
 9. Done! Test your webgui by entering the IP address of your Raspberry Pi in the address field in your browser.
+
+Setting up remote logging
+-------------------------
+
+* Enable remoteLogging in the etc/piLogger.conf file
+
+```
+remoteLogging=true
+```
+
+* Symlink the remote logging scripts that you want to use to your data directory
+
+```
+ln -s /home/pi/piLogger/remote-logging.d/piLogger-influx /var/lib/piLogger/remote-logging-enabled/piLogger-influx
+```
+
+
+* Configure the remote logging script in your etc/piLogger.conf file
+
+```
+#--- influx
+influxHost=192.168.4.82
+influxToken=SECRET_TOKEN
+influxPort=8086
+influxOrg=smalometern.com
+influxBucket=laggarbacken
+influxSender=lag-pilogger-r01
+```
 
 Setting a new admin password
 ----------------------------

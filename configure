@@ -171,7 +171,7 @@ piLoggerLocale=$piLoggerLocale
 
 baseDir=$this_dir
 dataDir=/var/lib/piLogger
-oneWireDir=/mnt/1wire
+oneWireDir=${oneWireDir:-/mnt/1wire}
 
 htmlDir=\$baseDir/html
 cacheDir=\$dataDir/cache
